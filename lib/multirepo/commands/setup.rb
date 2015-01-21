@@ -18,7 +18,10 @@ module MultiRepo
       repos = MultiRepo::Loader.load_repos(".multirepo")
       return unless repos
       
-      repos.each(&:checkout)
+      repos.each do |repo|
+        next unless repo.setup
+        repo.checkout
+      end
       
       MultiRepo::Console.log_step("Done!")
     end

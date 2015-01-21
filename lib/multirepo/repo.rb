@@ -18,7 +18,7 @@ module MultiRepo
       Dir.exist?("#{@working_copy}/.git")
     end
     
-    def checkout
+    def setup
       if exists?
         # TODO: Check if the existing repo's origin matches the expected remote
         MultiRepo::Console.log_alternate_substep("Working copy #{@working_copy} already exists, fetching instead...")
@@ -35,6 +35,10 @@ module MultiRepo
     
     def clone
       MultiRepo::Git.run("clone #{@remote_url} #{@working_copy}", true)
+    end
+    
+    def checkout
+      MultiRepo::Git.run(@working_copy, "checkout #{@branch_name}", true)
     end
   end
 end
