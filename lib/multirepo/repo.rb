@@ -21,7 +21,7 @@ module MultiRepo
     def checkout
       if exists?
         # TODO: Check if the existing repo's origin matches the expected remote
-        MultiRepo::Console.log_warning("Working copy #{@working_copy} already exists, fetching instead")
+        MultiRepo::Console.log_warning("Working copy #{@working_copy} already exists, fetching instead...")
         fetch
       else
         MultiRepo::Console.log_substep("Cloning #{@remote_url} to #{@working_copy}")
