@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'cli'
+require "claide"
+require "multirepo"
 
-MultiRepo::Cli.run(ARGV)
+CLAide::Command.run(ARGV)

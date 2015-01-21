@@ -1,5 +1,3 @@
-require "runner"
-
 module MultiRepo
   class Entry
     attr_accessor :folder_name

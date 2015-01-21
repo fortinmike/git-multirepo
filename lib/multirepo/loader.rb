@@ -1,4 +1,6 @@
-require "entry"
+require "pathname"
+
+require_relative "entry"
 
 module MultiRepo
   class Loader
