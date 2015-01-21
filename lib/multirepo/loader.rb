@@ -1,6 +1,7 @@
 require "pathname"
 
 require_relative "repo"
+require_relative "console"
 
 module MultiRepo
   class Loader
@@ -23,7 +24,7 @@ module MultiRepo
     
     def self.check_exists(path)
       exists = path.exist?
-      puts "'#{path.basename}' file does not exist." unless exists
+      MultiRepo::Console.log_error("'#{path.basename}' file does not exist.") unless exists
       return exists
     end
   end
