@@ -22,23 +22,26 @@ module MultiRepo
       if exists?
         # TODO: Check if the existing repo's origin matches the expected remote
         MultiRepo::Console.log_alternate_substep("Working copy #{@working_copy} already exists, fetching instead...")
-        fetch
+        return fetch
       else
         MultiRepo::Console.log_substep("Cloning #{@remote_url} to #{@working_copy}")
-        clone
+        return clone
       end
     end
     
     def fetch
       MultiRepo::Git.run(@working_copy, "fetch", true)
+      return $?.exitstatus == 0
     end
     
     def clone
       MultiRepo::Git.run("clone #{@remote_url} #{@working_copy}", true)
+      return $?.exitstatus == 0
     end
     
     def checkout
       MultiRepo::Git.run(@working_copy, "checkout #{@branch_name}", true)
+      return $?.exitstatus == 0
     end
   end
 end
