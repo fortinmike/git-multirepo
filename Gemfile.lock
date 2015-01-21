@@ -1,0 +1,19 @@
+PATH
+  remote: .
+  specs:
+    git-multirepo (0.0.1)
+      claide (~> 0.8, >= 0.8.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    claide (0.8.0)
+    rake (10.4.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler (~> 1.7)
+  git-multirepo!
+  rake (~> 10.0)

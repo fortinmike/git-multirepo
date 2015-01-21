@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'cli'
+
+MultiRepo::Cli.run(ARGV)
