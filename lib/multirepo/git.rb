@@ -9,7 +9,7 @@ module MultiRepo
       elsif args.length == 3
         self.run_in_working_dir(*args)
       else
-        raise
+        raise "Wrong number of arguments in Git.run() call"
       end
     end
     
