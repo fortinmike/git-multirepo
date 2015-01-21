@@ -3,4 +3,4 @@
 require "claide"
 require "multirepo"
 
-CLAide::Command.run(ARGV)
+MultiRepo::Command.run(ARGV)

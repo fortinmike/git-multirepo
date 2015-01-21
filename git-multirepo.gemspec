@@ -1,15 +1,15 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'multirepo/version'
+require 'info'
 
 Gem::Specification.new do |spec|
-  spec.name          = "git-multirepo"
+  spec.name          = MultiRepo::NAME
   spec.version       = MultiRepo::VERSION
   spec.authors       = ["Michaël Fortin"]
   spec.email         = ["fortinmike@irradiated.net"]
   spec.summary       = %q{Tracks multiple side-by-side Git repositories}
-  spec.description   = "MultiRepo is a work-in-progress. Use at your own risk."
+  spec.description   = MultiRepo::DESCRIPTION
   spec.homepage      = "http://www.irradiated.net"
   spec.license       = "MIT"
 
@@ -22,4 +22,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
 
   spec.add_runtime_dependency "claide", "~> 0.8", ">= 0.8.0"
+  spec.add_runtime_dependency 'colored',       '~> 1.2'
 end

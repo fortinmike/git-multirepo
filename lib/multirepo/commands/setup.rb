@@ -3,7 +3,7 @@ require "claide"
 require_relative "../loader"
 
 module MultiRepo
-  class Setup < CLAide::Command
+  class Setup < MultiRepo::Command
     self.command = "setup"
     self.summary = "Fetches and checks out the appropriate dependencies as defined in the .multirepo file."
     
