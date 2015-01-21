@@ -13,12 +13,12 @@ module MultiRepo
       end
     end
     
-    def self.run_in_current_dir(command, show_output = true)
+    def self.run_in_current_dir(command, show_output)
       full_command = "git #{command}"
       MultiRepo::Runner.run(full_command, show_output)
     end
     
-    def self.run_in_working_dir(working_dir, command, show_output = true)
+    def self.run_in_working_dir(working_dir, command, show_output)
       full_command = "git --git-dir=\"#{working_dir}/.git\" --work-tree=\"#{working_dir}\" #{command}";
       MultiRepo::Runner.run(full_command, show_output)
     end
