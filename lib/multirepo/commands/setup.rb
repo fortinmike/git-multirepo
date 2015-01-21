@@ -12,10 +12,10 @@ module MultiRepo
     end
     
     def run
-      entries = MultiRepo::Loader.load_entries(".multirepo")
-      return unless entries
+      repos = MultiRepo::Loader.load_repos(".multirepo")
+      return unless repos
       
-      puts entries.inspect
+      puts repos.inspect
     end
   end
 end

@@ -1,5 +1,5 @@
 module MultiRepo
-  class Entry
+  class Repo
     attr_accessor :folder_name
     attr_accessor :remote_url
     attr_accessor :branch_name

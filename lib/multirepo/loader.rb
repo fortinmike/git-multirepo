@@ -1,23 +1,23 @@
 require "pathname"
 
-require_relative "entry"
+require_relative "repo"
 
 module MultiRepo
   class Loader
-    def self.load_entries(config_path)
+    def self.load_repos(config_path)
       config = Pathname.new(config_path)
       return unless check_exists(config)
       
-      entries = Array.new
+      repos = Array.new
       
       file = config.open("r")
       file.each_line do |line|
         components = line.split(" ")
-        entries.push(MultiRepo::Entry.new(*components))
+        repos.push(MultiRepo::Repo.new(*components))
       end
       file.close
       
-      return entries
+      return repos
     end
     
     def self.check_exists(path)
