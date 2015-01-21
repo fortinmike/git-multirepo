@@ -12,6 +12,7 @@ module MultiRepo
       
       file = config.open("r")
       file.each_line do |line|
+        next if line.start_with?("#") # Barebones comments support
         components = line.split(" ")
         repos.push(MultiRepo::Repo.new(*components))
       end
