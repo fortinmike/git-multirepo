@@ -1,0 +1,3 @@
+# Recursive dependencies! Aaaaah!
+Dependency1 git@github.com:fortinmike/git-multirepo.git master
+Dependency2 git@github.com:fortinmike/git-multirepo.git master
