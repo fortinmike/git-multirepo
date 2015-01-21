@@ -16,6 +16,7 @@ module MultiRepo
       MultiRepo::Console.log_step("Fetching repositories...")
       
       @repos.each(&:fetch)
+      MultiRepo::Git.run("fetch", true)
       
       MultiRepo::Console.log_step("Done!")
     end
