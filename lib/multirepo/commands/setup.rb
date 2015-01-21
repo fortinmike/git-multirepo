@@ -1,6 +1,7 @@
 require "claide"
 
 require_relative "../loader"
+require_relative "../console"
 
 module MultiRepo
   class Setup < MultiRepo::Command
@@ -12,10 +13,14 @@ module MultiRepo
     end
     
     def run
+      MultiRepo::Console.log_step("Setupping multiple repositories...")
+      
       repos = MultiRepo::Loader.load_repos(".multirepo")
       return unless repos
       
-      puts repos.inspect
+      repos.each(&:checkout)
+      
+      MultiRepo::Console.log_step("Done!")
     end
   end
 end
