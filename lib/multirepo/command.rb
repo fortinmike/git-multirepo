@@ -6,5 +6,10 @@ module MultiRepo
     self.command = "multi"
     self.version = VERSION
     self.description = DESCRIPTION
+    
+    def initialize(argv)
+      @repos = MultiRepo::Loader.load_repos(".multirepo")
+      super
+    end
   end
 end
