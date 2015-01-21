@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require_relative "lib/version"
+require_relative "lib/info"
 
 # Stage files so they are considered by the gemspec:
 # http://stackoverflow.com/a/13190785/167983
