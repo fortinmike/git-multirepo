@@ -5,7 +5,7 @@ require_relative "../loader"
 module MultiRepo
   class Setup < MultiRepo::Command
     self.command = "setup"
-    self.summary = "Fetches and checks out the appropriate dependencies as defined in the .multirepo file."
+    self.summary = "Fetches and checks out dependencies as defined in the .multirepo file, and sets up git-multirepo's local pre-commit hook."
     
     def initialize(argv)
       super
