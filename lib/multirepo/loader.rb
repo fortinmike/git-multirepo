@@ -15,7 +15,7 @@ module MultiRepo
       file.each_line do |line|
         next if line.start_with?("#") # Barebones comments support
         components = line.split(" ")
-        repos.push(MultiRepo::Repo.new(*components))
+        repos.push(Repo.new(*components))
       end
       file.close
       
@@ -24,7 +24,7 @@ module MultiRepo
     
     def self.check_exists(path)
       exists = path.exist?
-      MultiRepo::Console.log_error("'#{path.basename}' file does not exist.") unless exists
+      Console.log_error("'#{path.basename}' file does not exist.") unless exists
       return exists
     end
   end

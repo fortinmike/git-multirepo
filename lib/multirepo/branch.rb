@@ -12,12 +12,12 @@ module MultiRepo
     end
     
     def create
-      MultiRepo::Git.run(@repo.working_copy, "branch #{@name}", false)
+      Git.run(@repo.working_copy, "branch #{@name}", false)
       return $?.exitstatus == 0
     end
     
     def checkout
-      MultiRepo::Git.run(@repo.working_copy, "checkout #{@name}", false) 
+      Git.run(@repo.working_copy, "checkout #{@name}", false) 
       return $?.exitstatus == 0
     end
   end

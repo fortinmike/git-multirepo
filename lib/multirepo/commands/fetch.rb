@@ -4,7 +4,7 @@ require_relative "../loader"
 require_relative "../console"
 
 module MultiRepo
-  class Fetch < MultiRepo::Command
+  class Fetch < Command
     self.command = "fetch"
     self.summary = "Performs a git fetch on all repositories."
     
@@ -13,11 +13,11 @@ module MultiRepo
     end
     
     def run
-      MultiRepo::Console.log_step("Fetching repositories...")
+      Console.log_step("Fetching repositories...")
       
       @repos.each(&:fetch)
       
-      MultiRepo::Console.log_step("Done!")
+      Console.log_step("Done!")
     end
   end
 end

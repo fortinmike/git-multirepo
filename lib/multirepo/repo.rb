@@ -15,7 +15,7 @@ module MultiRepo
       @remote_url = remote_url
       
       @working_copy = "../#{folder_name}"
-      @branch = MultiRepo::Branch.new(self, branch_name)
+      @branch = Branch.new(self, branch_name)
     end
     
     def exists?
@@ -26,15 +26,15 @@ module MultiRepo
       # Fetch or clone the remote
       if exists?
         # TODO: Check if the existing repo's origin matches the expected remote
-        MultiRepo::Console.log_substep("Working copy #{@working_copy} already exists, fetching instead...")
+        Console.log_substep("Working copy #{@working_copy} already exists, fetching instead...")
         if !fetch then
-          MultiRepo::Console.log_error("Could not fetch from remote #{@remote_url}")
+          Console.log_error("Could not fetch from remote #{@remote_url}")
           return
         end
       else
-        MultiRepo::Console.log_substep("Cloning #{@remote_url} to #{@working_copy}")
+        Console.log_substep("Cloning #{@remote_url} to #{@working_copy}")
         if !clone then
-          MultiRepo::Console.log_error("Could not clone remote #{@remote_url}")
+          Console.log_error("Could not clone remote #{@remote_url}")
           return
         end
       end
@@ -42,21 +42,21 @@ module MultiRepo
       # Create and switch to the appropriate branch
       @branch.create unless @branch.exists?  
       if @branch.checkout
-        MultiRepo::Console.log_info("Checked out branch #{branch.name}")
+        Console.log_info("Checked out branch #{branch.name}")
       else
-        MultiRepo::Console.log_error("Could not checkout branch #{branch.name}")
+        Console.log_error("Could not checkout branch #{branch.name}")
       end
     end
     
     # General
     
     def fetch
-      MultiRepo::Git.run(@working_copy, "fetch", true)
+      Git.run(@working_copy, "fetch", true)
       return $?.exitstatus == 0
     end
     
     def clone
-      MultiRepo::Git.run("clone #{@remote_url} #{@working_copy}", true)
+      Git.run("clone #{@remote_url} #{@working_copy}", true)
       return $?.exitstatus == 0
     end
   end

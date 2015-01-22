@@ -8,7 +8,7 @@ module MultiRepo
     self.description = DESCRIPTION
     
     def initialize(argv)
-      @repos = MultiRepo::Loader.load_repos(".multirepo")
+      @repos = Loader.load_repos(".multirepo")
       super
     end
   end
