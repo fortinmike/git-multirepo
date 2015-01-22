@@ -22,7 +22,7 @@ module MultiRepo
       Dir.exist?("#{@working_copy}/.git")
     end
     
-    def setup
+    def install
       # Fetch or clone the remote
       if exists?
         # TODO: Check if the existing repo's origin matches the expected remote

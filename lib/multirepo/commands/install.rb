@@ -5,8 +5,8 @@ require_relative "../console"
 
 module MultiRepo
   class Setup < Command
-    self.command = "setup"
-    self.summary = "Fetches and checks out repositories as defined in the .multirepo file, and sets up git-multirepo's local pre-commit hook."
+    self.command = "install"
+    self.summary = "Clones and checks out repositories as defined in the .multirepo file, and installs git-multirepo's local pre-commit hook."
     
     def initialize(argv)
       super
@@ -18,7 +18,7 @@ module MultiRepo
       Console.log_step("Setupping multiple repositories...")
       
       @repos.each do |repo|
-        next unless repo.setup
+        next unless repo.install
         repo.checkout
       end
       
