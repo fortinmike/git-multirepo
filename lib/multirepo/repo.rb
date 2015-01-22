@@ -39,8 +39,10 @@ module MultiRepo
         end
       end
       
-      # Create and switch to the appropriate branch
-      @branch.create unless @branch.exists?  
+      unless @branch.exists?
+        if @branch.create then Console.log_info("Created branch #{branch.name}") end
+      end
+      
       if @branch.checkout
         Console.log_info("Checked out branch #{branch.name}")
       else

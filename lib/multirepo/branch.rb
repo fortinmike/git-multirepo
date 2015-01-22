@@ -8,7 +8,9 @@ module MultiRepo
     end
     
     def exists?
-      return true
+      lines = Git.run(@repo.working_copy, "branch", false).split("\n")
+      branches = lines.map { |line| line.tr("* ", "")}
+      return branches.include?(@name)
     end
     
     def create
@@ -17,7 +19,7 @@ module MultiRepo
     end
     
     def checkout
-      Git.run(@repo.working_copy, "checkout #{@name}", false) 
+      Git.run(@repo.working_copy, "checkout #{@name}", false)
       return $?.exitstatus == 0
     end
   end
