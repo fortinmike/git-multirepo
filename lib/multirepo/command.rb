@@ -1,4 +1,4 @@
-require "colored"
+require "claide"
 
 module MultiRepo
   class Command < CLAide::Command
@@ -7,9 +7,9 @@ module MultiRepo
     self.version = VERSION
     self.description = DESCRIPTION
     
-    def initialize(argv)
+    def run
       @repos = Loader.load_repos(".multirepo")
-      super
+      return @repos != nil
     end
   end
 end

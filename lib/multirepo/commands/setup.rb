@@ -13,6 +13,8 @@ module MultiRepo
     end
     
     def run
+      return unless super
+      
       Console.log_step("Setupping multiple repositories...")
       
       @repos.each do |repo|
