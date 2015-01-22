@@ -15,7 +15,10 @@ module MultiRepo
     def run
       Console.log_step("Fetching repositories...")
       
-      @repos.each(&:fetch)
+      @repos.each do |repo|
+        Console.log_substep("Fetching from #{repo.remote_url}...")
+        repo.fetch
+      end
       
       Console.log_step("Done!")
     end
