@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+puts "Hello!"
+exit 1 # Exiting non-zero prevents commit
