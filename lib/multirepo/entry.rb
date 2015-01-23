@@ -3,10 +3,6 @@ require "multirepo/git/repo"
 
 module MultiRepo
   class Entry
-    attr_accessor :folder_name
-    attr_accessor :remote_url
-    attr_accessor :branch
-    
     def initialize(folder_name, remote_url, branch_name)
       @repo = Repo.new("../#{folder_name}")
       @remote_url = remote_url
