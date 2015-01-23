@@ -16,39 +16,51 @@ module MultiRepo
     end
     
     def install
-      clone_or_fetch
-      checkout_branch
+      checkout_branch if clone_or_fetch
     end
     
     def clone_or_fetch
       if @repo.exists?
-        # TODO: Check if the existing repo's origin matches the expected remote
-        Console.log_substep("Working copy #{@working_copy} already exists, fetching instead...")
+        unless remote_matches_entry
+          puts Console.log_error("Remote does not match for working copy #{@repo.working_copy}!")
+          return false
+        end
+        
+        Console.log_substep("Working copy #{@repo.working_copy} already exists, fetching instead...")
         if !@repo.fetch then
-          Console.log_error("Could not fetch from remote #{@remote_url}")
-          return
+          Console.log_error("Could not fetch from remote #{@repo.remote('origin').url}")
+          return false
         end
       else
-        Console.log_substep("Cloning #{@remote_url} to #{@working_copy}")
+        Console.log_substep("Cloning #{@remote_url} to #{@repo.working_copy}")
         if !@repo.clone(@remote_url) then
           Console.log_error("Could not clone remote #{@remote_url}")
-          return
+          return false
         end
       end
+      
+      true
     end
     
     def checkout_branch
       branch = @repo.branch(@branch_name);
       
-      unless branch.exists?
-        if branch.create then Console.log_info("Created branch #{branch.name}") end
+      if !branch.exists? && branch.create
+        Console.log_info("Created branch #{branch.name}")
       end
       
       if branch.checkout
         Console.log_info("Checked out branch #{branch.name}")
       else
         Console.log_error("Could not checkout branch #{branch.name}")
+        return false
       end
+      
+      true
+    end
+    
+    def remote_matches_entry
+      @repo.remote("origin").url == @remote_url
     end
   end
 end

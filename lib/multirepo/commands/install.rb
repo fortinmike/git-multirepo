@@ -17,10 +17,7 @@ module MultiRepo
       
       Console.log_step("Setupping multiple repositories...")
       
-      @entries.each do |entry|
-        next unless entry.install
-        entry.checkout
-      end
+      @entries.each(&:install)
       
       Console.log_step("Done!")
     end
