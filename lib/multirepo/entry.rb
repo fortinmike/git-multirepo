@@ -43,14 +43,14 @@ module MultiRepo
     def checkout_branch
       branch = @repo.branch(@branch_name);
       
-      if !branch.exists? && branch.create
+      if !branch.exists? && branch.create(remote_tracking: true)
         Console.log_info("Created branch #{branch.name}")
       end
       
       if branch.checkout
-        Console.log_info("Checked out branch #{branch.name}")
+        Console.log_info("Checked out branch #{branch.name} -> origin/#{branch.name}")
       else
-        Console.log_error("Could not checkout branch #{branch.name}")
+        Console.log_error("Could not setup branch #{branch.name}")
         return false
       end
       
