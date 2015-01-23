@@ -1,6 +1,8 @@
 require "claide"
 
+require "multirepo"
 require "multirepo/utility/console"
+require "multirepo/git/repo"
 require "multirepo/loader"
 
 module MultiRepo
@@ -18,10 +20,16 @@ module MultiRepo
       Console.log_step("Setupping multiple repositories...")
       
       @entries.each(&:install)
+      install_pre_commit_hook
       
       Console.log_step("Done!")
     rescue Exception => e
       Console.log_error(e.message)
+    end
+    
+    def install_pre_commit_hook
+      hook_path = File.join(MultiRepo.path, "hooks/pre-commit")
+      FileUtils.cp(hook_path, ".git/hooks")
     end
   end
 end
