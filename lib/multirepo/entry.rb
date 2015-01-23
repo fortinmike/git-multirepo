@@ -1,7 +1,5 @@
-require_relative "console"
-require_relative "git"
-require_relative "branch"
-require_relative "repo"
+require "multirepo/utility/console"
+require "multirepo/git/repo"
 
 module MultiRepo
   class Entry

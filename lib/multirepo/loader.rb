@@ -1,7 +1,7 @@
 require "pathname"
 
-require_relative "entry"
-require_relative "console"
+require "multirepo/utility/console"
+require "multirepo/entry"
 
 module MultiRepo
   class Loader

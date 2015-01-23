@@ -1,3 +1,5 @@
+require_relative "git"
+
 module MultiRepo
   class Branch
     attr_accessor :name

@@ -1,4 +1,4 @@
-require_relative "runner"
+require "multirepo/utility/runner"
 
 module MultiRepo
   class Git

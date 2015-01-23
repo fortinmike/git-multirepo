@@ -1,7 +1,7 @@
 require "claide"
 
-require_relative "../loader"
-require_relative "../console"
+require "multirepo/utility/console"
+require "multirepo/loader"
 
 module MultiRepo
   class Fetch < Command
