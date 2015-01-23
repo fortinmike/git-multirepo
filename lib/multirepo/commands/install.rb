@@ -17,9 +17,9 @@ module MultiRepo
       
       Console.log_step("Setupping multiple repositories...")
       
-      @repos.each do |repo|
-        next unless repo.install
-        repo.checkout
+      @entries.each do |entry|
+        next unless entry.install
+        entry.checkout
       end
       
       Console.log_step("Done!")

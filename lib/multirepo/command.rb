@@ -8,8 +8,8 @@ module MultiRepo
     self.description = DESCRIPTION
     
     def run
-      @repos = Loader.load_repos(".multirepo")
-      return @repos != nil
+      @entries = Loader.load_entries(".multirepo")
+      return @entries != nil
     end
   end
 end
