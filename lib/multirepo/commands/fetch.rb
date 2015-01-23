@@ -13,7 +13,7 @@ module MultiRepo
     end
     
     def run
-      return unless super
+      super
       
       Console.log_step("Fetching repositories...")
       
@@ -23,6 +23,8 @@ module MultiRepo
       end
       
       Console.log_step("Done!")
+    rescue Exception => e
+      Console.log_error(e.message)
     end
   end
 end

@@ -13,7 +13,7 @@ module MultiRepo
     end
     
     def run
-      return unless super
+      super
       
       Console.log_step("Setupping multiple repositories...")
       
