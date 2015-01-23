@@ -1,3 +1,6 @@
+require_relative "branch"
+require_relative "remote"
+
 module MultiRepo
   class Repo
     attr_accessor :working_copy
@@ -22,6 +25,10 @@ module MultiRepo
     
     def branch(name)
       Branch.new(self, name)
+    end
+    
+    def remote(name)
+      Remote.new(self, name)
     end
   end
 end
