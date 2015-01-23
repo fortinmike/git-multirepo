@@ -20,6 +20,8 @@ module MultiRepo
       @entries.each(&:install)
       
       Console.log_step("Done!")
+    rescue Exception => e
+      Console.log_error(e.message)
     end
   end
 end

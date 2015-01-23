@@ -4,36 +4,31 @@ require "multirepo/git/repo"
 module MultiRepo
   class Entry
     def initialize(folder_name, remote_url, branch_name)
+      @folder_name = folder_name
       @repo = Repo.new("../#{folder_name}")
       @remote_url = remote_url
       @branch_name = branch_name
     end
     
     def install
-      checkout_branch if clone_or_fetch
+      if @repo.exists?
+        check_repo_validity
+        fetch_repo
+      else
+        clone_repo
+      end
+      checkout_branch
     end
     
-    def clone_or_fetch
-      if @repo.exists?
-        unless remote_matches_entry
-          puts Console.log_error("Remote does not match for working copy #{@repo.working_copy}!")
-          return false
-        end
-        
-        Console.log_substep("Working copy #{@repo.working_copy} already exists, fetching instead...")
-        if !@repo.fetch
-          Console.log_error("Could not fetch from remote #{@repo.remote('origin').url}")
-          return false
-        end
-      else
-        Console.log_substep("Cloning #{@remote_url} to #{@repo.working_copy}")
-        if !@repo.clone(@remote_url)
-          Console.log_error("Could not clone remote #{@remote_url}")
-          return false
-        end
+    def fetch_repo
+      Console.log_substep("Working copy #{@repo.working_copy} already exists, fetching instead...")
+      if !@repo.fetch then raise "Could not fetch from remote #{@repo.remote('origin').url}"
       end
-      
-      true
+    end
+    
+    def clone_repo
+      Console.log_substep("Cloning #{@remote_url} to #{@repo.working_copy}")
+      if !@repo.clone(@remote_url) then raise "Could not clone remote #{@remote_url}" end
     end
     
     def checkout_branch
@@ -46,11 +41,14 @@ module MultiRepo
       if branch.checkout
         Console.log_info("Checked out branch #{branch.name} -> origin/#{branch.name}")
       else
-        Console.log_error("Could not setup branch #{branch.name}")
-        return false
+        raise "Could not setup branch #{branch.name}"
       end
-      
-      true
+    end
+    
+    def check_repo_validity
+      unless remote_matches_entry
+        raise "#{@folder_name} origin URL (#{@repo.remote('origin').url}) does not match entry (#{@remote_url})!"
+      end
     end
     
     def remote_matches_entry
