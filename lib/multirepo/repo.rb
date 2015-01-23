@@ -18,10 +18,6 @@ module MultiRepo
       @branch = Branch.new(self, branch_name)
     end
     
-    def exists?
-      Dir.exist?("#{@working_copy}/.git")
-    end
-    
     def install
       # Fetch or clone the remote
       if exists?
@@ -50,7 +46,13 @@ module MultiRepo
       end
     end
     
-    # General
+    # Inspection
+    
+    def exists?
+      Dir.exist?("#{@working_copy}/.git")
+    end
+    
+    # Operations
     
     def fetch
       Git.run(@working_copy, "fetch", true)
