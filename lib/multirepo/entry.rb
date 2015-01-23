@@ -21,13 +21,13 @@ module MultiRepo
         end
         
         Console.log_substep("Working copy #{@repo.working_copy} already exists, fetching instead...")
-        if !@repo.fetch then
+        if !@repo.fetch
           Console.log_error("Could not fetch from remote #{@repo.remote('origin').url}")
           return false
         end
       else
         Console.log_substep("Cloning #{@remote_url} to #{@repo.working_copy}")
-        if !@repo.clone(@remote_url) then
+        if !@repo.clone(@remote_url)
           Console.log_error("Could not clone remote #{@remote_url}")
           return false
         end
