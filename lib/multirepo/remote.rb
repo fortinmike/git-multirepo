@@ -8,7 +8,7 @@ module MultiRepo
     end
     
     def url
-      Git.run(@repo.working_copy, "config --get remote.#{@name}.url")
+      Git.run(@repo.working_copy, "config --get remote.#{@name}.url", false).strip
     end
   end
 end
