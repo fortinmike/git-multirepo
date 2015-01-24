@@ -22,6 +22,22 @@ module MultiRepo
       checkout_branch
     end
     
+    def exists?
+      Config::FILE.open("r").each_line do |line|
+        return true if line.start_with?(@folder_name)
+      end
+      false
+    end
+    
+    def add
+      entry_string = "#{@folder_name} #{@remote_url} #{@branch_name}"
+      Config::FILE.open("a") do |f|
+        f.puts entry_string
+      end
+    end
+    
+    # Repo operations
+    
     def fetch_repo
       Console.log_substep("Working copy #{@repo.working_copy} already exists, fetching instead...")
       if !@repo.fetch then raise "Could not fetch from remote #{@repo.remote('origin').url}"
@@ -46,6 +62,8 @@ module MultiRepo
         raise "Could not setup branch #{branch.name}"
       end
     end
+    
+    # Validation
     
     def check_repo_validity
       unless remote_matches_entry

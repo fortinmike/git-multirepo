@@ -10,10 +10,6 @@ module MultiRepo
     self.command = "install"
     self.summary = "Clones and checks out repositories as defined in the .multirepo file, and installs git-multirepo's local pre-commit hook."
     
-    def initialize(argv)
-      super
-    end
-    
     def run
       super
       
@@ -28,7 +24,7 @@ module MultiRepo
     end
     
     def install_pre_commit_hook
-      hook_path = File.join(MultiRepo.path, "hooks/pre-commit")
+      hook_path = File.join(MultiRepo.path, "resources/pre-commit")
       FileUtils.cp(hook_path, ".git/hooks")
       Console.log_substep("Installed multirepo pre-commit hook")
     end

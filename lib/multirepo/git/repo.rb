@@ -13,6 +13,10 @@ module MultiRepo
       Dir.exist?("#{@working_copy}/.git")
     end
     
+    def current_branch
+      Git.run(@working_copy, "rev-parse --abbrev-ref HEAD", false)
+    end
+    
     def fetch
       Git.run(@working_copy, "fetch", true)
       $?.exitstatus == 0

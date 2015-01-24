@@ -8,10 +8,6 @@ module MultiRepo
     self.command = "fetch"
     self.summary = "Performs a git fetch on all repositories."
     
-    def initialize(argv)
-      super
-    end
-    
     def run
       super
       
