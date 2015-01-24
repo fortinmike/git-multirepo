@@ -6,8 +6,9 @@ require_relative "multirepo/commands/open"
 
 module MultiRepo
   class MultiRepo
-    def self.path
-      Gem::Specification.find_by_name("git-multirepo").gem_dir
+    def self.path_for_resource(resource_name)
+      gem_path = Gem::Specification.find_by_name("git-multirepo").gem_dir
+      File.join(gem_path, "resources/#{resource_name}")
     end
   end
 end

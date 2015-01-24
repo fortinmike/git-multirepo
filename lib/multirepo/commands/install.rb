@@ -24,8 +24,7 @@ module MultiRepo
     end
     
     def install_pre_commit_hook
-      hook_path = File.join(MultiRepo.path, "resources/pre-commit")
-      FileUtils.cp(hook_path, ".git/hooks")
+      FileUtils.cp(MultiRepo.path_for_resource("pre-commit"), ".git/hooks")
       Console.log_substep("Installed multirepo pre-commit hook")
     end
   end

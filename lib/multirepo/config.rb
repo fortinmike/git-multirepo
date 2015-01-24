@@ -7,7 +7,7 @@ module MultiRepo
     end
     
     def self.create
-      template_path = File.join(MultiRepo.path, "resources/.multirepo")
+      template_path = MultiRepo.path_for_resource(".multirepo")
       FileUtils.cp(template_path, ".")
       Console.log_substep("Created .multirepo file")
     end
