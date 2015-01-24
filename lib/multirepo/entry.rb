@@ -5,7 +5,24 @@ module MultiRepo
   class Entry
     attr_accessor :repo
     
-    def initialize(folder_name, remote_url, branch_name)
+    def initialize(*args)
+      if args.length == 1
+        self.initialize_with_repo(*args)
+      elsif args.length == 3
+        self.initialize_with_args(*args)
+      else
+        raise "Wrong number of arguments in Entry.new() call"
+      end
+    end
+    
+    def initialize_with_repo(repo)
+      @folder_name = Pathname.new(repo.working_copy).basename.to_s
+      @repo = repo
+      @remote_url = repo.remote('origin').url
+      @branch_name = repo.current_branch
+    end
+    
+    def initialize_with_args(folder_name, remote_url, branch_name)
       @folder_name = folder_name
       @repo = Repo.new("../#{folder_name}")
       @remote_url = remote_url
@@ -31,9 +48,7 @@ module MultiRepo
     
     def add
       entry_string = "#{@folder_name} #{@remote_url} #{@branch_name}"
-      Config::FILE.open("a") do |f|
-        f.puts entry_string
-      end
+      Config::FILE.open("a") { |f| f.puts entry_string }
     end
     
     # Repo operations

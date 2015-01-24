@@ -13,8 +13,7 @@ module MultiRepo
     end
     
     def self.add(repo)
-      folder_name = Pathname.new(repo.working_copy).basename.to_s
-      entry = Entry.new(folder_name, repo.remote("origin").url, repo.current_branch)
+      entry = Entry.new(repo)
       
       if entry.exists?
         Console.log_info("There is already an entry for #{folder_name} in the .multirepo file")
