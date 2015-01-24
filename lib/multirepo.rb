@@ -1,4 +1,5 @@
 require_relative "multirepo/command"
+require_relative "multirepo/commands/init"
 require_relative "multirepo/commands/install"
 require_relative "multirepo/commands/fetch"
 require_relative "multirepo/commands/add"

@@ -16,8 +16,7 @@ module MultiRepo
     end
     
     def validate_in_work_tree
-      inside = (Git.run("rev-parse --is-inside-work-tree", false).strip == "true")
-      if !inside then raise "Not a git repository" end
+      if !Git.is_inside_git_repo(".") then raise "Not a git repository" end
     end
   end
 end

@@ -16,10 +16,10 @@ module MultiRepo
       entry = Entry.new(repo)
       
       if entry.exists?
-        Console.log_info("There is already an entry for #{folder_name} in the .multirepo file")
+        Console.log_info("There is already an entry for #{entry.folder_name} in the .multirepo file")
       else
         entry.add
-        Console.log_step("Added the repository #{repo.working_copy} to the .multirepo file")
+        Console.log_substep("Added the repository #{entry.repo.working_copy} to the .multirepo file")
       end
     end
   end

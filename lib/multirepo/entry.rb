@@ -3,6 +3,7 @@ require "multirepo/git/repo"
 
 module MultiRepo
   class Entry
+    attr_accessor :folder_name
     attr_accessor :repo
     
     def initialize(*args)

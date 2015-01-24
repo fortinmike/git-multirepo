@@ -10,7 +10,7 @@ module MultiRepo
     end
     
     def exists?
-      Dir.exist?("#{@working_copy}/.git")
+      Git.is_inside_git_repo(@working_copy)
     end
     
     def current_branch

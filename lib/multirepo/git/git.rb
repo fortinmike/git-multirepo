@@ -1,4 +1,5 @@
 require "multirepo/utility/runner"
+require "multirepo/git/git"
 
 module MultiRepo
   class Git
@@ -23,6 +24,11 @@ module MultiRepo
       full_command = "git --git-dir=\"#{working_copy}/.git\" --work-tree=\"#{working_copy}\" #{git_command}";
       Console.log_info(full_command)
       Runner.run(full_command, show_output)
+    end
+    
+    def self.is_inside_git_repo(working_copy)
+      Dir.exist?("#{working_copy}/.git")
+      #return (Git.run(working_copy, "rev-parse --is-inside-work-tree", false).strip == "true") # Can't silence output?
     end
   end
 end
