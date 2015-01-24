@@ -15,9 +15,7 @@ module MultiRepo
       super
       
       @entries.each do |entry|
-        # OS X
-        `open #{entry.repo.working_copy}`
-        
+        `open #{entry.repo.working_copy}` # OS X
         # TODO: Windows
       end
     end
