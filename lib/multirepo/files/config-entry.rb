@@ -2,7 +2,7 @@ require "multirepo/utility/console"
 require "multirepo/git/repo"
 
 module MultiRepo
-  class Entry
+  class ConfigEntry
     attr_accessor :folder_name
     attr_accessor :repo
     
@@ -12,7 +12,7 @@ module MultiRepo
       elsif args.length == 3
         self.initialize_with_args(*args)
       else
-        raise "Wrong number of arguments in Entry.new() call"
+        raise "Wrong number of arguments in ConfigEntry.new() call"
       end
     end
     
@@ -41,7 +41,7 @@ module MultiRepo
     end
     
     def exists?
-      Config::FILE.open("r").each_line do |line|
+      ConfigFile::FILE.open("r").each_line do |line|
         return true if line.start_with?(@folder_name)
       end
       false
@@ -49,7 +49,7 @@ module MultiRepo
     
     def add
       entry_string = "#{@folder_name} #{@remote_url} #{@branch_name}"
-      Config::FILE.open("a") { |f| f.puts entry_string }
+      ConfigFile::FILE.open("a") { |f| f.puts entry_string }
     end
     
     # Repo operations

@@ -1,7 +1,7 @@
 require "claide"
 
 require "multirepo/utility/console"
-require "multirepo/config"
+require "multirepo/files/config-file"
 
 module MultiRepo
   class Add < Command
@@ -16,12 +16,12 @@ module MultiRepo
     def run
       super
       check_repo_exists
-      unless Config.exists?
-        Config.create
+      unless ConfigFile.exists?
+        ConfigFile.create
         Console.log_substep("Created missing .multirepo file")
       end
       
-      entry = Entry.new(@repo)
+      entry = ConfigEntry.new(@repo)
       if entry.exists?
         Console.log_info("There is already an entry for #{entry.folder_name} in the .multirepo file")
       else

@@ -1,20 +1,20 @@
 require "pathname"
 
 require "multirepo/utility/console"
-require "multirepo/config"
-require "multirepo/entry"
+require "multirepo/files/config-file"
+require "multirepo/files/config-entry"
 
 module MultiRepo
   class Loader
     def self.load_entries
       entries = Array.new
       
-      Config::FILE.open("r").each_line do |line|
+      ConfigFile::FILE.open("r").each_line do |line|
         next if line.start_with?("#") # Barebones comments support
         next if line.strip == "" # Skip empty lines
         components = line.split(" ")
         validate_components(line, components)
-        entries.push(Entry.new(*components))
+        entries.push(ConfigEntry.new(*components))
       end
       
       return entries

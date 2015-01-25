@@ -2,7 +2,7 @@ require "claide"
 
 require "multirepo"
 require "multirepo/utility/console"
-require "multirepo/config"
+require "multirepo/files/config-file"
 
 module MultiRepo
   class Init < Command
@@ -14,16 +14,16 @@ module MultiRepo
       
       Console.log_step("Initializing multirepo...")
       
-      unless Config.exists?
-        Config.create
+      unless ConfigFile.exists?
+        ConfigFile.create
         Console.log_substep("Created .multirepo file")
       else
         Console.log_info(".multirepo file already exists")
       end
       
-      sibling_repos.each do |repo|
+      MultiRepo.sibling_repos.each do |repo|
         if Console.ask_yes_no("Do you want to add #{repo.working_copy} (#{repo.remote('origin').url} #{repo.current_branch}) as a dependency?")
-          entry = Entry.new(repo)
+          entry = ConfigEntry.new(repo)
           if entry.exists?
             Console.log_info("There is already an entry for #{entry.folder_name} in the .multirepo file")
           else
@@ -39,12 +39,6 @@ module MultiRepo
       Console.log_step("Done!")
     rescue Exception => e
       Console.log_error(e.message)
-    end
-    
-    def sibling_repos
-      sibling_directories = Dir['../*/']
-      sibling_repos = sibling_directories.map{ |d| Repo.new(d) }.select{ |r| r.exists? }
-      sibling_repos.delete_if{ |r| Pathname.new(r.working_copy).realpath == Pathname.new(".").realpath }
     end
     
     def check_repo_exists

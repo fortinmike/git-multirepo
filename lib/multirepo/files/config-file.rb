@@ -1,5 +1,5 @@
 module MultiRepo
-  class Config
+  class ConfigFile
     FILE = Pathname.new(".multirepo")
     
     def self.exists?
