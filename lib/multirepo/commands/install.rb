@@ -16,7 +16,6 @@ module MultiRepo
       @entries.each(&:install)
       
       self.install_pre_commit_hook
-      self.update_lock_file
       
       Console.log_step("Done!")
     rescue Exception => e
