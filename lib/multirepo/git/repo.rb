@@ -11,6 +11,8 @@ module MultiRepo
       @working_copy_basename = Pathname.new(working_copy).basename.to_s
     end
     
+    # Inspection
+    
     def exists?
       Git.is_inside_git_repo(@working_copy)
     end
@@ -23,6 +25,23 @@ module MultiRepo
       Git.run(@working_copy, "rev-parse HEAD", false)
     end
     
+    def untracked_files
+      output = Git.run(@working_copy, "ls-files --exclude-standard --others", false)
+      output.split("\n").each { |f| f.strip }
+    end
+    
+    def modified_files
+      output = Git.run(@working_copy, "ls-files --modified", false)
+      output.split("\n").each { |f| f.strip }
+    end
+    
+    def staged_files
+      output = Git.run(@working_copy, "diff --name-only --cached", false)
+      output.split("\n").each { |f| f.strip }
+    end
+    
+    # Operations
+    
     def fetch
       Git.run(@working_copy, "fetch", true)
       $?.exitstatus == 0
@@ -32,6 +51,8 @@ module MultiRepo
       Git.run("clone #{remote_url} #{@working_copy}", true)
       $?.exitstatus == 0
     end
+    
+    # Remotes and branches
     
     def branch(name)
       Branch.new(self, name)
