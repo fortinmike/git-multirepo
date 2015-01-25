@@ -34,12 +34,24 @@ module MultiRepo
         end
       end
       
+      ensure_no_uncommited_changes(entries)
       self.install_pre_commit_hook
       self.update_lock_file
       
       Console.log_step("Done!")
     rescue Exception => e
       Console.log_error(e.message)
+    end
+    
+    def ensure_no_uncommited_changes(entries)
+      uncommited = false
+      entries.each do |e|
+        if e.repo.has_uncommited_changes
+          Console.log_warning("Repository #{e.repo.working_copy} has uncommited changes")
+          uncommited = true
+        end
+      end
+      raise "Can't finish initialization!" if uncommited
     end
     
     def check_repo_exists
