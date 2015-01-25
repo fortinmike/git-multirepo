@@ -16,16 +16,13 @@ module MultiRepo
       Console.log_step("Setupping multiple repositories...")
       
       @entries.each(&:install)
-      install_pre_commit_hook
+      
+      MultiRepo.install_pre_commit_hook
+      Console.log_substep("Installed pre-commit hook")
       
       Console.log_step("Done!")
     rescue Exception => e
       Console.log_error(e.message)
-    end
-    
-    def install_pre_commit_hook
-      FileUtils.cp(MultiRepo.path_for_resource("pre-commit"), ".git/hooks")
-      Console.log_substep("Installed multirepo pre-commit hook")
     end
   end
 end

@@ -11,5 +11,9 @@ module MultiRepo
       gem_path = Gem::Specification.find_by_name("git-multirepo").gem_dir
       File.join(gem_path, "resources/#{resource_name}")
     end
+    
+    def self.install_pre_commit_hook
+      FileUtils.cp(path_for_resource("pre-commit"), ".git/hooks")
+    end
   end
 end

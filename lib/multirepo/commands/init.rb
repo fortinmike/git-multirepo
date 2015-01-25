@@ -1,5 +1,6 @@
 require "claide"
 
+require "multirepo"
 require "multirepo/utility/console"
 require "multirepo/config"
 
@@ -10,16 +11,31 @@ module MultiRepo
     
     def run
       super
-      Config.create unless Config.exists?
       
       Console.log_step("Initializing multirepo...")
       
+      unless Config.exists?
+        Config.create
+        Console.log_substep("Created .multirepo file")
+      else
+        Console.log_info(".multirepo file already exists")
+      end
+      
       sibling_repos.each do |repo|
-        if Console.ask_yes_no("Do you want to add #{repo.working_copy} as a dependency?")
-          Config.add(repo)
+        if Console.ask_yes_no("Do you want to add #{repo.working_copy} (#{repo.remote('origin').url} #{repo.current_branch}) as a dependency?")
+          entry = Entry.new(repo)
+          if entry.exists?
+            Console.log_info("There is already an entry for #{entry.folder_name} in the .multirepo file")
+          else
+            entry.add
+            Console.log_substep("Added the repository #{entry.repo.working_copy} to the .multirepo file")
+          end
         end
       end
       
+      MultiRepo.install_pre_commit_hook
+      Console.log_substep("Installed pre-commit hook")
+              
       Console.log_step("Done!")
     rescue Exception => e
       Console.log_error(e.message)
