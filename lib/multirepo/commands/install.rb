@@ -14,6 +14,7 @@ module MultiRepo
       
       Console.log_step("Setupping multiple repositories...")
       
+      self.load_entries  
       @entries.each(&:install)
       
       MultiRepo.install_pre_commit_hook

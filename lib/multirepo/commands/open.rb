@@ -9,6 +9,8 @@ module MultiRepo
     
     def run
       super
+      
+      self.load_entries
       @entries.each do |entry|
         `open #{entry.repo.working_copy}` # OS X
         # TODO: Windows

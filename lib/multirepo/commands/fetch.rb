@@ -5,16 +5,17 @@ require "multirepo/utility/console"
 module MultiRepo
   class Fetch < Command
     self.command = "fetch"
-    self.summary = "Performs a git fetch on all repositories."
+    self.summary = "Performs a git fetch on all dependency repositories."
     
     def run
       super
       
       Console.log_step("Fetching repositories...")
       
-      @repos.each do |repo|
+      self.load_entries
+      @entries.each do |entry|
         Console.log_substep("Fetching from #{repo.remote_url}...")
-        repo.fetch
+        entry.fetch_repo
       end
       
       Console.log_step("Done!")
