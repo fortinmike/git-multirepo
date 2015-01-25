@@ -3,7 +3,6 @@ require "claide"
 require "multirepo"
 require "multirepo/utility/console"
 require "multirepo/git/repo"
-require "multirepo/loader"
 
 module MultiRepo
   class Setup < Command

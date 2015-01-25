@@ -11,7 +11,7 @@ module MultiRepo
     def run
       validate_in_work_tree
       
-      @entries = Loader.load_entries
+      @entries = ConfigFile.load_entries
       if !@entries then raise "Failed to load entries from .multirepo file" end
     end
     
