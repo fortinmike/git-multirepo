@@ -3,6 +3,7 @@ require "claide"
 require "multirepo"
 require "multirepo/utility/console"
 require "multirepo/files/config-file"
+require "multirepo/files/lock-file"
 
 module MultiRepo
   class Init < Command
@@ -21,9 +22,11 @@ module MultiRepo
         Console.log_info(".multirepo file already exists")
       end
       
+      entries = []
       MultiRepo.sibling_repos.each do |repo|
         if Console.ask_yes_no("Do you want to add #{repo.working_copy} (#{repo.remote('origin').url} #{repo.current_branch}) as a dependency?")
           entry = ConfigEntry.new(repo)
+          entries.push(entry)
           if entry.exists?
             Console.log_info("There is already an entry for #{entry.folder_name} in the .multirepo file")
           else
@@ -33,9 +36,9 @@ module MultiRepo
         end
       end
       
-      MultiRepo.install_pre_commit_hook
-      Console.log_substep("Installed pre-commit hook")
-              
+      self.install_pre_commit_hook
+      self.update_lock_file
+      
       Console.log_step("Done!")
     rescue Exception => e
       Console.log_error(e.message)

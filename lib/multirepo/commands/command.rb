@@ -20,5 +20,15 @@ module MultiRepo
       @entries = ConfigFile.load_entries
       if !@entries then raise "Failed to load entries from .multirepo file" end
     end
+    
+    def install_pre_commit_hook
+      MultiRepo.install_pre_commit_hook
+      Console.log_substep("Installed pre-commit hook")
+    end
+    
+    def update_lock_file
+      LockFile.update
+      Console.log_substep("Updated lock file with current HEAD revisions for all dependencies")
+    end
   end
 end

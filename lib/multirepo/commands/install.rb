@@ -17,8 +17,8 @@ module MultiRepo
       self.load_entries  
       @entries.each(&:install)
       
-      MultiRepo.install_pre_commit_hook
-      Console.log_substep("Installed pre-commit hook")
+      self.install_pre_commit_hook
+      self.update_lock_file
       
       Console.log_step("Done!")
     rescue Exception => e

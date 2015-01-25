@@ -1,4 +1,5 @@
 require_relative "lock-entry"
+require_relative "config-file"
 
 module MultiRepo
   class LockFile
@@ -7,7 +8,7 @@ module MultiRepo
     def self.exists?
       FILE.exist?
     end
-        
+    
     def self.load_entries
       entries = Array.new
       
@@ -18,6 +19,17 @@ module MultiRepo
       end
       
       return entries
+    end
+    
+    def self.update
+      repos = ConfigFile.load_entries.map{ |e| e.repo }
+      
+      FILE.open("w") do |f|
+        repos.each do |r|
+          entry_string = "#{r.working_copy_basename} #{r.head_hash}"
+          f.puts(entry_string)
+        end
+      end
     end
     
     def self.validate_components(line, components)

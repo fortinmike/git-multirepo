@@ -25,9 +25,5 @@ module MultiRepo
       @folder_name = folder_name
       @head_hash = head_hash
     end
-    
-    def save
-      # TODO: Implement me!
-    end
   end
 end
