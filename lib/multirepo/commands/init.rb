@@ -1,5 +1,3 @@
-require "claide"
-
 require "multirepo"
 require "multirepo/utility/console"
 require "multirepo/files/config-file"
