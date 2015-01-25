@@ -17,7 +17,7 @@ module MultiRepo
     end
     
     def initialize_with_repo(repo)
-      @folder_name = Pathname.new(repo.working_copy).basename.to_s
+      @folder_name = repo.working_copy_basename
       @repo = repo
       @remote_url = repo.remote('origin').url
       @branch_name = repo.current_branch

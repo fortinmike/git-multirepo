@@ -16,7 +16,7 @@ module MultiRepo
     def self.load_entries
       entries = Array.new
       
-      ConfigFile::FILE.open("r").each_line do |line|
+      FILE.open("r").each_line do |line|
         next if line.start_with?("#") # Barebones comments support
         next if line.strip == "" # Skip empty lines
         components = line.split(" ")

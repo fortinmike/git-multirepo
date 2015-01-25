@@ -4,9 +4,11 @@ require_relative "remote"
 module MultiRepo
   class Repo
     attr_accessor :working_copy
+    attr_accessor :working_copy_basename
     
     def initialize(working_copy)
       @working_copy = working_copy
+      @working_copy_basename = Pathname.new(working_copy).basename.to_s
     end
     
     def exists?
@@ -15,6 +17,10 @@ module MultiRepo
     
     def current_branch
       Git.run(@working_copy, "rev-parse --abbrev-ref HEAD", false)
+    end
+    
+    def head_hash
+      Git.run(@working_copy, "rev-parse HEAD", false)
     end
     
     def fetch
