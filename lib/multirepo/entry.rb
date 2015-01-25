@@ -68,8 +68,9 @@ module MultiRepo
     def checkout_branch
       branch = @repo.branch(@branch_name);
       
-      if !branch.exists? && branch.create(remote_tracking: true)
-        Console.log_info("Created branch #{branch.name}")
+      unless branch.exists?
+        Console.log_warning("Branch #{@branch_name} doesn't exist in working copy #{@repo.working_copy}")
+        return
       end
       
       if branch.checkout
