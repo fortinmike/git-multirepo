@@ -43,7 +43,8 @@ module MultiRepo
     
     def sibling_repos
       sibling_directories = Dir['../*/']
-      sibling_directories.map{ |d| Repo.new(d) }.select{ |r| r.exists? }
+      sibling_repos = sibling_directories.map{ |d| Repo.new(d) }.select{ |r| r.exists? }
+      sibling_repos.delete_if{ |r| Pathname.new(r.working_copy).realpath == Pathname.new(".").realpath }
     end
     
     def check_repo_exists
