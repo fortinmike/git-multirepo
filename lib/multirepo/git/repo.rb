@@ -25,6 +25,10 @@ module MultiRepo
       Git.run(@working_copy, "rev-parse HEAD", false)
     end
     
+    def has_uncommited_changes
+      return untracked_files.any? || modified_files.any? || staged_files.any?
+    end
+    
     def untracked_files
       output = Git.run(@working_copy, "ls-files --exclude-standard --others", false)
       output.split("\n").each { |f| f.strip }
