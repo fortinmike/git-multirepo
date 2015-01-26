@@ -54,7 +54,7 @@ module MultiRepo
       end
       
       if branch.checkout
-        Console.log_info("Checked out branch #{branch.name} -> origin/#{branch.name}")
+        Console.log_substep("Checked out branch #{branch.name} -> origin/#{branch.name}")
       else
         raise "Could not setup branch #{branch.name}"
       end
