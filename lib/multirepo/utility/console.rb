@@ -4,27 +4,27 @@ module MultiRepo
   class Console
     def self.log_step(message)
       print_arrow
-      puts message.bold.green
+      puts $stdout.isatty ? message.bold.green : message
     end
     
     def self.log_substep(message)
       print_arrow
-      puts message.blue
+      puts $stdout.isatty ? message.blue : message
     end
     
     def self.log_info(message)
       print_arrow
-      puts message.white
+      puts $stdout.isatty ? message.white : message
     end
     
     def self.log_warning(message)
       print_arrow
-      puts message.yellow
+      puts $stdout.isatty ? message.yellow : message
     end
     
     def self.log_error(message)
       print_arrow
-      puts message.red
+      puts $stdout.isatty ? message.red : message
     end
     
     def self.ask_yes_no(message)
@@ -46,7 +46,7 @@ module MultiRepo
     end
     
     def self.print_arrow
-      print "> ".white
+      print $stdout.isatty ? "> ".white : ""
     end
   end
 end
