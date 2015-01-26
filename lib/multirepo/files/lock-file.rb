@@ -22,12 +22,12 @@ module MultiRepo
     end
     
     def self.update
-      repos = ConfigFile.load_entries.map{ |e| e.repo }
+      repos = ConfigFile.load_entries.map { |e| e.repo }
+      lock_entries = repos.map { |r| LockEntry.new(r) }
       
       FILE.open("w") do |f|
-        repos.each do |r|
-          entry_string = "#{r.working_copy_basename} #{r.head_hash}"
-          f.puts(entry_string)
+        lock_entries.each do |lock_entry|
+          f.puts(lock_entry.to_s)
         end
       end
     end

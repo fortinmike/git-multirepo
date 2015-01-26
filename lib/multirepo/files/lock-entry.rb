@@ -6,6 +6,10 @@ module MultiRepo
     attr_accessor :folder_name
     attr_accessor :head_hash
     
+    def to_s
+      "#{@folder_name} #{@head_hash}"
+    end
+    
     def initialize(*args)
       if args.length == 1
         self.initialize_with_repo(*args)
