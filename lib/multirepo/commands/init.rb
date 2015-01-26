@@ -22,17 +22,17 @@ module MultiRepo
       sibling_repos = MultiRepo.sibling_repos
       
       if sibling_repos.any?
-        entries = []
+        added_entries = []
         sibling_repos.each do |repo|
           if Console.ask_yes_no("Do you want to add #{repo.working_copy} (#{repo.remote('origin').url} #{repo.current_branch}) as a dependency?")
             entry = ConfigEntry.new(repo)
-            entries.push(entry)
+            added_entries.push(entry)
             ConfigFile.add_entry(entry)
             Console.log_substep("Added the repository #{entry.repo.working_copy} to the .multirepo file")
           end
         end
       
-        ensure_no_uncommited_changes(entries)
+        ensure_no_uncommited_changes(added_entries)
         self.update_lock_file
       else
         Console.log_info("There are no sibling repositories to add")

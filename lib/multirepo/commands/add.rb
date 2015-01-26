@@ -20,7 +20,7 @@ module MultiRepo
       end
       
       entry = ConfigEntry.new(@repo)
-      if entry.exists?
+      if ConfigFile.entry_exists?(entry)
         Console.log_info("There is already an entry for #{entry.folder_name} in the .multirepo file")
       else
         ConfigFile.add_entry(entry)

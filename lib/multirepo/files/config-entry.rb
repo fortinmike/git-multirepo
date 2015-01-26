@@ -37,12 +37,5 @@ module MultiRepo
       
       @repo = Repo.new("../#{folder_name}")
     end
-    
-    def exists?
-      ConfigFile::FILE.open("r").each_line do |line|
-        return true if line.start_with?(@folder_name)
-      end
-      false
-    end
   end
 end

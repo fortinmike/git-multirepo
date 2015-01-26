@@ -27,6 +27,13 @@ module MultiRepo
       return entries
     end
     
+    def self.entry_exists?(entry)
+      FILE.open("r").each_line do |line|
+        return true if line.start_with?(entry.folder_name)
+      end
+      false
+    end
+    
     def self.add_entry(entry)
       ConfigFile::FILE.open("a") { |f| f.puts entry.to_s }
     end
