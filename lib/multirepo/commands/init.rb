@@ -11,13 +11,12 @@ module MultiRepo
     def run
       super
       
-      Console.log_step("Initializing multirepo...")
+      Console.log_step("Initializing new multirepo config...")
       
-      unless ConfigFile.exists?
+      if ConfigFile.exists?
+        return unless Console.ask_yes_no(".multirepo file already exists. Reinitialize?")
         ConfigFile.create
         Console.log_substep("Created .multirepo file")
-      else
-        Console.log_info(".multirepo file already exists")
       end
       
       entries = []
@@ -25,12 +24,8 @@ module MultiRepo
         if Console.ask_yes_no("Do you want to add #{repo.working_copy} (#{repo.remote('origin').url} #{repo.current_branch}) as a dependency?")
           entry = ConfigEntry.new(repo)
           entries.push(entry)
-          if entry.exists?
-            Console.log_info("There is already an entry for #{entry.folder_name} in the .multirepo file")
-          else
-            entry.add
-            Console.log_substep("Added the repository #{entry.repo.working_copy} to the .multirepo file")
-          end
+          ConfigFile.add_entry(entry)
+          Console.log_substep("Added the repository #{entry.repo.working_copy} to the .multirepo file")
         end
       end
       
@@ -46,6 +41,7 @@ module MultiRepo
     def ensure_no_uncommited_changes(entries)
       uncommited = false
       entries.each do |e|
+        next unless e.repo.exists?
         if e.repo.has_uncommited_changes
           Console.log_warning("Repository #{e.repo.working_copy} has uncommited changes")
           uncommited = true
