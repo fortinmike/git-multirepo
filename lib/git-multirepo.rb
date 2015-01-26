@@ -1,4 +1,1 @@
-require "multirepo/files/config-file"
-require "multirepo/files/lock-file"
-require "multirepo/utility/utils"
-require "multirepo/utility/console"
+require "multirepo/hooks/pre-commit-hook.rb"
