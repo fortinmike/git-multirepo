@@ -7,9 +7,9 @@ module MultiRepo
   class PreCommitHook
     def self.run
       entries =  ConfigFile.load_entries
-      uncommited = Utils.check_for_uncommited_changes(entries)
+      uncommitted = Utils.check_for_uncommitted_changes(entries)
       
-      if uncommited
+      if uncommitted
         Console.log_error("You must commit changes to your dependencies before you can commit the main repo")
         exit 1
       end

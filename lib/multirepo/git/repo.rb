@@ -25,7 +25,7 @@ module MultiRepo
       Git.run(@working_copy, "rev-parse HEAD", false)
     end
     
-    def has_uncommited_changes
+    def has_uncommitted_changes
       return untracked_files.any? || modified_files.any? || staged_files.any?
     end
     

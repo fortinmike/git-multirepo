@@ -17,16 +17,16 @@ module MultiRepo
       sibling_repos.delete_if{ |r| Pathname.new(r.working_copy).realpath == Pathname.new(".").realpath }
     end
     
-    def self.check_for_uncommited_changes(config_entries)
-      uncommited = false
+    def self.check_for_uncommitted_changes(config_entries)
+      uncommitted = false
       config_entries.each do |e|
         next unless e.repo.exists?
-        if e.repo.has_uncommited_changes
-          Console.log_warning("Repository #{e.repo.working_copy} has uncommited changes")
-          uncommited = true
+        if e.repo.has_uncommitted_changes
+          Console.log_warning("Repository #{e.repo.working_copy} has uncommitted changes")
+          uncommitted = true
         end
       end
-      return uncommited
+      return uncommitted
     end
   end
 end

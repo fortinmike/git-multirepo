@@ -32,8 +32,8 @@ module MultiRepo
           end
         end
       
-        uncommited = Utils.check_for_uncommited_changes(added_entries)
-        raise "Can't finish initialization!" if uncommited
+        uncommitted = Utils.check_for_uncommitted_changes(added_entries)
+        raise "Can't finish initialization!" if uncommitted
         
         self.update_lock_file
       else
