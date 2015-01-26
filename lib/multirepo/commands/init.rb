@@ -19,19 +19,26 @@ module MultiRepo
         Console.log_substep("Created .multirepo file")
       end
       
-      entries = []
-      MultiRepo.sibling_repos.each do |repo|
-        if Console.ask_yes_no("Do you want to add #{repo.working_copy} (#{repo.remote('origin').url} #{repo.current_branch}) as a dependency?")
-          entry = ConfigEntry.new(repo)
-          entries.push(entry)
-          ConfigFile.add_entry(entry)
-          Console.log_substep("Added the repository #{entry.repo.working_copy} to the .multirepo file")
+      sibling_repos = MultiRepo.sibling_repos
+      
+      if sibling_repos.any?
+        entries = []
+        sibling_repos.each do |repo|
+          if Console.ask_yes_no("Do you want to add #{repo.working_copy} (#{repo.remote('origin').url} #{repo.current_branch}) as a dependency?")
+            entry = ConfigEntry.new(repo)
+            entries.push(entry)
+            ConfigFile.add_entry(entry)
+            Console.log_substep("Added the repository #{entry.repo.working_copy} to the .multirepo file")
+          end
         end
+      
+        ensure_no_uncommited_changes(entries)
+        self.update_lock_file
+      else
+        Console.log_info("There are no sibling repositories to add")
       end
       
-      ensure_no_uncommited_changes(entries)
       self.install_pre_commit_hook
-      self.update_lock_file
       
       Console.log_step("Done!")
     rescue Exception => e
