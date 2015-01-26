@@ -1,5 +1,6 @@
 require "pathname"
 
+require "multirepo/git/git"
 require_relative "lock-entry"
 require_relative "config-file"
 
@@ -32,6 +33,8 @@ module MultiRepo
           f.puts(lock_entry.to_s)
         end
       end
+      
+      Git.run("add -A -f #{FILE.to_s}", false)
     end
     
     def self.validate_components(line, components)

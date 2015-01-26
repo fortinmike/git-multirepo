@@ -1,3 +1,5 @@
+require "fileutils"
+
 module MultiRepo
   class Utils
     def self.path_for_resource(resource_name)
