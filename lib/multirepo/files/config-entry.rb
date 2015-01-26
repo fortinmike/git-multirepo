@@ -6,6 +6,10 @@ module MultiRepo
     attr_accessor :folder_name
     attr_accessor :repo
     
+    def to_s
+      "#{@folder_name} #{@remote_url} #{@branch_name}"
+    end
+    
     def initialize(*args)
       if args.length == 1
         self.initialize_with_repo(*args)
@@ -45,11 +49,6 @@ module MultiRepo
         return true if line.start_with?(@folder_name)
       end
       false
-    end
-    
-    def add
-      entry_string = "#{@folder_name} #{@remote_url} #{@branch_name}"
-      ConfigFile::FILE.open("a") { |f| f.puts entry_string }
     end
     
     # Repo operations
