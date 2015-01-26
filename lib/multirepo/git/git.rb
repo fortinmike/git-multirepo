@@ -21,7 +21,8 @@ module MultiRepo
     end
     
     def self.run_in_working_dir(working_copy, git_command, show_output)
-      full_command = "git --git-dir=\"#{working_copy}/.git\" --work-tree=\"#{working_copy}\" #{git_command}";
+      git_dir = File.join(working_copy, ".git")
+      full_command = "git --git-dir=\"#{git_dir}\" --work-tree=\"#{working_copy}\" #{git_command}";
       Console.log_info(full_command)
       Runner.run(full_command, show_output)
     end
