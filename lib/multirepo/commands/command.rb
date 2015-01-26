@@ -28,7 +28,7 @@ module MultiRepo
     
     def update_lock_file
       LockFile.update
-      Console.log_substep("Updated lock file with current HEAD revisions for all dependencies")
+      Console.log_substep("Updated and staged lock file with current HEAD revisions for all dependencies")
     end
   end
 end

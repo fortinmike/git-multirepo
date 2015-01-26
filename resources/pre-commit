@@ -12,6 +12,6 @@ if uncommited
 end
 
 MultiRepo::LockFile.update
-MultiRepo::Console.log_info("Updated lock file with current HEAD revisions for all dependencies")
+MultiRepo::Console.log_info("Updated and staged lock file with current HEAD revisions for all dependencies")
 
 exit 0 # Success!
