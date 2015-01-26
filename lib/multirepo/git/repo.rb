@@ -31,17 +31,19 @@ module MultiRepo
     
     def untracked_files
       output = Git.run(@working_copy, "ls-files --exclude-standard --others", false)
-      output.split("\n").each { |f| f.strip }
+      output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
     end
     
     def modified_files
       output = Git.run(@working_copy, "ls-files --modified", false)
-      output.split("\n").each { |f| f.strip }
+      result = output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
+      puts result
+      result
     end
     
     def staged_files
       output = Git.run(@working_copy, "diff --name-only --cached", false)
-      output.split("\n").each { |f| f.strip }
+      output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
     end
     
     # Operations

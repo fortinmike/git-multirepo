@@ -14,5 +14,17 @@ module MultiRepo
       sibling_repos = sibling_directories.map{ |d| Repo.new(d) }.select{ |r| r.exists? }
       sibling_repos.delete_if{ |r| Pathname.new(r.working_copy).realpath == Pathname.new(".").realpath }
     end
+    
+    def self.check_for_uncommited_changes(config_entries)
+      uncommited = false
+      config_entries.each do |e|
+        next unless e.repo.exists?
+        if e.repo.has_uncommited_changes
+          Console.log_warning("Repository #{e.repo.working_copy} has uncommited changes")
+          uncommited = true
+        end
+      end
+      return uncommited
+    end
   end
 end

@@ -1,3 +1,5 @@
+require "pathname"
+
 require_relative "config-entry"
 
 module MultiRepo

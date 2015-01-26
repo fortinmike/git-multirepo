@@ -32,7 +32,9 @@ module MultiRepo
           end
         end
       
-        ensure_no_uncommited_changes(added_entries)
+        uncommited = Utils.check_for_uncommited_changes(added_entries)
+        raise "Can't finish initialization!" if uncommited
+        
         self.update_lock_file
       else
         Console.log_info("There are no sibling repositories to add")
@@ -43,18 +45,6 @@ module MultiRepo
       Console.log_step("Done!")
     rescue Exception => e
       Console.log_error(e.message)
-    end
-    
-    def ensure_no_uncommited_changes(entries)
-      uncommited = false
-      entries.each do |e|
-        next unless e.repo.exists?
-        if e.repo.has_uncommited_changes
-          Console.log_warning("Repository #{e.repo.working_copy} has uncommited changes")
-          uncommited = true
-        end
-      end
-      raise "Can't finish initialization!" if uncommited
     end
     
     def check_repo_exists

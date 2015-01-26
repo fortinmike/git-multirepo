@@ -1,3 +1,5 @@
+require "pathname"
+
 require_relative "lock-entry"
 require_relative "config-file"
 
@@ -11,8 +13,8 @@ module MultiRepo
     
     def self.load_entries
       entries = Array.new
-      
       FILE.open("r").each_line do |line|
+        puts line
         components = line.split(" ")
         validate_components(line, components)
         entries.push(LockEntry.new(*components))

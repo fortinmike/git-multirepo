@@ -13,7 +13,7 @@ module MultiRepo
     def initialize(*args)
       if args.length == 1
         self.initialize_with_repo(*args)
-      elsif args.length == 3
+      elsif args.length == 2
         self.initialize_with_args(*args)
       else
         raise "Wrong number of arguments in LockEntry.new() call"
