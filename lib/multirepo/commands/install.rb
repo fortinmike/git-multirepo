@@ -10,7 +10,7 @@ module MultiRepo
     def run
       super
       
-      Console.log_step("Setupping multiple repositories...")
+      Console.log_step("Cloning dependencies and installing hooks...")
       
       self.load_entries  
       @entries.each(&:install)
