@@ -1,5 +1,5 @@
-require "multirepo"
 require "multirepo/utility/console"
+require "multirepo/utility/utils"
 require "multirepo/git/repo"
 
 module MultiRepo

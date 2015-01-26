@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
 require "claide"
-require "multirepo"
+require "commands"
 
 MultiRepo::Command.run(ARGV)

@@ -9,7 +9,7 @@ module MultiRepo
     end
     
     def self.create
-      template_path = MultiRepo.path_for_resource(".multirepo")
+      template_path = Utils.path_for_resource(".multirepo")
       FileUtils.cp(template_path, ".")
     end
     

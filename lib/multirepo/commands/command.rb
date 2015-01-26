@@ -22,7 +22,7 @@ module MultiRepo
     end
     
     def install_pre_commit_hook
-      MultiRepo.install_pre_commit_hook
+      Utils.install_pre_commit_hook
       Console.log_substep("Installed pre-commit hook")
     end
     

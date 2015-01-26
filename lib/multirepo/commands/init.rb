@@ -1,5 +1,5 @@
-require "multirepo"
 require "multirepo/utility/console"
+require "multirepo/utility/utils"
 require "multirepo/files/config-file"
 require "multirepo/files/lock-file"
 
@@ -19,7 +19,7 @@ module MultiRepo
         Console.log_substep("Created .multirepo file")
       end
       
-      sibling_repos = MultiRepo.sibling_repos
+      sibling_repos = Utils.sibling_repos
       
       if sibling_repos.any?
         added_entries = []
