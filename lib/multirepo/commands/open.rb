@@ -1,4 +1,5 @@
 require "multirepo/utility/console"
+require "os"
 
 module MultiRepo
   class Open < Command
@@ -11,8 +12,13 @@ module MultiRepo
       
       self.load_entries
       @entries.each do |entry|
-        `open #{entry.repo.working_copy}` # OS X
-        # TODO: Windows
+        if OS.osx?
+          `open "#{entry.repo.working_copy}"`
+        elsif OS.windows?
+          # TODO: Convert the path to a Windows-compatible format
+          # http://stackoverflow.com/a/22644151
+          `explorer "#{entry.repo.working_copy}"`
+        end
       end
     rescue Exception => e
       Console.log_error(e.message)
