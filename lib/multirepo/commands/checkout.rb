@@ -12,6 +12,7 @@ module MultiRepo
     
     def run
       super
+      ensure_multirepo_initialized
       Console.log_step("Checking out #{@ref}...")
       
       main_repo = Repo.new(".")
