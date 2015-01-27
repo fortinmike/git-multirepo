@@ -15,12 +15,6 @@ module MultiRepo
       branch_names.include?(@name)
     end
     
-    def create(remote_tracking)
-      Git.run(@repo.working_copy, "branch #{@name}", false)
-      if remote_tracking then Git.run(@repo.working_copy, "push -u origin #{name}", false) end
-      $?.exitstatus == 0
-    end
-    
     def checkout
       Git.run(@repo.working_copy, "checkout #{@name}", false)
       $?.exitstatus == 0
