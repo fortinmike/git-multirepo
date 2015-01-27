@@ -9,6 +9,7 @@ module MultiRepo
     
     def run
       super
+      ensure_multirepo_initialized
       
       Console.log_step("Cloning dependencies and installing hooks...")
       

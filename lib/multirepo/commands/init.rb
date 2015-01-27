@@ -10,7 +10,6 @@ module MultiRepo
     
     def run
       super
-      
       Console.log_step("Initializing new multirepo config...")
       
       if ConfigFile.exists?
