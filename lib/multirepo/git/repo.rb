@@ -43,6 +43,11 @@ module MultiRepo
       $?.exitstatus == 0
     end
     
+    def checkout(ref)
+      Git.run(@working_copy, "checkout #{ref}", false)
+      $?.exitstatus == 0
+    end
+    
     # Remotes and branches
     
     def branch(name)

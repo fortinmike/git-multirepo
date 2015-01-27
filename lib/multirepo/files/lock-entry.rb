@@ -5,6 +5,7 @@ module MultiRepo
   class LockEntry
     attr_accessor :folder_name
     attr_accessor :head_hash
+    attr_accessor :repo
     
     def to_s
       "#{@folder_name} #{@head_hash}"
@@ -21,6 +22,8 @@ module MultiRepo
     end
     
     def initialize_with_repo(repo)
+      @repo = repo
+      
       @folder_name = repo.working_copy_basename
       @head_hash = repo.head_hash
     end
@@ -28,6 +31,8 @@ module MultiRepo
     def initialize_with_args(folder_name, head_hash)
       @folder_name = folder_name
       @head_hash = head_hash
+      
+      @repo = Repo.new("../#{folder_name}")
     end
   end
 end
