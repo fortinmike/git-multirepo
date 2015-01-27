@@ -25,24 +25,9 @@ module MultiRepo
       Git.run(@working_copy, "rev-parse HEAD", false)
     end
     
-    def has_uncommitted_changes
-      return untracked_files.any? || modified_files.any? || staged_files.any?
-    end
-    
-    def untracked_files
-      output = Git.run(@working_copy, "ls-files --exclude-standard --others", false)
-      output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
-    end
-    
-    def modified_files
-      output = Git.run(@working_copy, "ls-files --modified", false)
-      result = output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
-      puts result
-      result
-    end
-    
-    def staged_files
-      output = Git.run(@working_copy, "diff --name-only --cached", false)
+    def changes
+      output = Git.run(@working_copy, "status --porcelain", false)
+      puts output
       output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
     end
     

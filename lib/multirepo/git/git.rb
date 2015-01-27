@@ -21,10 +21,9 @@ module MultiRepo
     end
     
     def self.run_in_working_dir(working_copy, git_command, show_output)
-      # Run command in subshell for this to work when called from a script
       # http://stackoverflow.com/a/1387631/167983
       
-      full_command = "(cd \"#{working_copy}\" && git #{git_command})";
+      full_command = "git -C \"#{working_copy}\" #{git_command}";
       Console.log_info(full_command)
       Runner.run(full_command, show_output)
     end
