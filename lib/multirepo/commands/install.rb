@@ -9,6 +9,7 @@ module MultiRepo
     
     def run
       super
+      ensure_multirepo_initialized
       
       Console.log_step("Cloning dependencies and installing hooks...")
       
@@ -48,15 +49,10 @@ module MultiRepo
     def checkout_branch(entry)
       branch = entry.repo.branch(entry.branch_name);
       
-      unless branch.exists?
-        Console.log_warning("Branch #{entry.branch_name} doesn't exist in working copy #{entry.repo.working_copy}")
-        return
-      end
-      
       if branch.checkout
         Console.log_substep("Checked out branch #{branch.name} -> origin/#{branch.name}")
       else
-        raise "Could not setup branch #{branch.name}"
+        raise "Could not checkout branch #{branch.name}"
       end
     end
     

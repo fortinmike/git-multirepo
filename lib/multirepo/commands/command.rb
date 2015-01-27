@@ -13,7 +13,7 @@ module MultiRepo
     end
     
     def validate_in_work_tree
-      if !Git.is_inside_git_repo(".") then raise "Not a git repository" end
+      raise "Not a git repository" unless Git.is_inside_git_repo(".")
     end
     
     def load_entries
@@ -29,6 +29,10 @@ module MultiRepo
     def update_lock_file
       LockFile.update
       Console.log_substep("Updated and staged lock file with current HEAD revisions for all dependencies")
+    end
+
+    def ensure_multirepo_initialized
+      raise "multirepo is not initialized in this repository. Please run \"multi init\"" unless ConfigFile.exists?
     end
   end
 end

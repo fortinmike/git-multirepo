@@ -13,7 +13,9 @@ module MultiRepo
     
     def run
       super
-      check_repo_exists
+      ensure_multirepo_initialized
+      ensure_dependency_repo_exists
+
       unless ConfigFile.exists?
         ConfigFile.create
         Console.log_substep("Created missing .multirepo file")
@@ -24,13 +26,14 @@ module MultiRepo
         Console.log_info("There is already an entry for #{entry.folder_name} in the .multirepo file")
       else
         ConfigFile.add_entry(entry)
+        ConfigFile.stage
         Console.log_substep("Added the repository #{entry.repo.working_copy} to the .multirepo file")
       end
     rescue Exception => e
       Console.log_error(e.message)
     end
     
-    def check_repo_exists
+    def ensure_dependency_repo_exists
       if !Dir.exists?(@repo.working_copy) then raise "There is no folder at path #{@repo.working_copy}" end
       if !@repo.exists? then raise "#{@repo.working_copy} is not a repository" end
     end

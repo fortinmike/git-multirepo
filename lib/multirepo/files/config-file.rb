@@ -40,7 +40,11 @@ module MultiRepo
     def self.add_entry(entry)
       ConfigFile::FILE.open("a") { |f| f.puts entry.to_s }
     end
-    
+
+    def self.stage
+      Git.run("add -A -f #{FILE.to_s}", false)
+    end
+
     def self.validate_components(line, components)
       unless components.count == 3
         raise "Wrong entry format in .multirepo file: #{line}"

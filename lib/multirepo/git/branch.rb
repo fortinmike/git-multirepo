@@ -9,12 +9,6 @@ module MultiRepo
       @name = name
     end
     
-    def exists?
-      lines = Git.run(@repo.working_copy, "branch", false).split("\n")
-      branch_names = lines.map { |line| line.tr("* ", "")}
-      branch_names.include?(@name)
-    end
-    
     def checkout
       Git.run(@repo.working_copy, "checkout #{@name}", false)
       $?.exitstatus == 0

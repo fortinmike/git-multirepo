@@ -5,6 +5,8 @@ module MultiRepo
     
     def run
       super
+      ensure_multirepo_initialized
+      
       editor = `echo ${FCEDIT:-${VISUAL:-${EDITOR:-vi}}}`.strip
       system(editor, ".multirepo")
       # TODO: Windows support
