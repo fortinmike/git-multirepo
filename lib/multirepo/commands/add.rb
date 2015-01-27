@@ -26,6 +26,7 @@ module MultiRepo
         Console.log_info("There is already an entry for #{entry.folder_name} in the .multirepo file")
       else
         ConfigFile.add_entry(entry)
+        ConfigFile.stage
         Console.log_substep("Added the repository #{entry.repo.working_copy} to the .multirepo file")
       end
     rescue Exception => e

@@ -30,6 +30,8 @@ module MultiRepo
             Console.log_substep("Added the repository #{entry.repo.working_copy} to the .multirepo file")
           end
         end
+        
+        ConfigFile.stage
       
         uncommitted = Utils.check_for_uncommitted_changes(added_entries)
         raise "Can't finish initialization!" if uncommitted
