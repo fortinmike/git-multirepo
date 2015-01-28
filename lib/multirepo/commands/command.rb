@@ -2,6 +2,7 @@ require "claide"
 
 require "info"
 require "multirepo/multirepo-exception"
+require "multirepo/config"
 
 module MultiRepo
   class Command < CLAide::Command
@@ -9,6 +10,11 @@ module MultiRepo
     self.command = "multi"
     self.version = VERSION
     self.description = DESCRIPTION
+    
+    def initialize(argv)
+      Config.instance.verbose = argv.flag?("verbose") ? true : false
+      super
+    end
     
     def run
       validate_in_work_tree

@@ -1,5 +1,6 @@
 require "multirepo/utility/runner"
 require "multirepo/git/git"
+require "multirepo/config"
 
 module MultiRepo
   class Git
@@ -16,7 +17,7 @@ module MultiRepo
     
     def self.run_in_current_dir(git_command, show_output)
       full_command = "git #{git_command}"
-      Console.log_info(full_command)
+      Console.log_info(full_command) if Config.instance.verbose
       Runner.run(full_command, show_output)
     end
     
@@ -24,7 +25,7 @@ module MultiRepo
       # http://stackoverflow.com/a/1387631/167983
       
       full_command = "git -C \"#{path}\" #{git_command}";
-      Console.log_info(full_command)
+      Console.log_info(full_command) if Config.instance.verbose
       Runner.run(full_command, show_output)
     end
     
