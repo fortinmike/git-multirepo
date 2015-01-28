@@ -6,7 +6,7 @@ require "multirepo/utility/utils"
 module MultiRepo
   class Open < Command
     self.command = "open"
-    self.summary = "Opens this repo's dependencies in Finder or Windows Explorer."
+    self.summary = "Opens this repo's dependencies in the current OS's file explorer."
     
     def run
       super
