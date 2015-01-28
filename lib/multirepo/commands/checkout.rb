@@ -3,7 +3,7 @@ require "multirepo/utility/console"
 module MultiRepo
   class Checkout < Command
     self.command = "checkout"
-    self.summary = "Checks out the specified commit or branch in the main repo and checks out matching versions of all dependencies."
+    self.summary = "Checks out the specified commit or branch of the main repo and checks out matching versions of all dependencies."
     
     def initialize(argv)
       @ref = argv.shift_argument
@@ -21,22 +21,22 @@ module MultiRepo
       Console.log_step("Checking out #{@ref}...")
       
       unless main_repo.is_clean?
-        raise "Can't checkout #{@ref} because the main repo has uncommited changes"
+        raise "Can't checkout #{@ref} because the main repo contains uncommitted changes"
       end
       
       ConfigFile.load.each do |e|
-        raise "Can't checkout #{@ref} because #{e.path} has uncommitted changes" unless e.repo.is_clean?
+        raise "Can't checkout #{@ref} because #{e.path} contains uncommitted changes" unless e.repo.is_clean?
       end
       
       unless main_repo.checkout(@ref)
-        raise MultiRepoException, "Couldn't check out #{@ref} in main project!"
+        raise MultiRepoException, "Couldn't perform checkout of main repo #{@ref}!"
       end
       
-      Console.log_substep("Checked out #{@ref} of main repo")
+      Console.log_substep("Checked out main repo #{@ref}")
       
       unless LockFile.exists?
         main_repo.checkout(initial_revision)
-        raise MultiRepoException, "The specified revision was not managed by multirepo. Checkout cancelled."
+        raise MultiRepoException, "The specified revision was not managed by multirepo. Checkout reverted."
       end
       
       config_entries = ConfigFile.load # Load the post-checkout config entries, which might be different than pre-checkout
