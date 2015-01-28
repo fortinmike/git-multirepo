@@ -18,12 +18,12 @@ module MultiRepo
     end
     
     def current_branch
-      branch = Git.run(@working_copy, "rev-parse --abbrev-ref HEAD", false)
+      branch = Git.run(@working_copy, "rev-parse --abbrev-ref HEAD", false).strip
       branch != "HEAD" ? branch : nil
     end
     
     def head_hash
-      Git.run(@working_copy, "rev-parse HEAD", false)
+      Git.run(@working_copy, "rev-parse HEAD", false).strip
     end
     
     def changes

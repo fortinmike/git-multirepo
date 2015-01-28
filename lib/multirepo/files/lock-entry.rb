@@ -5,34 +5,22 @@ module MultiRepo
   class LockEntry
     attr_accessor :folder_name
     attr_accessor :head_hash
-    attr_accessor :repo
+    attr_accessor :branch_name
     
-    def to_s
-      "#{@folder_name} #{@head_hash}"
+    def repo
+      Repo.new("../#{folder_name}")
     end
     
-    def initialize(*args)
-      if args.length == 1
-        self.initialize_with_repo(*args)
-      elsif args.length == 2
-        self.initialize_with_args(*args)
-      else
-        raise "Wrong number of arguments in LockEntry.new() call"
-      end
+    def encode_with(coder)
+      coder["name"] = @folder_name
+      coder["head"] = @head_hash
+      coder["branch"] = @branch_name
     end
     
-    def initialize_with_repo(repo)
-      @repo = repo
-      
+    def initialize(repo)
       @folder_name = repo.working_copy_basename
       @head_hash = repo.head_hash
-    end
-    
-    def initialize_with_args(folder_name, head_hash)
-      @folder_name = folder_name
-      @head_hash = head_hash
-      
-      @repo = Repo.new("../#{folder_name}")
+      @branch_name = repo.current_branch
     end
   end
 end
