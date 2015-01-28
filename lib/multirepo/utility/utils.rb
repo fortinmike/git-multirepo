@@ -28,5 +28,10 @@ module MultiRepo
       end
       return uncommitted
     end
+
+    def self.convert_to_windows_path(unix_path)
+      components = Pathname.new(unix_path).each_filename.to_a
+      components.join(File::ALT_SEPARATOR)
+    end
   end
 end

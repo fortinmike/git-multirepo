@@ -1,5 +1,7 @@
-require "multirepo/utility/console"
 require "os"
+
+require "multirepo/utility/console"
+require "multirepo/utility/utils"
 
 module MultiRepo
   class Open < Command
@@ -15,9 +17,7 @@ module MultiRepo
         if OS.osx?
           `open "#{entry.repo.path}"`
         elsif OS.windows?
-          # TODO: Convert the path to a Windows-compatible format
-          # http://stackoverflow.com/a/22644151
-          `explorer "#{entry.repo.path}"`
+          `explorer "#{Utils.convert_to_windows_path(entry.repo.path)}"`
         end
       end
     rescue Exception => e
