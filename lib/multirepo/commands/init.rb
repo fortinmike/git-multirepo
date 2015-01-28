@@ -14,14 +14,12 @@ module MultiRepo
       
       if ConfigFile.exists?
         return unless Console.ask_yes_no(".multirepo file already exists. Reinitialize?")
-        ConfigFile.create
-        Console.log_substep("Created .multirepo file")
       end
       
       sibling_repos = Utils.sibling_repos
       
       if sibling_repos.any?
-        entries = ConfigFile.load
+        entries = []
         sibling_repos.each do |repo|
           if Console.ask_yes_no("Do you want to add #{repo.path} (#{repo.remote('origin').url} #{repo.current_branch}) as a dependency?")
             entries.push(ConfigEntry.new(repo))
@@ -32,7 +30,7 @@ module MultiRepo
         
         ConfigFile.stage
       
-        uncommitted = Utils.check_for_uncommitted_changes(added_entries)
+        uncommitted = Utils.check_for_uncommitted_changes(entries)
         raise MultiRepoException, "Can't finish initialization!" if uncommitted
         
         self.update_lock_file
