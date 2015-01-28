@@ -15,17 +15,18 @@ module MultiRepo
       super
       ensure_multirepo_initialized
       
-      config_entries = ConfigFile.load
-      
       main_repo = Repo.new(".")
       initial_revision = main_repo.current_branch || main_repo.head_hash
+                  
+      Console.log_step("Checking out #{@ref}...")
       
-      all_repos = config_entries.map{ |e| e.repo }.push(main_repo)
-      if all_repos.any? { |r| r.changes.count > 0 }
-        raise MultiRepoException, "Can't checkout #{@ref} because some repositories have uncommitted changes"
+      unless main_repo.is_clean?
+        raise "Can't checkout #{@ref} because the main repo has uncommited changes"
       end
       
-      Console.log_step("Checking out #{@ref}...")
+      ConfigFile.load.each do |e|
+        raise "Can't checkout #{@ref} because #{e.path} has uncommitted changes" unless e.repo.is_clean?
+      end
       
       unless main_repo.checkout(@ref)
         raise MultiRepoException, "Couldn't check out #{@ref} in main project!"
@@ -38,6 +39,7 @@ module MultiRepo
         raise MultiRepoException, "The specified revision was not managed by multirepo. Checkout cancelled."
       end
       
+      config_entries = ConfigFile.load # Load the post-checkout config entries, which might be different than pre-checkout
       LockFile.load.each do |lock_entry|
         config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
         revision = @checkout_latest ? lock_entry.branch : lock_entry.head

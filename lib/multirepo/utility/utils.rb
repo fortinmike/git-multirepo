@@ -21,7 +21,7 @@ module MultiRepo
       uncommitted = false
       config_entries.each do |e|
         next unless e.repo.exists?
-        if e.repo.changes.count > 0
+        unless e.repo.is_clean?
           Console.log_warning("Repository #{e.repo.path} has uncommitted changes")
           uncommitted = true
         end

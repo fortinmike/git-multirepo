@@ -32,6 +32,10 @@ module MultiRepo
       output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
     end
     
+    def is_clean?
+      return changes.count == 0
+    end
+    
     # Operations
     
     def fetch
