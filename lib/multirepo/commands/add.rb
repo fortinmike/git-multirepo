@@ -29,13 +29,13 @@ module MultiRepo
         ConfigFile.stage
         Console.log_substep("Added the repository #{entry.path} to the .multirepo file")
       end
-    rescue Exception => e
+    rescue MultiRepoException => e
       Console.log_error(e.message)
     end
     
     def ensure_dependency_repo_exists
-      if !Dir.exists?(@repo.path) then raise "There is no folder at path #{@repo.path}" end
-      if !@repo.exists? then raise "#{@repo.path} is not a repository" end
+      if !Dir.exists?(@repo.path) then raise MultiRepoException, "There is no folder at path #{@repo.path}" end
+      if !@repo.exists? then raise MultiRepoException, "#{@repo.path} is not a repository" end
     end
   end
 end

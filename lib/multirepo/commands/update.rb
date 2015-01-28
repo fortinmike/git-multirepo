@@ -12,7 +12,7 @@ module MultiRepo
       LockFile.update
       
       Console.log_step("Lock file updated")
-    rescue Exception => e
+    rescue MultiRepoException => e
       Console.log_error(e.message)
     end
   end

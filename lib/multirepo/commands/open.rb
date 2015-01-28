@@ -20,7 +20,7 @@ module MultiRepo
           `explorer "#{Utils.convert_to_windows_path(entry.repo.path)}"`
         end
       end
-    rescue Exception => e
+    rescue MultiRepoException => e
       Console.log_error(e.message)
     end
   end

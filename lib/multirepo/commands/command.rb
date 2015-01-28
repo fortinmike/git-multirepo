@@ -1,5 +1,7 @@
 require "claide"
+
 require "info"
+require "multirepo/multirepo-exception"
 
 module MultiRepo
   class Command < CLAide::Command
@@ -13,12 +15,11 @@ module MultiRepo
     end
     
     def validate_in_work_tree
-      raise "Not a git repository" unless Git.is_inside_git_repo(".")
+      raise MultiRepoException, "Not a git repository" unless Git.is_inside_git_repo(".")
     end
     
     def load_entries
       @entries = ConfigFile.load_entries
-      if !@entries then raise "Failed to load entries from .multirepo file" end
     end
     
     def install_pre_commit_hook
@@ -32,7 +33,7 @@ module MultiRepo
     end
 
     def ensure_multirepo_initialized
-      raise "multirepo is not initialized in this repository." unless ConfigFile.exists?
+      raise MultiRepoException, "multirepo is not initialized in this repository." unless ConfigFile.exists?
     end
   end
 end

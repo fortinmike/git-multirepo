@@ -28,7 +28,7 @@ module MultiRepo
     
     def self.validate_components(line, components)
       unless components.count == 2
-        raise "Wrong entry format in .multirepo.lock file: #{line}"
+        raise MultiRepoException, "Wrong entry format in .multirepo.lock file: #{line}"
       end
     end
   end

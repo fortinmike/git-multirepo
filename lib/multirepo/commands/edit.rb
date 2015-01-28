@@ -10,7 +10,7 @@ module MultiRepo
       editor = `echo ${FCEDIT:-${VISUAL:-${EDITOR:-vi}}}`.strip
       system(editor, ".multirepo")
       # TODO: Windows support
-    rescue Exception => e
+    rescue MultiRepoException => e
       Console.log_error(e.message)
     end
   end

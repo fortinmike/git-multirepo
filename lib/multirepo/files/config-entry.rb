@@ -21,7 +21,7 @@ module MultiRepo
       elsif args.length == 4
         self.initialize_with_args(*args)
       else
-        raise "Wrong number of arguments in ConfigEntry.new() call"
+        raise MultiRepoException, "Wrong number of arguments in ConfigEntry.new() call"
       end
     end
     

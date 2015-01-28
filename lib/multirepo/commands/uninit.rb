@@ -14,7 +14,7 @@ module MultiRepo
       File.delete(".git/hooks/pre-commit")
       
       Console.log_step("All traces of multirepo have been removed from this repository")
-    rescue Exception => e
+    rescue MultiRepoException => e
       Console.log_error(e.message)
     end
   end

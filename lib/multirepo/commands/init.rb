@@ -34,7 +34,7 @@ module MultiRepo
         ConfigFile.stage
       
         uncommitted = Utils.check_for_uncommitted_changes(added_entries)
-        raise "Can't finish initialization!" if uncommitted
+        raise MultiRepoException, "Can't finish initialization!" if uncommitted
         
         self.update_lock_file
       else
@@ -44,13 +44,13 @@ module MultiRepo
       self.install_pre_commit_hook
       
       Console.log_step("Done!")
-    # rescue Exception => e
-    #   Console.log_error(e.message)
+    rescue MultiRepoException => e
+      Console.log_error(e.message)
     end
     
     def check_repo_exists
-      if !Dir.exists?(@repo.path) then raise "There is no folder at path #{@repo.path}" end
-      if !@repo.exists? then raise "#{@repo.path} is not a repository" end
+      if !Dir.exists?(@repo.path) then raise MultiRepoException, "There is no folder at path #{@repo.path}" end
+      if !@repo.exists? then raise MultiRepoException, "#{@repo.path} is not a repository" end
     end
   end
 end
