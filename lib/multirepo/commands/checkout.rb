@@ -43,8 +43,8 @@ module MultiRepo
       end
       
       Console.log_step("Done!")
-    # rescue Exception => e
-    #   Console.log_error(e.message)
+    rescue Exception => e
+      Console.log_error(e.message)
     end
   end
 end
