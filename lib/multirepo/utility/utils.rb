@@ -22,7 +22,7 @@ module MultiRepo
       config_entries.each do |e|
         next unless e.repo.exists?
         unless e.repo.is_clean?
-          Console.log_warning("Repository #{e.repo.path} has uncommitted changes")
+          Console.log_warning("Dependency #{e.repo.path} contains uncommitted changes")
           uncommitted = true
         end
       end
