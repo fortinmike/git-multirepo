@@ -31,9 +31,7 @@ module MultiRepo
     end
     
     def self.entry_exists?(entry)
-      load_entries.any? { |e|
-        Pathname.new(e.path).realpath == Pathname.new(entry.path).realpath
-      }
+      load_entries.any? { |e| Pathname.new(e.path).realpath == Pathname.new(entry.path).realpath }
     end
     
     def self.add_entry(entry)
@@ -46,7 +44,7 @@ module MultiRepo
 
     def self.validate_components(line, components)
       unless components.count == 4
-        raise "Wrong entry format in .multirepo file: #{line}"
+        raise "Wrong entry format in .multirepo file"
       end
     end
   end

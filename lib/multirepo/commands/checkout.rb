@@ -18,6 +18,8 @@ module MultiRepo
       config_entries = ConfigFile.load_entries
       
       main_repo = Repo.new(".")
+      initial_revision = main_repo.current_branch || main_repo.head_hash
+      
       all_repos = config_entries.map{ |e| e.repo }.push(main_repo)
       if all_repos.any? { |r| r.changes.count > 0 }
         raise "Can't checkout #{@ref} because some repositories have uncommitted changes"
@@ -26,11 +28,15 @@ module MultiRepo
       Console.log_step("Checking out #{@ref}...")
       
       unless main_repo.checkout(@ref)
-        Console.log_error("Couldn't check out #{@ref} in main project!")
-        return
+        raise "Couldn't check out #{@ref} in main project!"
       end
       
       Console.log_substep("Checked out #{@ref} of main repo")
+      
+      unless LockFile.exists?
+        main_repo.checkout(initial_revision)
+        raise "The specified revision was not managed by multirepo. Checkout cancelled."
+      end
       
       LockFile.load_entries.each do |lock_entry|
         config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
@@ -38,7 +44,7 @@ module MultiRepo
         if config_entry.repo.checkout(revision)
           Console.log_substep("Checked out #{revision} of #{lock_entry.name}")
         else
-          Console.log_error("Couldn't check out the appropriate version of dependency #{lock_entry.name}")
+          raise "Couldn't check out the appropriate version of dependency #{lock_entry.name}"
         end
       end
       
