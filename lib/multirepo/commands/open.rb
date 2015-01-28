@@ -13,11 +13,11 @@ module MultiRepo
       self.load_entries
       @entries.each do |entry|
         if OS.osx?
-          `open "#{entry.repo.working_copy}"`
+          `open "#{entry.repo.path}"`
         elsif OS.windows?
           # TODO: Convert the path to a Windows-compatible format
           # http://stackoverflow.com/a/22644151
-          `explorer "#{entry.repo.working_copy}"`
+          `explorer "#{entry.repo.path}"`
         end
       end
     rescue Exception => e

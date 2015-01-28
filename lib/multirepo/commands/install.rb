@@ -36,13 +36,13 @@ module MultiRepo
     # Repo operations
     
     def fetch_repo(entry)
-      Console.log_substep("Working copy #{entry.repo.working_copy} already exists, fetching instead...")
+      Console.log_substep("Working copy #{entry.repo.path} already exists, fetching instead...")
       if !entry.repo.fetch then raise "Could not fetch from remote #{entry.repo.remote('origin').url}"
       end
     end
     
     def clone_repo(entry)
-      Console.log_substep("Cloning #{entry.remote_url} to #{entry.repo.working_copy}")
+      Console.log_substep("Cloning #{entry.remote_url} to #{entry.repo.path}")
       if !entry.repo.clone(entry.remote_url) then raise "Could not clone remote #{entry.remote_url}" end
     end
     

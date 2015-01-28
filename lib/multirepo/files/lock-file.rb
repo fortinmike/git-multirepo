@@ -18,8 +18,8 @@ module MultiRepo
     end
     
     def self.update
-      repos = ConfigFile.load_entries.map { |e| e.repo }
-      lock_entries = repos.map { |r| LockEntry.new(r) }
+      config_entries = ConfigFile.load_entries
+      lock_entries = config_entries.map { |c| LockEntry.new(c) }
       
       File.write(FILE.to_s, Psych.dump(lock_entries))
       

@@ -20,17 +20,17 @@ module MultiRepo
       Runner.run(full_command, show_output)
     end
     
-    def self.run_in_working_dir(working_copy, git_command, show_output)
+    def self.run_in_working_dir(path, git_command, show_output)
       # http://stackoverflow.com/a/1387631/167983
       
-      full_command = "git -C \"#{working_copy}\" #{git_command}";
+      full_command = "git -C \"#{path}\" #{git_command}";
       Console.log_info(full_command)
       Runner.run(full_command, show_output)
     end
     
-    def self.is_inside_git_repo(working_copy)
-      Dir.exist?("#{working_copy}/.git")
-      #return (Git.run(working_copy, "rev-parse --is-inside-work-tree", false).strip == "true") # Can't silence output?
+    def self.is_inside_git_repo(path)
+      Dir.exist?("#{path}/.git")
+      #return (Git.run(path, "rev-parse --is-inside-work-tree", false).strip == "true") # Can't silence output?
     end
   end
 end

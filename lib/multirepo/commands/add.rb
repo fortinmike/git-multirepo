@@ -27,15 +27,15 @@ module MultiRepo
       else
         ConfigFile.add_entry(entry)
         ConfigFile.stage
-        Console.log_substep("Added the repository #{entry.repo.working_copy} to the .multirepo file")
+        Console.log_substep("Added the repository #{entry.repo.path} to the .multirepo file")
       end
     rescue Exception => e
       Console.log_error(e.message)
     end
     
     def ensure_dependency_repo_exists
-      if !Dir.exists?(@repo.working_copy) then raise "There is no folder at path #{@repo.working_copy}" end
-      if !@repo.exists? then raise "#{@repo.working_copy} is not a repository" end
+      if !Dir.exists?(@repo.path) then raise "There is no folder at path #{@repo.path}" end
+      if !@repo.exists? then raise "#{@repo.path} is not a repository" end
     end
   end
 end

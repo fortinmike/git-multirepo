@@ -14,12 +14,12 @@ module MultiRepo
       super
       ensure_multirepo_initialized
       
+      config_entries = ConfigFile.load_entries
+      
       main_repo = Repo.new(".")
-      all_repos = ConfigFile.load_entries.map{ |e| e.repo }.push(main_repo)
-      all_repos.each do |repo|
-        if repo.changes.count > 0
-          raise "Can't checkout #{@ref} because some repositories have uncommitted changes"
-        end
+      all_repos = config_entries.map{ |e| e.repo }.push(main_repo)
+      if all_repos.any? { |r| r.changes.count > 0 }
+        raise "Can't checkout #{@ref} because some repositories have uncommitted changes"
       end
       
       Console.log_step("Checking out #{@ref}...")
@@ -31,17 +31,18 @@ module MultiRepo
       
       Console.log_substep("Checked out revision #{@ref} of main repo")
       
-      LockFile.load_entries.each do |e|
-        if e.repo.checkout(e.head_hash)
-          Console.log_substep("Checked out revision #{e.head_hash} of dependency #{e.folder_name}")
+      LockFile.load_entries.each do |lock_entry|
+        config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
+        if config_entry.repo.checkout(lock_entry.head)
+          Console.log_substep("Checked out revision #{lock_entry.head} of dependency #{lock_entry.name}")
         else
-          Console.log_error("Couldn't check out the appropriate revision of dependency #{e.folder_name}")
+          Console.log_error("Couldn't check out the appropriate revision of dependency #{lock_entry.name}")
         end
       end
       
       Console.log_step("Done!")
-    rescue Exception => e
-      Console.log_error(e.message)
+    # rescue Exception => e
+    #   Console.log_error(e.message)
     end
   end
 end

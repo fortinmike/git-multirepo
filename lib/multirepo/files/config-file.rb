@@ -46,7 +46,7 @@ module MultiRepo
     end
 
     def self.validate_components(line, components)
-      unless components.count == 3
+      unless components.count == 4
         raise "Wrong entry format in .multirepo file: #{line}"
       end
     end
