@@ -5,7 +5,7 @@ require "multirepo/git/repo"
 module MultiRepo
   class Setup < Command
     self.command = "install"
-    self.summary = "Clones and checks out repositories as defined in the .multirepo file, and installs git-multirepo's local pre-commit hook."
+    self.summary = "Clones and checks out dependencies as defined in the .multirepo file, and installs git-multirepo's local pre-commit hook."
     
     def run
       super

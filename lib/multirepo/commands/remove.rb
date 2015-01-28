@@ -14,7 +14,7 @@ module MultiRepo
     
     def validate!
       super
-      help! "You must provide a repo path to remove" unless @path
+      help! "You must provide a dependency repository to remove" unless @path
     end
     
     def run

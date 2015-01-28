@@ -6,7 +6,7 @@ require "multirepo/files/lock-file"
 module MultiRepo
   class Init < Command
     self.command = "init"
-    self.summary = "Initialize the current repo as a multirepo project."
+    self.summary = "Initialize the current repository as a multirepo project."
     
     def run
       super

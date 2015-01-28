@@ -4,7 +4,7 @@ require "multirepo/files/config-file"
 module MultiRepo
   class Add < Command
     self.command = "add"
-    self.summary = "Add a dependency repository to the .multirepo file."
+    self.summary = "Add a dependency to the .multirepo file."
     
     def initialize(argv)
       @path = argv.shift_argument
@@ -13,7 +13,7 @@ module MultiRepo
     
     def validate!
       super
-      help! "You must provide a repo path to add as a dependency" unless @path
+      help! "You must provide a repository to add as a dependency" unless @path
     end
     
     def run
