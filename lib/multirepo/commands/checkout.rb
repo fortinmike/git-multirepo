@@ -15,7 +15,7 @@ module MultiRepo
       super
       ensure_multirepo_initialized
       
-      config_entries = ConfigFile.load_entries
+      config_entries = ConfigFile.load
       
       main_repo = Repo.new(".")
       initial_revision = main_repo.current_branch || main_repo.head_hash
@@ -38,7 +38,7 @@ module MultiRepo
         raise MultiRepoException, "The specified revision was not managed by multirepo. Checkout cancelled."
       end
       
-      LockFile.load_entries.each do |lock_entry|
+      LockFile.load.each do |lock_entry|
         config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
         revision = @checkout_latest ? lock_entry.branch : lock_entry.head
         if config_entry.repo.checkout(revision)

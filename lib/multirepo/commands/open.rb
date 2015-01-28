@@ -12,8 +12,7 @@ module MultiRepo
       super
       ensure_multirepo_initialized
       
-      self.load_entries
-      @entries.each do |entry|
+      ConfigFile.load.each do |entry|
         if OS.osx?
           `open "#{entry.repo.path}"`
         elsif OS.windows?

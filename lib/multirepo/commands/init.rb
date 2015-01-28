@@ -21,15 +21,14 @@ module MultiRepo
       sibling_repos = Utils.sibling_repos
       
       if sibling_repos.any?
-        added_entries = []
+        entries = ConfigFile.load
         sibling_repos.each do |repo|
           if Console.ask_yes_no("Do you want to add #{repo.path} (#{repo.remote('origin').url} #{repo.current_branch}) as a dependency?")
-            entry = ConfigEntry.new(repo)
-            added_entries.push(entry)
-            ConfigFile.add_entry(entry)
-            Console.log_substep("Added the repository #{entry.repo.path} to the .multirepo file")
+            entries.push(ConfigEntry.new(repo))
+            Console.log_substep("Added the repository #{repo.path} to the .multirepo file")
           end
         end
+        ConfigFile.save(entries)
         
         ConfigFile.stage
       

@@ -15,6 +15,12 @@ module MultiRepo
       "#{@id}, #{@path}, #{@remote_url}, #{@branch}"
     end
     
+    def ==(entry)
+      entry_path = Pathname.new(entry.path)
+      self_path = Pathname.new(self.path)
+      entry_path.exist? && self_path.exist? && entry_path.realpath == self_path.realpath
+    end
+    
     def initialize(*args)
       if args.length == 1
         self.initialize_with_repo(*args)

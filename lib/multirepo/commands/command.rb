@@ -17,11 +17,7 @@ module MultiRepo
     def validate_in_work_tree
       raise MultiRepoException, "Not a git repository" unless Git.is_inside_git_repo(".")
     end
-    
-    def load_entries
-      @entries = ConfigFile.load_entries
-    end
-    
+        
     def install_pre_commit_hook
       Utils.install_pre_commit_hook
       Console.log_substep("Installed pre-commit hook")

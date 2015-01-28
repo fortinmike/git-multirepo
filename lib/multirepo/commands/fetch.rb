@@ -11,8 +11,7 @@ module MultiRepo
       
       Console.log_step("Fetching repositories...")
       
-      self.load_entries
-      @entries.each do |entry|
+      ConfigFile.load.each do |entry|
         Console.log_substep("Fetching from #{entry.repo.remote('origin').url}...")
         entry.repo.fetch
       end

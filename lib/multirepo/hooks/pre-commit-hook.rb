@@ -6,7 +6,7 @@ require "multirepo/utility/console"
 module MultiRepo
   class PreCommitHook
     def self.run
-      entries =  ConfigFile.load_entries
+      entries =  ConfigFile.load
       uncommitted = Utils.check_for_uncommitted_changes(entries)
       
       if uncommitted

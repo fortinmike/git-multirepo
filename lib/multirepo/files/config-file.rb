@@ -11,12 +11,7 @@ module MultiRepo
       FILE.exist?
     end
     
-    def self.create
-      template_path = Utils.path_for_resource(".multirepo")
-      FileUtils.cp(template_path, ".")
-    end
-    
-    def self.load_entries
+    def self.load
       entries = Array.new
       
       FILE.open("r").each_line do |line|
@@ -30,12 +25,27 @@ module MultiRepo
       return entries
     end
     
+    def self.save(entries)
+      # Copy template .multirepo file from resources
+      template_path = Utils.path_for_resource(".multirepo")
+      FileUtils.cp(template_path, ".")
+      
+      # Append the entries to it
+      FILE.open("a") do |f|
+        entries.each { |e| f.puts e.to_s }
+      end
+    end
+    
     def self.entry_exists?(entry)
-      load_entries.any? { |e| Pathname.new(e.path).realpath == Pathname.new(entry.path).realpath }
+      load.any? { |e| e == entry }
     end
     
     def self.add_entry(entry)
-      ConfigFile::FILE.open("a") { |f| f.puts entry.to_s }
+      save(load.push(entry))
+    end
+    
+    def self.remove_entry(entry)
+      save(load.delete_if { |e| e == entry })
     end
 
     def self.stage
@@ -44,7 +54,7 @@ module MultiRepo
 
     def self.validate_components(line, components)
       unless components.count == 4
-        raise MultiRepoException, "Wrong entry format in .multirepo file"
+        raise MultiRepoException, "Wrong entry format in .multirepo file. Can't load entries."
       end
     end
   end
