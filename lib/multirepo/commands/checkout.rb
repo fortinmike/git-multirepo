@@ -13,10 +13,18 @@ module MultiRepo
     def run
       super
       ensure_multirepo_initialized
-      Console.log_step("Checking out #{@ref}...")
       
       main_repo = Repo.new(".")
-      if main_repo.checkout(@ref)
+      all_repos = ConfigFile.load_entries.map{ |e| e.repo }.push(main_repo)
+      all_repos.each do |repo|
+        if repo.changes.count > 0
+          raise "Can't checkout #{@ref} because some repositories have uncommitted changes"
+        end
+      end
+      
+      Console.log_step("Checking out #{@ref}...")
+      
+      unless main_repo.checkout(@ref)
         Console.log_error("Couldn't check out main project revision #{@ref}!")
         return
       end
