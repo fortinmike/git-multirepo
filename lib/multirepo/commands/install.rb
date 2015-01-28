@@ -11,7 +11,7 @@ module MultiRepo
       super
       ensure_multirepo_initialized
       
-      Console.log_step("Cloning dependencies and installing hooks...")
+      Console.log_step("Cloning dependencies and installing hook...")
       
       ConfigFile.load.each { |e| install(e) }
       
