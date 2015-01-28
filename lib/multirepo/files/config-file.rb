@@ -22,7 +22,7 @@ module MultiRepo
       FILE.open("r").each_line do |line|
         next if line.start_with?("#") # Barebones comments support
         next if line.strip == "" # Skip empty lines
-        components = line.split(" ")
+        components = line.split(",").map(&:strip)
         validate_components(line, components)
         entries.push(ConfigEntry.new(*components))
       end

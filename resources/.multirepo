@@ -1,2 +1,2 @@
 # Specify dependencies here:
-# [DirectoryName] [RemoteUrl] [BranchName]
+# [DirectoryName], [RemoteUrl], [BranchName]

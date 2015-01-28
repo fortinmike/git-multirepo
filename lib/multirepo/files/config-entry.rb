@@ -9,7 +9,7 @@ module MultiRepo
     attr_accessor :repo
     
     def to_s
-      "#{@folder_name} #{@remote_url} #{@branch_name}"
+      "#{@folder_name}, #{@remote_url}, #{@branch_name}"
     end
     
     def initialize(*args)
