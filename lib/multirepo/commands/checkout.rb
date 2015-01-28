@@ -7,6 +7,7 @@ module MultiRepo
     
     def initialize(argv)
       @ref = argv.shift_argument
+      @checkout_latest = argv.flag?("latest")
       super
     end
     
@@ -25,18 +26,19 @@ module MultiRepo
       Console.log_step("Checking out #{@ref}...")
       
       unless main_repo.checkout(@ref)
-        Console.log_error("Couldn't check out main project revision #{@ref}!")
+        Console.log_error("Couldn't check out #{@ref} in main project!")
         return
       end
       
-      Console.log_substep("Checked out revision #{@ref} of main repo")
+      Console.log_substep("Checked out #{@ref} of main repo")
       
       LockFile.load_entries.each do |lock_entry|
         config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
-        if config_entry.repo.checkout(lock_entry.head)
-          Console.log_substep("Checked out revision #{lock_entry.head} of dependency #{lock_entry.name}")
+        revision = @checkout_latest ? lock_entry.branch : lock_entry.head
+        if config_entry.repo.checkout(revision)
+          Console.log_substep("Checked out #{revision} of #{lock_entry.name}")
         else
-          Console.log_error("Couldn't check out the appropriate revision of dependency #{lock_entry.name}")
+          Console.log_error("Couldn't check out the appropriate version of dependency #{lock_entry.name}")
         end
       end
       

@@ -7,7 +7,7 @@ module MultiRepo
     self.summary = "Add a dependency repository to the .multirepo file."
     
     def initialize(argv)
-      @repo = Repo.new("../#{argv.shift_argument}")
+      @repo = Repo.new(argv.shift_argument)
       super
     end
     
@@ -23,11 +23,11 @@ module MultiRepo
       
       entry = ConfigEntry.new(@repo)
       if ConfigFile.entry_exists?(entry)
-        Console.log_info("There is already an entry for #{entry.folder_name} in the .multirepo file")
+        Console.log_info("There is already an entry for #{entry.path} in the .multirepo file")
       else
         ConfigFile.add_entry(entry)
         ConfigFile.stage
-        Console.log_substep("Added the repository #{entry.repo.path} to the .multirepo file")
+        Console.log_substep("Added the repository #{entry.path} to the .multirepo file")
       end
     rescue Exception => e
       Console.log_error(e.message)

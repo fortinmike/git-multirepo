@@ -47,7 +47,7 @@ module MultiRepo
     end
     
     def checkout_branch(entry)
-      branch = entry.repo.branch(entry.branch_name);
+      branch = entry.repo.branch(entry.branch);
       
       if branch.checkout
         Console.log_substep("Checked out branch #{branch.name} -> origin/#{branch.name}")
@@ -60,7 +60,7 @@ module MultiRepo
     
     def check_repo_validity(entry)
       unless entry.repo.remote("origin").url == entry.remote_url
-        raise "#{entry.folder_name} origin URL (#{entry.repo.remote('origin').url}) does not match entry (#{entry.remote_url})!"
+        raise "#{entry.path} origin URL (#{entry.repo.remote('origin').url}) does not match entry (#{entry.remote_url})!"
       end
     end
   end

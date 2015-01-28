@@ -8,11 +8,11 @@ module MultiRepo
     attr_accessor :id
     attr_accessor :path
     attr_accessor :remote_url
-    attr_accessor :branch_name
+    attr_accessor :branch
     attr_accessor :repo
     
     def to_s
-      "#{@id}, #{@path}, #{@remote_url}, #{@branch_name}"
+      "#{@id}, #{@path}, #{@remote_url}, #{@branch}"
     end
     
     def initialize(*args)
@@ -29,14 +29,14 @@ module MultiRepo
       @id = SecureRandom.uuid
       @path = repo.path
       @remote_url = repo.remote('origin').url
-      @branch_name = repo.current_branch
+      @branch = repo.current_branch
     end
     
-    def initialize_with_args(id, path, remote_url, branch_name)
+    def initialize_with_args(id, path, remote_url, branch)
       @id = id
       @path = path
       @remote_url = remote_url
-      @branch_name = branch_name
+      @branch = branch
     end
     
     def repo

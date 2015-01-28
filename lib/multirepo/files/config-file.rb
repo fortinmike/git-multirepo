@@ -31,10 +31,9 @@ module MultiRepo
     end
     
     def self.entry_exists?(entry)
-      FILE.open("r").each_line do |line|
-        return true if line.start_with?(entry.folder_name)
-      end
-      false
+      load_entries.any? { |e|
+        Pathname.new(e.path).realpath == Pathname.new(entry.path).realpath
+      }
     end
     
     def self.add_entry(entry)
