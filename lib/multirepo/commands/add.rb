@@ -27,7 +27,7 @@ module MultiRepo
       else
         ConfigFile.add_entry(entry)
         ConfigFile.stage
-        Console.log_substep("Added #{@path} to the .multirepo file")
+        Console.log_step("Added #{@path} to the .multirepo file")
       end
     rescue MultiRepoException => e
       Console.log_error(e.message)
