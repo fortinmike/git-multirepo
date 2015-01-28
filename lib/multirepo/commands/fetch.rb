@@ -14,7 +14,7 @@ module MultiRepo
       self.load_entries
       @entries.each do |entry|
         Console.log_substep("Fetching from #{entry.repo.remote('origin').url}...")
-        entry.fetch_repo
+        entry.repo.fetch
       end
       
       Console.log_step("Done!")
