@@ -40,8 +40,8 @@ module MultiRepo
     end
     
     def ensure_dependency_repo_exists
-      if !Dir.exists?(@repo.path) then raise MultiRepoException, "There is no folder at path #{@path}" end
-      if !@repo.exists? then raise MultiRepoException, "#{@path} is not a repository" end
+      if !Dir.exists?(@path) then raise MultiRepoException, "There is no folder at path #{@path}" end
+      if !Repo.new(@path).exists? then raise MultiRepoException, "#{@path} is not a repository" end
     end
   end
 end
