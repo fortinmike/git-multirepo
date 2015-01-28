@@ -8,6 +8,7 @@ module MultiRepo
     
     def initialize(argv)
       @path = argv.shift_argument
+      @delete = argv.flag?("delete")
       super
     end
     
@@ -26,6 +27,11 @@ module MultiRepo
       if ConfigFile.entry_exists?(entry)
         ConfigFile.remove_entry(entry)
         Console.log_step("Removed #{@path} from the .multirepo file")
+        
+        if @delete
+          FileUtils.rm_rf(@path)
+          Console.log_step("Deleted #{@path} from disk")
+        end
       else
         raise MultiRepoException, "#{@path} isn't tracked by multirepo"
       end
