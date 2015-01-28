@@ -32,7 +32,7 @@ module MultiRepo
     end
 
     def ensure_multirepo_initialized
-      raise "multirepo is not initialized in this repository. Please run \"multi init\"" unless ConfigFile.exists?
+      raise "multirepo is not initialized in this repository." unless ConfigFile.exists?
     end
   end
 end
