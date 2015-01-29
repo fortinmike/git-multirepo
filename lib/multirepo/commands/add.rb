@@ -13,7 +13,7 @@ module MultiRepo
     
     def validate!
       super
-      help! "You must provide a repository to add as a dependency" unless @path
+      help! "You must specify a repository to add as a dependency" unless @path
     end
     
     def run
