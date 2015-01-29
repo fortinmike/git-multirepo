@@ -64,7 +64,7 @@ Say you want to track an existing project with git-multirepo:
 4. You will get prompted to add *Dependency1* and *Dependency2* to multirepo; do so.
 5. git-multirepo reads all required information from dependency repos and initializes itself, storing its metadata files in the main repo, under version control.
 
-From now on, each time you commit the main repo git-multirepo tracks which revision of each dependency is required for that main repo revision (and where to get them). A pre-commit hook ensures that you won't commit the main repo before its dependencies so that you always get a valid state stored under version control.
+From now on, each time you commit the main repo git-multirepo tracks &mdash; using a pre-commit hook &mdash; which revision of each dependency is required for that main repo revision, and where to get them. The pre-commit hook also ensures that you won't commit the main repo before its dependencies so that you always get a valid state stored under version control.
 
 If you want to add another dependency later on, you can run `multi add ../NewDependency` and you can do the opposite with `multi remove ../SomeOtherDependency`.
 
