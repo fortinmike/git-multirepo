@@ -68,7 +68,7 @@ From now on, each time you commit the main repo git-multirepo tracks &mdash; usi
 
 If you want to add another dependency later on, you can run `multi add ../NewDependency` and you can do the opposite with `multi remove ../SomeOtherDependency`.
 
-If you want to checkout a previous revision (say tag "1.2"), you use the checkout command: `multi checkout 1.2`. This will checkout the main repo and all of its dependencies with the proper revisions in detached HEAD state.
+If you want to checkout a previous revision (say `e690d`), you use the checkout command: `multi checkout e690d`. This will checkout the main repo's `e690d` revision and all of its dependencies with the proper revisions in detached HEAD state.
 
 If you want to setup your project on another machine, simply clone the main repo in a container directory (see above) and run `multi install`. This will clone each dependency and checkout the appropriate branches.
 
@@ -104,5 +104,18 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 - You must install the tool (`gem install git-multirepo`) on the CI server to perform continuous integration.
 
 ## Summary of Commands
+
+| Command | Description |
+|---------|-------------|
+| init | Initialize the current repository as a multirepo project. |
+| add | Track an additional dependency with multirepo. |
+| checkout | Checks out the specified commit or branch of the main repo and checks out matching versions of all dependencies. |
+| edit | Opens the .multirepo file in the default text editor. |
+| fetch | Performs a git fetch on all dependencies. |
+| install | Clones and checks out dependencies as defined in the .multirepo file, and installs git-multirepo's local pre-commit hook. |
+| open | Opens all dependencies in the current OS's file explorer. |
+| remove | Removes the specified dependency from multirepo. |
+| update | Force-updates the multirepo lock file. |
+| uninit | Removes all traces of multirepo in the current multirepo repository. |
 
 ## How It Works, In Detail
