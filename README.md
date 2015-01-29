@@ -1,6 +1,10 @@
 # git-multirepo
 
-Track multiple Git repositories side-by-side. An alternative approach to manage constantly evolving dependencies.
+Track multiple Git repositories side-by-side.
+
+An alternative approach to manage constantly evolving dependencies.
+
+Check out [the project's to-do list](https://www.pivotaltracker.com/n/projects/1256156) to get an idea of upcoming enhancements.
 
 ## Motivation
 
@@ -40,16 +44,16 @@ In essence:
 1. You tell git-multirepo what your dependencies are.
 2. Each time you commit the main repo, git-multirepo tracks what revision of each dependency is required by the project (don't worry, it ensures that you don't forget to commit changes to dependencies beforehand; more on that later).
 3. If you ever want to go back to a previous version of your project, git-multirepo handles checking out the main repo and appropriate revisions of all of its dependencies in a single, seamless operation.
-4. Setting up the project on another machine is only a single `git clone` and `multi install` away.
+4. Setting up the project on a new machine is only a single `git clone` and `multi install` away.
 
 ## Advantages
 
-- Works really well to develop multiple projects that share a common set of constantly evolving dependencies.
+- Works really well with multiple projects that share a common set of constantly evolving dependencies.
 - Each dependency's repository is totally independent from the main repository, which simplifies a lot of things (merges, contributing upstream, etc.) and works well with git GUIs.
 - While the repositories are independent, git-multirepo makes sure to track everything that's required to bring back a previous version of your project in a valid state.
 - Much more approachable to novice developers than submodules or subtrees.
-- Once setup, there is little need for git-multirepo commands, so you are free to use whatever tools you like.
-- Low possibility of human error (such as forgetting to contribute changes back to dependency remotes).
+- Once setup, there is little need for git-multirepo commands, so you are free to use whatever tools you like to work with your git repos.
+- Low possibility of human error (such as forgetting to contribute dependency changes back to the appropriate remotes, forgetting to commit dependencies before committing the main project, etc.)
 - Works well with CI servers.
 - You're not stuck with git-multirepo. It stores its metadata as CSV and YAML in the main repo. You can clone and checkout appropriate revisions of your dependencies by hand without git-multirepo if you need to. The information is there, in human-readable form.
 
@@ -60,11 +64,14 @@ In essence:
 | Merging Changes to Dependencies  |       easy       |      hard      |   passable   |
 | Contributing Upstream            |       easy       |      easy      |   passable   |
 | Continuous Integration           |      medium      |     medium     |     easy     |
+| Complex Branch-Based Workflows   |      medium*     |      hard      |     easy     |
+
+(*) This should get better in future versions of git-multirepo.
 
 ## Limitations
 
 - git-multirepo should be considered alpha at the moment. All of the core features work as described, though. Suggestions and contributions are welcome.
-- The project and its dependencies are beside each other on disk.
+- The project and its dependencies are beside each other on disk (for now).
 - There are currently no features to facilitate main-repo + dependencies branching workflows.
 - You must install the tool (`gem install git-multirepo`) on the CI server to perform continuous integration.
 
@@ -73,5 +80,3 @@ In essence:
 ## Summary of Commands
 
 ## How It Works, In Detail
-
-Check out [the project's to-do list](https://www.pivotaltracker.com/n/projects/1256156).
