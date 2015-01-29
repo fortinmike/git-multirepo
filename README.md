@@ -64,7 +64,7 @@ In essence:
 | Merging Changes to Dependencies  |       easy       |      hard      |   passable   |
 | Contributing Upstream            |       easy       |      easy      |   passable   |
 | Continuous Integration           |      medium      |     medium     |     easy     |
-| Complex Branch-Based Workflows   |      medium*     |      hard      |     easy     |
+| Complex Branch-Based Workflows   |      hard*       |      hard      |     easy     |
 
 (*) This should get better in future versions of git-multirepo.
 
@@ -76,6 +76,30 @@ In essence:
 - You must install the tool (`gem install git-multirepo`) on the CI server to perform continuous integration.
 
 ## Example
+
+Say you want to track an existing project with git-multirepo:
+
+1. Organize repos on disk in the following manner:
+
+	```
+	MyAwesomeProject
+	  |-- AwesomeApp
+	  |-- Dependency1
+	  |-- Dependency2
+	```
+
+2. `cd` into the *AwesomeApp* directory (aka the "main repo").
+3. Run `multi init`.
+4. You will get prompted to add *Dependency1* and *Dependency2* to multirepo; do so.
+5. git-multirepo reads all required information from dependency repos and initializes itself, storing its metadata files in the main repo, under version control.
+
+From now on, each time you commit the main repo git-multirepo tracks which revision of each dependency is required for that main repo revision (and where to get them). A pre-commit hook ensures that you won't commit the main repo before its dependencies so that you always get a valid state stored under version control.
+
+If you want to add another dependency later on, you can run `multi add ../NewDependency` and you can do the opposite with `multi remove ../SomeOtherDependency`.
+
+If you want to checkout a previous revision (say tag "1.2"), you use the checkout command: `multi checkout 1.2`. This will checkout the main repo and all of its dependencies with the proper revisions in detached HEAD state.
+
+If you want to stop using git-multirepo, run `multi uninit`. This will remove all traces of git-multirepo from your repository and working copy.
 
 ## Summary of Commands
 
