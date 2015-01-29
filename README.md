@@ -46,6 +46,34 @@ In essence:
 3. If you ever want to go back to a previous version of your project, git-multirepo handles checking out the main repo and appropriate revisions of all of its dependencies in a single, seamless operation.
 4. Setting up the project on a new machine is only a single `git clone` and `multi install` away.
 
+## Example
+
+Say you want to track an existing project with git-multirepo:
+
+1. Organize repos on disk in the following manner:
+
+	```
+	MyAwesomeProject
+	  |-- AwesomeApp
+	  |-- Dependency1
+	  |-- Dependency2
+	```
+
+2. `cd` into the *AwesomeApp* directory (aka the "main repo").
+3. Run `multi init`.
+4. You will get prompted to add *Dependency1* and *Dependency2* to multirepo; do so.
+5. git-multirepo reads all required information from dependency repos and initializes itself, storing its metadata files in the main repo, under version control.
+
+From now on, each time you commit the main repo git-multirepo tracks which revision of each dependency is required for that main repo revision (and where to get them). A pre-commit hook ensures that you won't commit the main repo before its dependencies so that you always get a valid state stored under version control.
+
+If you want to add another dependency later on, you can run `multi add ../NewDependency` and you can do the opposite with `multi remove ../SomeOtherDependency`.
+
+If you want to checkout a previous revision (say tag "1.2"), you use the checkout command: `multi checkout 1.2`. This will checkout the main repo and all of its dependencies with the proper revisions in detached HEAD state.
+
+If you want to setup your project on another machine, simply clone the main repo in a container directory (see above) and run `multi install`. This will clone each dependency and checkout the appropriate branches.
+
+If you want to stop using git-multirepo, run `multi uninit`. This will remove all traces of git-multirepo from your repository and working copy.
+
 ## Advantages
 
 - Works really well with multiple projects that share a common set of constantly evolving dependencies.
@@ -74,32 +102,6 @@ In essence:
 - The project and its dependencies are beside each other on disk (for now).
 - There are currently no features to facilitate main-repo + dependencies branching workflows.
 - You must install the tool (`gem install git-multirepo`) on the CI server to perform continuous integration.
-
-## Example
-
-Say you want to track an existing project with git-multirepo:
-
-1. Organize repos on disk in the following manner:
-
-	```
-	MyAwesomeProject
-	  |-- AwesomeApp
-	  |-- Dependency1
-	  |-- Dependency2
-	```
-
-2. `cd` into the *AwesomeApp* directory (aka the "main repo").
-3. Run `multi init`.
-4. You will get prompted to add *Dependency1* and *Dependency2* to multirepo; do so.
-5. git-multirepo reads all required information from dependency repos and initializes itself, storing its metadata files in the main repo, under version control.
-
-From now on, each time you commit the main repo git-multirepo tracks which revision of each dependency is required for that main repo revision (and where to get them). A pre-commit hook ensures that you won't commit the main repo before its dependencies so that you always get a valid state stored under version control.
-
-If you want to add another dependency later on, you can run `multi add ../NewDependency` and you can do the opposite with `multi remove ../SomeOtherDependency`.
-
-If you want to checkout a previous revision (say tag "1.2"), you use the checkout command: `multi checkout 1.2`. This will checkout the main repo and all of its dependencies with the proper revisions in detached HEAD state.
-
-If you want to stop using git-multirepo, run `multi uninit`. This will remove all traces of git-multirepo from your repository and working copy.
 
 ## Summary of Commands
 
