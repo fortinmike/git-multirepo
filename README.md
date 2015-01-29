@@ -45,9 +45,10 @@ In essence:
 ## Advantages
 
 - Works really well to develop multiple projects that share a common set of constantly evolving dependencies.
-- Managing dependencies as totally independent repositories simplifies a lot of things (merges, contributing upstream, etc.) and works well with git GUIs.
+- Each dependency's repository is totally independent from the main repository, which simplifies a lot of things (merges, contributing upstream, etc.) and works well with git GUIs.
 - While the repositories are independent, git-multirepo makes sure to track everything that's required to bring back a previous version of your project in a valid state.
 - Much more approachable to novice developers than submodules or subtrees.
+- Once setup, there is little need for git-multirepo commands, so you are free to use whatever tools you like.
 - Low possibility of human error (such as forgetting to contribute changes back to dependency remotes).
 - Works well with CI servers.
 - You're not stuck with git-multirepo. It stores its metadata as CSV and YAML in the main repo. You can clone and checkout appropriate revisions of your dependencies by hand without git-multirepo if you need to. The information is there, in human-readable form.
@@ -63,6 +64,9 @@ In essence:
 ## Limitations
 
 - git-multirepo should be considered alpha at the moment. All of the core features work as described, though. Suggestions and contributions are welcome.
+- The project and its dependencies are beside each other on disk.
+- There are currently no features to facilitate main-repo + dependencies branching workflows.
+- You must install the tool (`gem install git-multirepo`) on the CI server to perform continuous integration.
 
 ## Example
 
