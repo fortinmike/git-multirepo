@@ -43,8 +43,8 @@ module MultiRepo
       $?.exitstatus == 0
     end
     
-    def clone(remote_url)
-      Git.run("clone #{remote_url} #{@path}", true)
+    def clone(url)
+      Git.run("clone #{url} #{@path}", true)
       $?.exitstatus == 0
     end
     

@@ -14,7 +14,7 @@ module MultiRepo
     end
     
     def self.load
-      return Psych.load(FILE.read)
+      Psych.load(FILE.read)
     end
     
     def self.update
