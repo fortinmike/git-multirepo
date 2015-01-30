@@ -23,6 +23,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
 
   spec.add_runtime_dependency "claide", "~> 0.8", ">= 0.8.0"
-  spec.add_runtime_dependency 'colored',       '~> 1.2'
-  spec.add_runtime_dependency 'os', '~> 0.9.6'
+  spec.add_runtime_dependency "colored", "~> 1.2"
+  spec.add_runtime_dependency "os", "~> 0.9.6"
 end

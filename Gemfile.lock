@@ -4,12 +4,14 @@ PATH
     git-multirepo (0.0.1)
       claide (~> 0.8, >= 0.8.0)
       colored (~> 1.2)
+      os (~> 0.9.6)
 
 GEM
   remote: https://rubygems.org/
   specs:
     claide (0.8.0)
     colored (1.2)
+    os (0.9.6)
     rake (10.4.2)
 
 PLATFORMS
