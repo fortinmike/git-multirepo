@@ -1,3 +1,5 @@
+require "os"
+
 module MultiRepo
   class Edit < Command
     self.command = "edit"
@@ -7,9 +9,12 @@ module MultiRepo
       super
       ensure_multirepo_initialized
       
-      editor = `echo ${FCEDIT:-${VISUAL:-${EDITOR:-vi}}}`.strip
-      system(editor, ".multirepo")
-      # TODO: Windows support
+      if OS.posix?
+        editor = `echo ${FCEDIT:-${VISUAL:-${EDITOR:-vi}}}`.strip
+        system(editor, ".multirepo")
+      elsif OS.windows?
+        raise "The edit command is not implemented on Window yet."
+      end
     rescue MultiRepoException => e
       Console.log_error(e.message)
     end
