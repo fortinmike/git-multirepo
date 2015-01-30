@@ -36,23 +36,19 @@ module MultiRepo
     
     def fetch_repo(entry)
       Console.log_substep("Working copy #{entry.repo.path} already exists, fetching instead...")
-      if !entry.repo.fetch then raise MultiRepoException, "Could not fetch from remote #{entry.repo.remote('origin').url}"
+      raise MultiRepoException, "Could not fetch from remote #{entry.repo.remote('origin').url}" unless entry.repo.fetch
       end
     end
     
     def clone_repo(entry)
       Console.log_substep("Cloning #{entry.url} to #{entry.repo.path}")
-      if !entry.repo.clone(entry.url) then raise MultiRepoException, "Could not clone remote #{entry.url}" end
+      raise MultiRepoException, "Could not clone remote #{entry.url}" unless entry.repo.clone(entry.url)
     end
     
     def checkout_branch(entry)
       branch = entry.repo.branch(entry.branch);
-      
-      if branch.checkout
-        Console.log_substep("Checked out branch #{branch.name} -> origin/#{branch.name}")
-      else
-        raise MultiRepoException, "Could not checkout branch #{branch.name}"
-      end
+      raise MultiRepoException, "Could not checkout branch #{branch.name}" unless branch.checkout
+      Console.log_substep("Checked out branch #{branch.name} -> origin/#{branch.name}")
     end
     
     # Validation
