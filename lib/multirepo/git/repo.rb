@@ -44,7 +44,7 @@ module MultiRepo
     end
     
     def clone(url)
-      Git.run_in_working_dir("clone #{url} #{@path}", true)
+      Git.run_in_current_dir("clone #{url} #{@path}", true)
       $?.exitstatus == 0
     end
     
