@@ -100,10 +100,12 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 
 - git-multirepo should be considered alpha at the moment. All of the core features work as described, though. Suggestions and contributions are welcome.
 - The project and its dependencies are beside each other on disk (for now).
-- There are currently no features to facilitate main-repo + dependencies branching workflows.
-- You must install the tool (`gem install git-multirepo`) on the CI server to perform continuous integration.
+- There are currently no features to facilitate branch-heavy workflows.
+- You must install the tool (`gem install git-multirepo`) on the CI server for continuous integration.
 
 ## Summary of Commands
+
+Here is a quick rundown of commands available to you in git-multirepo:
 
 | Command | Description |
 |---------|-------------|
