@@ -32,7 +32,7 @@ module MultiRepo
     end
 
     def self.stage
-      Git.run("add -A -f #{FILE.to_s}", false)
+      Git.run_in_current_dir("add -A -f #{FILE.to_s}", false)
     end
   end
 end

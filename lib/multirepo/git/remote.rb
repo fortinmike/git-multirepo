@@ -10,7 +10,7 @@ module MultiRepo
     end
     
     def url
-      Git.run(@repo.path, "config --get remote.#{@name}.url", false).strip
+      Git.run_in_working_dir(@repo.path, "config --get remote.#{@name}.url", false).strip
     end
   end
 end

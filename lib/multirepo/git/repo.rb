@@ -18,16 +18,16 @@ module MultiRepo
     end
     
     def current_branch
-      branch = Git.run(@path, "rev-parse --abbrev-ref HEAD", false).strip
+      branch = Git.run_in_working_dir(@path, "rev-parse --abbrev-ref HEAD", false).strip
       branch != "HEAD" ? branch : nil
     end
     
     def head_hash
-      Git.run(@path, "rev-parse HEAD", false).strip
+      Git.run_in_working_dir(@path, "rev-parse HEAD", false).strip
     end
     
     def changes
-      output = Git.run(@path, "status --porcelain", false)
+      output = Git.run_in_working_dir(@path, "status --porcelain", false)
       puts output
       output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
     end
@@ -39,17 +39,17 @@ module MultiRepo
     # Operations
     
     def fetch
-      Git.run(@path, "fetch", true)
+      Git.run_in_working_dir(@path, "fetch", true)
       $?.exitstatus == 0
     end
     
     def clone(url)
-      Git.run("clone #{url} #{@path}", true)
+      Git.run_in_working_dir("clone #{url} #{@path}", true)
       $?.exitstatus == 0
     end
     
     def checkout(ref)
-      Git.run(@path, "checkout #{ref}", false)
+      Git.run_in_working_dir(@path, "checkout #{ref}", false)
       $?.exitstatus == 0
     end
     

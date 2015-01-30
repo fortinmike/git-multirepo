@@ -4,17 +4,6 @@ require "multirepo/config"
 
 module MultiRepo
   class Git
-    def self.run(*args)
-      # No method overloading makes me sad
-      if args.length == 2
-        self.run_in_current_dir(*args)
-      elsif args.length == 3
-        self.run_in_working_dir(*args)
-      else
-        raise MultiRepoException, "Wrong number of arguments in Git.run() call"
-      end
-    end
-    
     def self.run_in_current_dir(git_command, show_output)
       full_command = "git #{git_command}"
       Console.log_info(full_command) if Config.instance.verbose
@@ -31,7 +20,7 @@ module MultiRepo
     
     def self.is_inside_git_repo(path)
       Dir.exist?("#{path}/.git")
-      #return (Git.run(path, "rev-parse --is-inside-work-tree", false).strip == "true") # Can't silence output?
+      #return (Git.run_in_working_dir(path, "rev-parse --is-inside-work-tree", false).strip == "true") # Can't silence output?
     end
   end
 end
