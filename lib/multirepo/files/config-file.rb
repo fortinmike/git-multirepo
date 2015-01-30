@@ -12,28 +12,11 @@ module MultiRepo
     end
     
     def self.load
-      entries = Array.new
-      
-      FILE.open("r").each_line do |line|
-        next if line.start_with?("#") # Barebones comments support
-        next if line.strip == "" # Skip empty lines
-        components = line.split(",").map(&:strip)
-        validate_components(line, components)
-        entries.push(ConfigEntry.new(*components))
-      end
-      
-      return entries
+      Psych.load(FILE.read)
     end
     
     def self.save(entries)
-      # Copy template .multirepo file from resources
-      template_path = Utils.path_for_resource(".multirepo")
-      FileUtils.cp(template_path, ".")
-      
-      # Append the entries to it
-      FILE.open("a") do |f|
-        entries.each { |e| f.puts e.to_s }
-      end
+      File.write(FILE.to_s, Psych.dump(entries))
     end
     
     def self.entry_exists?(entry)
@@ -50,12 +33,6 @@ module MultiRepo
 
     def self.stage
       Git.run("add -A -f #{FILE.to_s}", false)
-    end
-
-    def self.validate_components(line, components)
-      unless components.count == 4
-        raise MultiRepoException, "Wrong entry format in .multirepo file. Can't load entries."
-      end
     end
   end
 end

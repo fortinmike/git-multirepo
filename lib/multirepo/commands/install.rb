@@ -41,8 +41,8 @@ module MultiRepo
     end
     
     def clone_repo(entry)
-      Console.log_substep("Cloning #{entry.remote_url} to #{entry.repo.path}")
-      if !entry.repo.clone(entry.remote_url) then raise MultiRepoException, "Could not clone remote #{entry.remote_url}" end
+      Console.log_substep("Cloning #{entry.url} to #{entry.repo.path}")
+      if !entry.repo.clone(entry.url) then raise MultiRepoException, "Could not clone remote #{entry.url}" end
     end
     
     def checkout_branch(entry)
@@ -58,8 +58,8 @@ module MultiRepo
     # Validation
     
     def check_repo_validity(entry)
-      unless entry.repo.remote("origin").url == entry.remote_url
-        raise MultiRepoException, "#{entry.path} origin URL (#{entry.repo.remote('origin').url}) does not match entry (#{entry.remote_url})!"
+      unless entry.repo.remote("origin").url == entry.url
+        raise MultiRepoException, "#{entry.path} origin URL (#{entry.repo.remote('origin').url}) does not match entry (#{entry.url})!"
       end
     end
   end

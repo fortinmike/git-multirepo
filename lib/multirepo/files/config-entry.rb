@@ -7,12 +7,15 @@ module MultiRepo
   class ConfigEntry
     attr_accessor :id
     attr_accessor :path
-    attr_accessor :remote_url
+    attr_accessor :url
     attr_accessor :branch
     attr_accessor :repo
     
-    def to_s
-      "#{@id}, #{@path}, #{@remote_url}, #{@branch}"
+    def encode_with(coder)
+      coder["id"] = @id
+      coder["path"] = @path
+      coder["url"] = @url
+      coder["branch"] = @branch
     end
     
     def ==(entry)
@@ -21,28 +24,11 @@ module MultiRepo
       entry_path.exist? && self_path.exist? && entry_path.realpath == self_path.realpath
     end
     
-    def initialize(*args)
-      if args.length == 1
-        self.initialize_with_repo(*args)
-      elsif args.length == 4
-        self.initialize_with_args(*args)
-      else
-        raise MultiRepoException, "Wrong number of arguments in ConfigEntry.new() call"
-      end
-    end
-    
-    def initialize_with_repo(repo)
+    def initialize(repo)
       @id = SecureRandom.uuid
       @path = repo.path
-      @remote_url = repo.remote('origin').url
-      @branch = repo.current_branch
-    end
-    
-    def initialize_with_args(id, path, remote_url, branch)
-      @id = id
-      @path = path
-      @remote_url = remote_url
-      @branch = branch
+      @url = repo.exists? ? repo.remote('origin').url : nil
+      @branch = repo.exists? ? repo.current_branch : nil
     end
     
     def repo
