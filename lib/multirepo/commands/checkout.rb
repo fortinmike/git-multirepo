@@ -35,11 +35,9 @@ module MultiRepo
         raise MultiRepoException, "The specified revision was not managed by multirepo. Checkout reverted."
       end
       
-      ConfigFile.load.each do |e|
-        unless e.repo.is_clean?
-          main_repo.checkout(initial_revision)
-          raise "#{e.path} contains uncommitted changes. Checkout reverted."
-        end
+      if Utils.warn_of_uncommitted_changes(ConfigFile.load)
+        main_repo.checkout(initial_revision)
+        raise "#{e.path} contains uncommitted changes. Checkout reverted."
       end
       
       config_entries = ConfigFile.load # Load the post-checkout config entries, which might be different than pre-checkout
