@@ -85,14 +85,14 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 - Works well with CI servers.
 - You're not stuck with git-multirepo. It stores its metadata as CSV and YAML in the main repo. You can clone and checkout appropriate revisions of your dependencies by hand without git-multirepo if you need to. The information is there, in human-readable form.
 
-| How It Handles...                |   git-multirepo  | git submodules | git subtrees |
+| How It Handles... | git-multirepo | git submodules | git subtrees |
 |----------------------------------|:----------------:|:--------------:|:------------:|
-| Working Copy                     | beside main repo |  in main repo  | in main repo |
-| Constantly Evolving Dependencies |       easy       |      hard      |   passable   |
-| Merging Changes to Dependencies  |       easy       |      hard      |   passable   |
-| Contributing Upstream            |       easy       |      easy      |   passable   |
-| Continuous Integration           |      medium      |     medium     |     easy     |
-| Complex Branch-Based Workflows   |      hard*       |      hard      |     easy     |
+| Working Copy | beside main repo | in main repo | in main repo |
+| Constantly Evolving Dependencies | easy | hard | passable |
+| Merging Changes to Dependencies | easy | hard | passable |
+| Contributing Upstream | easy | easy | passable |
+| Continuous Integration | medium | medium | easy |
+| Complex Branch-Based Workflows | hard* | hard | easy |
 
 (*) This should get better in future versions of git-multirepo.
 
@@ -118,4 +118,13 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 | update | Force-updates the multirepo lock file. |
 | uninit | Removes all traces of multirepo in the current multirepo repository. |
 
-## How It Works, In Detail
+## Metadata
+
+git-multirepo stores all of its metadata in two files:
+
+| File | Format | Contents |
+|------|--------|----------|
+| .multirepo | YAML | A collection of your project's dependencies. For each dependency, stores its **local path** relative to the main repo, the **remote URL** and the **brach** your project depends upon.
+| .multirepo.lock | YAML | For each dependency, stores the **commit hash** and **branch** on which the dependency was when the main repo was committed. The dependency's name is also included but only serves as a reference to make inspecting the lock file easier. |
+
+The information contained in .multirepo and .multirepo.lock allow one-step cloning of a project and all its dependencies, and checking out any prior revision of the main project with appropriate revisions of all of its dependencies, respectively.
