@@ -4,18 +4,25 @@ require "multirepo/config"
 
 module MultiRepo
   class Git
+    class << self
+      attr_accessor :last_command_succeeded
+    end
+    
     def self.run_in_current_dir(git_command, show_output)
       full_command = "git #{git_command}"
-      Console.log_info(full_command) if Config.instance.verbose
-      Runner.run(full_command, show_output)
+      run(full_command, show_output)
     end
     
     def self.run_in_working_dir(path, git_command, show_output)
-      # http://stackoverflow.com/a/1387631/167983
-      
       full_command = "git -C \"#{path}\" #{git_command}";
+      run(full_command, show_output)
+    end
+    
+    def self.run(full_command, show_output)
       Console.log_info(full_command) if Config.instance.verbose
-      Runner.run(full_command, show_output)
+      result = Runner.run(full_command, show_output)
+      @last_command_succeeded = Runner.last_command_succeeded
+      return result
     end
     
     def self.is_inside_git_repo(path)

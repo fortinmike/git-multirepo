@@ -40,17 +40,17 @@ module MultiRepo
     
     def fetch
       Git.run_in_working_dir(@path, "fetch", true)
-      $?.exitstatus == 0
+      Runner.last_command_succeeded
     end
     
     def clone(url)
       Git.run_in_current_dir("clone #{url} #{@path}", true)
-      $?.exitstatus == 0
+      Runner.last_command_succeeded
     end
     
     def checkout(ref)
       Git.run_in_working_dir(@path, "checkout #{ref}", false)
-      $?.exitstatus == 0
+      Runner.last_command_succeeded
     end
     
     # Remotes and branches

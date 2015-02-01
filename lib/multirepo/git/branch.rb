@@ -11,7 +11,7 @@ module MultiRepo
     
     def checkout
       Git.run_in_working_dir(@repo.path, "checkout #{@name}", false)
-      $?.exitstatus == 0
+      Git.last_command_succeeded
     end
   end
 end
