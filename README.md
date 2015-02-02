@@ -76,13 +76,13 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 
 ## Advantages
 
-- Works really well with multiple projects that share a common set of constantly evolving dependencies.
+- Makes setting up the project on a new machine a breeze.
+- Works really well for multiple projects that share a common set of constantly evolving dependencies.
 - Each dependency's repository is totally independent from the main repository, which simplifies a lot of things (merges, contributing upstream, etc.) and works well with git GUIs.
 - While the repositories are independent, git-multirepo makes sure to track everything that's required to bring back a previous version of your project in a valid state.
 - Much more approachable to novice developers than submodules or subtrees.
 - Once setup, there is little need for git-multirepo commands, so you are free to use whatever tools you like to work with your git repos.
 - Low possibility of human error (such as forgetting to contribute dependency changes back to the appropriate remotes, forgetting to commit dependencies before committing the main project, etc.)
-- Works well with CI servers.
 - You're not stuck with git-multirepo. It stores its metadata as [YAML](http://www.yaml.org) in the main repo. You can clone and checkout appropriate revisions of your dependencies by hand without git-multirepo if you need to. The information is there, in human-readable form.
 
 | How It Handles... | git-multirepo | git submodules | git subtrees |
@@ -98,10 +98,10 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 
 ## Limitations
 
-- git-multirepo should be considered alpha at the moment. All of the core features work as described, though. Suggestions and contributions are welcome.
-- The project and its dependencies are beside each other on disk (for now).
+- git-multirepo should be considered beta at the moment. All of the core features work as described, though. Suggestions and contributions are welcome.
+- The project and its dependencies must live beside each other on disk (for now).
 - There are currently no features to facilitate branch-heavy workflows.
-- You must install the tool (`gem install git-multirepo`) on the CI server for continuous integration.
+- You must (ideally) install the tool on your CI server: `gem install git-multirepo`
 
 ## Summary of Commands
 
@@ -126,7 +126,7 @@ git-multirepo stores all of its metadata in two files:
 
 | File | Format | Contents |
 |------|--------|----------|
-| .multirepo | YAML | A collection of your project's dependencies. For each dependency, stores its **local path** relative to the main repo, the **remote URL** and the **brach** your project depends upon.
-| .multirepo.lock | YAML | For each dependency, stores the **commit hash** and **branch** on which the dependency was when the main repo was committed. The dependency's name is also included but only serves as a reference to make inspecting the lock file easier. |
+| .multirepo | YAML | A collection of your project's dependencies. For each dependency, stores its **local path** relative to the main repo, the **remote URL** and the **branch** your project depends upon.
+| .multirepo.lock | YAML | For each dependency, stores the **commit hash** and **branch** on which the dependency was when the main repo was committed. The dependency's **name** is also included but only serves as a reference to make inspecting the lock file easier. |
 
 The information contained in .multirepo and .multirepo.lock allow one-step cloning of a project and all its dependencies, and checking out any prior revision of the main project with appropriate revisions of all of its dependencies, respectively.
