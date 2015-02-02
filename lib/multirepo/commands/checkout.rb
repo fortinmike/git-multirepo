@@ -45,7 +45,7 @@ module MultiRepo
         config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
         revision = @checkout_latest ? lock_entry.branch : lock_entry.head
         if config_entry.repo.checkout(revision)
-          Console.log_substep("Checked out #{revision} of #{lock_entry.name}")
+          Console.log_substep("Checked out #{lock_entry.name} #{revision}")
         else
           raise MultiRepoException, "Couldn't check out the appropriate version of dependency #{lock_entry.name}"
         end
