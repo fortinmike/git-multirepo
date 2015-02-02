@@ -10,7 +10,7 @@ module MultiRepo
       output = []
       Open3.popen2e(cmd) do |stdin, stdout_and_stderr, thread|
         stdout_and_stderr.each do |line|
-          puts line# if show_output
+          puts line if show_output
           output << line
         end
         @last_command_succeeded = thread.value.success?

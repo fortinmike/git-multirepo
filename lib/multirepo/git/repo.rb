@@ -28,7 +28,6 @@ module MultiRepo
     
     def changes
       output = Git.run_in_working_dir(@path, "status --porcelain", false)
-      puts output
       output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
     end
     
@@ -39,12 +38,12 @@ module MultiRepo
     # Operations
     
     def fetch
-      Git.run_in_working_dir(@path, "fetch", true)
+      Git.run_in_working_dir(@path, "fetch --progress", true)
       Runner.last_command_succeeded
     end
     
     def clone(url)
-      Git.run_in_current_dir("clone #{url} #{@path}", true)
+      Git.run_in_current_dir("clone #{url} #{@path} --progress", true)
       Runner.last_command_succeeded
     end
     
