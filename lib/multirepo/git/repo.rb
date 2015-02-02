@@ -30,7 +30,18 @@ module MultiRepo
     def changes
       output = Git.run_in_working_dir(@path, "status --porcelain", false)
       lines = output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
-      lines.map { |l| Change.new(l) }
+      changes = lines.map { |l| Change.new(l) }
+      
+      # Workaround for what seems like a git bug (or some incomprehension on my part)
+      # When providing a pathspec pointing to an untracked file when committing the main
+      # repo and the pre-commit hook looks like so: 'git -C "../some-dependency" status --porcelain'
+      # then the output of "git status" shows all unmodified files as both
+      # D[eleted] and ??[untracked] simultaneously. They should simply not be listed as modified in any way.
+      deleted = changes.select { |c| c.status == "D" }
+      untracked = changes.select { |c| c.status == "??" }
+      changes.delete_if { |c| deleted.any? { |d| d.path == c.path } && untracked.any? { |u| u.path == c.path } }
+      
+      return changes
     end
     
     def is_clean?
