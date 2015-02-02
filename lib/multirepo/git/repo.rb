@@ -1,5 +1,6 @@
 require_relative "branch"
 require_relative "remote"
+require_relative "change"
 
 module MultiRepo
   class Repo
@@ -28,7 +29,8 @@ module MultiRepo
     
     def changes
       output = Git.run_in_working_dir(@path, "status --porcelain", false)
-      output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
+      lines = output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
+      lines.map { |l| Change.new(l) }
     end
     
     def is_clean?
