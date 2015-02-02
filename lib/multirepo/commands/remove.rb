@@ -26,14 +26,14 @@ module MultiRepo
       
       if ConfigFile.entry_exists?(entry)
         ConfigFile.remove_entry(entry)
-        Console.log_step("Removed #{@path} from the .multirepo file")
+        Console.log_step("Removed '#{@path}' from the .multirepo file")
         
         if @delete
           FileUtils.rm_rf(@path)
-          Console.log_step("Deleted #{@path} from disk")
+          Console.log_step("Deleted '#{@path}' from disk")
         end
       else
-        raise MultiRepoException, "#{@path} isn't tracked by multirepo"
+        raise MultiRepoException, "'#{@path}' isn't tracked by multirepo"
       end
     rescue MultiRepoException => e
       Console.log_error(e.message)

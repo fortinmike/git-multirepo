@@ -37,7 +37,7 @@ module MultiRepo
       
       if Utils.warn_of_uncommitted_changes(ConfigFile.load)
         main_repo.checkout(initial_revision)
-        raise "#{e.path} contains uncommitted changes. Checkout reverted."
+        raise "'#{e.path}' contains uncommitted changes. Checkout reverted."
       end
       
       config_entries = ConfigFile.load # Load the post-checkout config entries, which might be different than pre-checkout

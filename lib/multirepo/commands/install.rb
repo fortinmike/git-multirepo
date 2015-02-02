@@ -35,12 +35,12 @@ module MultiRepo
     # Repo operations
     
     def fetch_repo(entry)
-      Console.log_substep("Working copy #{entry.repo.path} already exists, fetching instead...")
+      Console.log_substep("Working copy '#{entry.repo.path}' already exists, fetching instead...")
       raise MultiRepoException, "Could not fetch from remote #{entry.repo.remote('origin').url}" unless entry.repo.fetch
     end
     
     def clone_repo(entry)
-      Console.log_substep("Cloning #{entry.url} to #{entry.repo.path}")
+      Console.log_substep("Cloning '#{entry.url} to #{entry.repo.path}'")
       raise MultiRepoException, "Could not clone remote #{entry.url}" unless entry.repo.clone(entry.url)
     end
     
@@ -54,7 +54,7 @@ module MultiRepo
     
     def check_repo_validity(entry)
       unless entry.repo.remote("origin").url == entry.url
-        raise MultiRepoException, "#{entry.path} origin URL (#{entry.repo.remote('origin').url}) does not match entry (#{entry.url})!"
+        raise MultiRepoException, "'#{entry.path}' origin URL (#{entry.repo.remote('origin').url}) does not match entry (#{entry.url})!"
       end
     end
   end

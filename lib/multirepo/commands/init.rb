@@ -21,9 +21,9 @@ module MultiRepo
       if sibling_repos.any?
         entries = []
         sibling_repos.each do |repo|
-          if Console.ask_yes_no("Do you want to add #{repo.path} (#{repo.remote('origin').url} #{repo.current_branch}) as a dependency?")
+          if Console.ask_yes_no("Do you want to add '#{repo.path}' (#{repo.remote('origin').url} #{repo.current_branch}) as a dependency?")
             entries.push(ConfigEntry.new(repo))
-            Console.log_substep("Added the repository #{repo.path} to the .multirepo file")
+            Console.log_substep("Added the repository '#{repo.path}' to the .multirepo file")
           end
         end
         ConfigFile.save(entries)
@@ -46,8 +46,8 @@ module MultiRepo
     end
     
     def check_repo_exists
-      if !Dir.exists?(@repo.path) then raise MultiRepoException, "There is no folder at path #{@repo.path}" end
-      if !@repo.exists? then raise MultiRepoException, "#{@repo.path} is not a repository" end
+      if !Dir.exists?(@repo.path) then raise MultiRepoException, "There is no folder at path '#{@repo.path}'" end
+      if !@repo.exists? then raise MultiRepoException, "'#{@repo.path}' is not a repository" end
     end
   end
 end
