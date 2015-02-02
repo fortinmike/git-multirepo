@@ -83,7 +83,7 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 - Once setup, there is little need for git-multirepo commands, so you are free to use whatever tools you like to work with your git repos.
 - Low possibility of human error (such as forgetting to contribute dependency changes back to the appropriate remotes, forgetting to commit dependencies before committing the main project, etc.)
 - Works well with CI servers.
-- You're not stuck with git-multirepo. It stores its metadata as CSV and YAML in the main repo. You can clone and checkout appropriate revisions of your dependencies by hand without git-multirepo if you need to. The information is there, in human-readable form.
+- You're not stuck with git-multirepo. It stores its metadata as [YAML](http://www.yaml.org) in the main repo. You can clone and checkout appropriate revisions of your dependencies by hand without git-multirepo if you need to. The information is there, in human-readable form.
 
 | How It Handles... | git-multirepo | git submodules | git subtrees |
 |----------------------------------|:----------------:|:--------------:|:------------:|
