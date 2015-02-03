@@ -28,7 +28,7 @@ module MultiRepo
     end
     
     def changes
-      output = Git.run_in_working_dir(@path, "status --porcelain", false)
+      output = Git.run_in_working_dir_with_env_unset(@path, "status --porcelain", false)
       lines = output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
       lines.map { |l| Change.new(l) }
     end

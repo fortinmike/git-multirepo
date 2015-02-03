@@ -18,6 +18,11 @@ module MultiRepo
       run(full_command, show_output)
     end
     
+    def self.run_in_working_dir_with_env_unset(path, git_command, show_output)
+      full_command = "unset $(git rev-parse --local-env-vars); git -C \"#{path}\" #{git_command}";
+      run(full_command, show_output)
+    end
+    
     def self.run(full_command, show_output)
       Console.log_info(full_command) if Config.instance.verbose
       result = Runner.run(full_command, show_output)
