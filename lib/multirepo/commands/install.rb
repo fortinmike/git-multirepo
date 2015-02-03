@@ -13,7 +13,11 @@ module MultiRepo
       
       Console.log_step("Cloning dependencies and installing hook...")
       
-      ConfigFile.load.each { |e| install(e) }
+      config_entries = ConfigFile.load
+
+      Console.log_info("There are #{config_entries.count} dependencies to install");
+      
+      config_entries.each { |e| install(e) }
       
       self.install_pre_commit_hook
       
