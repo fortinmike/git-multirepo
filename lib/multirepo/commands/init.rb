@@ -2,6 +2,7 @@ require "multirepo/utility/console"
 require "multirepo/utility/utils"
 require "multirepo/files/config-file"
 require "multirepo/files/lock-file"
+require "multirepo/commands/command"
 
 module MultiRepo
   class Init < Command
