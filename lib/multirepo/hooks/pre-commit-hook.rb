@@ -6,6 +6,8 @@ require "multirepo/utility/console"
 module MultiRepo
   class PreCommitHook
     def self.run
+      Config.instance.running_git_hook = true
+
       entries =  ConfigFile.load
       uncommitted = Utils.warn_of_uncommitted_changes(entries)
       

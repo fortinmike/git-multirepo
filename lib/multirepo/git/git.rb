@@ -15,11 +15,7 @@ module MultiRepo
     
     def self.run_in_working_dir(path, git_command, show_output)
       full_command = "git -C \"#{path}\" #{git_command}";
-      run(full_command, show_output)
-    end
-    
-    def self.run_in_working_dir_with_env_unset(path, git_command, show_output)
-      full_command = "unset $(git rev-parse --local-env-vars); git -C \"#{path}\" #{git_command}";
+      full_command = "unset $(git rev-parse --local-env-vars); " + full_command if Config.instance.running_git_hook
       run(full_command, show_output)
     end
     
