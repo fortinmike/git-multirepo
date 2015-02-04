@@ -9,9 +9,14 @@ module MultiRepo
       super
       ensure_multirepo_initialized
       
-      LockFile.update
+      Console.log_step("Updating...")
       
-      Console.log_step("Lock file updated")
+      LockFile.update
+      Console.log_substep("Updated lock file")
+      
+      self.install_pre_commit_hook
+      
+      Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
     end
