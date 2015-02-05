@@ -27,8 +27,8 @@ module MultiRepo
             Console.log_substep("Added the repository '#{repo.path}' to the .multirepo file")
           end
         end
-        ConfigFile.save(entries)
         
+        ConfigFile.save(entries)
         ConfigFile.stage
       
         uncommitted = Utils.warn_of_uncommitted_changes(entries)
