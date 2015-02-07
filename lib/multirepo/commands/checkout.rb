@@ -21,7 +21,7 @@ module MultiRepo
       Console.log_step("Checking out #{@ref} and its dependencies...")
       
       unless main_repo.is_clean?
-        raise "Can't checkout #{@ref} because the main repo contains uncommitted changes"
+        raise MultiRepoException, "Can't checkout #{@ref} because the main repo contains uncommitted changes"
       end
       
       unless main_repo.checkout(@ref)
@@ -37,7 +37,7 @@ module MultiRepo
       
       if Utils.warn_of_uncommitted_changes(ConfigFile.load)
         main_repo.checkout(initial_revision)
-        raise "'#{e.path}' contains uncommitted changes. Checkout reverted."
+        raise MultiRepoException, "'#{e.path}' contains uncommitted changes. Checkout reverted."
       end
       
       config_entries = ConfigFile.load # Load the post-checkout config entries, which might be different than pre-checkout

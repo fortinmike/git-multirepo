@@ -13,7 +13,7 @@ module MultiRepo
         editor = `echo ${FCEDIT:-${VISUAL:-${EDITOR:-vi}}}`.strip
         system(editor, ".multirepo")
       elsif OS.windows?
-        raise "The edit command is not implemented on Window yet."
+        raise MultiRepoException, "The edit command is not implemented on Window yet."
       end
     rescue MultiRepoException => e
       Console.log_error(e.message)
