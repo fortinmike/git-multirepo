@@ -11,6 +11,11 @@ module MultiRepo
       super
     end
     
+    def validate!
+      super
+      help! "You must specify a branch or commit id to checkout" unless @ref
+    end
+    
     def run
       super
       ensure_multirepo_initialized
