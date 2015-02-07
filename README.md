@@ -1,3 +1,5 @@
+<div style="text-align: center;"><img src="images/logo.png"></div>
+
 # git-multirepo
 
 Track multiple Git repositories side-by-side.
