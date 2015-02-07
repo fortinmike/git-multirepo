@@ -1,4 +1,4 @@
-<div style="text-align: center;"><img src="images/logo.png"></div>
+![git-multirepo](images/logo.png)
 
 # git-multirepo
 
