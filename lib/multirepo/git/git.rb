@@ -32,8 +32,8 @@ module MultiRepo
     end
     
     def self.is_inside_git_repo(path)
-      Dir.exist?("#{path}/.git")
-      #return (Git.run_in_working_dir(path, "rev-parse --is-inside-work-tree", false).strip == "true") # Can't silence output?
+      return false unless Dir.exist?("#{path}/.git")
+      return Git.run_in_working_dir(path, "rev-parse --is-inside-work-tree", false).strip == "true"
     end
   end
 end
