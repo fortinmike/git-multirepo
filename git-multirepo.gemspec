@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["fortinmike@irradiated.net"]
   spec.summary       = %q{Track multiple Git repositories side-by-side}
   spec.description   = MultiRepo::DESCRIPTION
-  spec.homepage      = "http://www.irradiated.net"
+  spec.homepage      = "https://github.com/fortinmike/git-multirepo"
   spec.license       = "MIT"
   
   spec.required_ruby_version = '~> 2.0'
