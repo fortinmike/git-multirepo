@@ -2,6 +2,8 @@
 
 # git-multirepo
 
+[![Gem Version](https://badge.fury.io/rb/git-multirepo.svg)](http://badge.fury.io/rb/git-multirepo)
+
 Track multiple Git repositories side-by-side.
 
 An alternative approach to manage constantly evolving dependencies.
