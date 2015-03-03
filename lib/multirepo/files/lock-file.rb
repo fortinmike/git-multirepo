@@ -23,7 +23,7 @@ module MultiRepo
       
       File.write(FILE.to_s, Psych.dump(lock_entries))
       
-      Git.run_in_current_dir("add -A -f #{FILE.to_s}", false)
+      Git.run_in_current_dir("add -A #{FILE.to_s}", false)
     end
     
     def self.validate_components(line, components)
