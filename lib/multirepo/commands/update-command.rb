@@ -1,7 +1,7 @@
 require "multirepo/utility/console"
 
 module MultiRepo
-  class Update < Command
+  class UpdateCommand < Command
     self.command = "update"
     self.summary = "Force-updates the multirepo lock file."
     

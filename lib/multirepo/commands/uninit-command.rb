@@ -1,7 +1,7 @@
 require "multirepo/utility/console"
 
 module MultiRepo
-  class Uninit < Command
+  class UninitCommand < Command
     self.command = "uninit"
     self.summary = "Removes all traces of multirepo in the current multirepo repository."
     

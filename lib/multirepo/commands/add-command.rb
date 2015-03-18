@@ -2,7 +2,7 @@ require "multirepo/utility/console"
 require "multirepo/files/config-file"
 
 module MultiRepo
-  class Add < Command
+  class AddCommand < Command
     self.command = "add"
     self.summary = "Track an additional dependency with multirepo."
     
