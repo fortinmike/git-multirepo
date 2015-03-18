@@ -2,7 +2,7 @@ require "multirepo/utility/console"
 require "multirepo/files/config-file"
 
 module MultiRepo
-  class Remove < Command
+  class RemoveCommand < Command
     self.command = "remove"
     self.summary = "Removes the specified dependency from multirepo."
     

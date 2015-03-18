@@ -3,7 +3,7 @@ require "multirepo/utility/utils"
 require "multirepo/git/repo"
 
 module MultiRepo
-  class Setup < Command
+  class InstallCommand < Command
     self.command = "install"
     self.summary = "Clones and checks out dependencies as defined in the .multirepo file, and installs git-multirepo's local pre-commit hook."
     

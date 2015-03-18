@@ -1,7 +1,7 @@
 require "multirepo/utility/console"
 
 module MultiRepo
-  class Fetch < Command
+  class FetchCommand < Command
     self.command = "fetch"
     self.summary = "Performs a git fetch on all dependencies."
     

@@ -6,7 +6,7 @@ require 'info'
 Gem::Specification.new do |spec|
   spec.name          = MultiRepo::NAME
   spec.version       = MultiRepo::VERSION
-  spec.authors       = ["Michaël Fortin"]
+  spec.authors       = ["Michaël Fortin"]
   spec.email         = ["fortinmike@irradiated.net"]
   spec.summary       = %q{Track multiple Git repositories side-by-side}
   spec.description   = MultiRepo::DESCRIPTION

@@ -1,7 +1,7 @@
 require "os"
 
 module MultiRepo
-  class Edit < Command
+  class EditCommand < Command
     self.command = "edit"
     self.summary = "Opens the .multirepo file in the default text editor."
     

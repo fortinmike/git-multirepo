@@ -4,7 +4,7 @@ require "multirepo/utility/console"
 require "multirepo/utility/utils"
 
 module MultiRepo
-  class Open < Command
+  class OpenCommand < Command
     self.command = "open"
     self.summary = "Opens all dependencies in the current OS's file explorer."
     

@@ -5,7 +5,7 @@ require "multirepo/files/lock-file"
 require "multirepo/commands/command"
 
 module MultiRepo
-  class Init < Command
+  class InitCommand < Command
     self.command = "init"
     self.summary = "Initialize the current repository as a multirepo project."
     

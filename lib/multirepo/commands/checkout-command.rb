@@ -1,7 +1,7 @@
 require "multirepo/utility/console"
 
 module MultiRepo
-  class Checkout < Command
+  class CheckoutCommand < Command
     self.command = "checkout"
     self.summary = "Checks out the specified commit or branch of the main repo and checks out matching versions of all dependencies."
     
