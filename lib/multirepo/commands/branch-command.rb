@@ -4,7 +4,7 @@ require "multirepo/files/config-file"
 module MultiRepo
   class BranchCommand < Command
     self.command = "branch"
-    self.summary = "Create and/or checkout a new branch for each dependency."
+    self.summary = "Create and/or checkout a new branch for all repos."
     
     def initialize(argv)
       @branch_name = argv.shift_argument
