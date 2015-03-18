@@ -34,6 +34,8 @@ module MultiRepo
         branch.create unless branch.exists?
         branch.checkout
       end
+
+      Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
     end
