@@ -22,14 +22,15 @@ module MultiRepo
 
       Console.log_step("Branching (\"#{@branch_name}\")...")
 
-      entries = ConfigFile.load
+      main_repo = main_repo = Repo.new(".")
+      repos = ConfigFile.load.map{ |entry| entry.repo }.push(main_repo)
 
-      unless ensure_working_copies_clean(entries)
-        raise MultiRepoException, "Can't branch because not all dependencies are clean"
+      unless ensure_working_copies_clean(repos)
+        raise MultiRepoException, "Can't branch because not all repos are clean"
       end
 
-      entries.each do |entry|
-        branch = entry.repo.branch(@branch_name)
+      repos.each do |repo|
+        branch = repo.branch(@branch_name)
         branch.create unless branch.exists?
         branch.checkout
       end
@@ -37,10 +38,10 @@ module MultiRepo
       Console.log_error(e.message)
     end
 
-    def ensure_working_copies_clean(entries)
-      entries.all? do |entry|
-        clean = entry.repo.is_clean?
-        Console.log_warning("Dependency #{entry.path} has uncommitted changes") unless clean
+    def ensure_working_copies_clean(repos)
+      repos.all? do |repo|
+        clean = repo.is_clean?
+        Console.log_warning("Repo #{entry.path} has uncommitted changes") unless clean
         return clean
       end
     end
