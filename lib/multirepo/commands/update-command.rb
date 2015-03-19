@@ -5,6 +5,11 @@ module MultiRepo
     self.command = "update"
     self.summary = "Force-updates the multirepo lock file."
     
+    def initialize(argv)
+      @commit = argv.flag?("commit")
+      super
+    end
+
     def run
       super
       ensure_multirepo_initialized
@@ -15,6 +20,11 @@ module MultiRepo
       Console.log_substep("Updated lock file")
       
       self.install_pre_commit_hook
+
+      if @commit
+        Console.log_substep("Committing updated lock file")
+        LockFile.commit
+      end
       
       Console.log_step("Done!")
     rescue MultiRepoException => e
