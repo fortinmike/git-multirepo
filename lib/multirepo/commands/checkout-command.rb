@@ -8,12 +8,14 @@ module MultiRepo
     def initialize(argv)
       @ref = argv.shift_argument
       @checkout_latest = argv.flag?("latest")
+      @checkout_exact = argv.flag?("exact")
       super
     end
     
     def validate!
       super
       help! "You must specify a branch or commit id to checkout" unless @ref
+      help! "You can't provide more than one operation modifier (--latest, --exact, etc.)" if @checkout_latest && @checkout_exact
     end
     
     def run
@@ -49,6 +51,7 @@ module MultiRepo
       LockFile.load.each do |lock_entry|
         config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
         revision = @checkout_latest ? lock_entry.branch : lock_entry.head
+        revision = @checkout_exact ? @ref : revision
         if config_entry.repo.checkout(revision)
           Console.log_substep("Checked out #{lock_entry.name} #{revision}")
         else
