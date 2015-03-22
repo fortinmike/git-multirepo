@@ -5,6 +5,13 @@ module MultiRepo
     self.command = "update"
     self.summary = "Force-updates the multirepo lock file."
     
+    def self.options
+      [
+        ['--force', 'Update the lock file even if dependencies contain uncommitted changes.'],
+        ['--commit', 'Commit the lock file after updating it.']
+      ].concat(super)
+    end
+    
     def initialize(argv)
       @commit = argv.flag?("commit")
       @force = argv.flag?("force")

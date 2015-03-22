@@ -6,6 +6,13 @@ module MultiRepo
     self.command = "remove"
     self.summary = "Removes the specified dependency from multirepo."
     
+    def self.options
+      [
+        ['[path]', 'The relative path to the dependency to remove (e.g. ../MyOldDependency).'],
+        ['--delete', 'Delete the dependency on disk in addition to removing it from the multirepo config.']
+      ].concat(super)
+    end
+    
     def initialize(argv)
       @path = argv.shift_argument
       @delete = argv.flag?("delete")

@@ -5,6 +5,14 @@ module MultiRepo
     self.command = "checkout"
     self.summary = "Checks out the specified commit or branch of the main repo and checks out matching versions of all dependencies."
     
+    def self.options
+      [
+        ['[ref]', 'The main repo tag, branch or commit hash to checkout.'],
+        ['--latest', 'Checkout the HEAD of each dependency branch (as recorded in the lock file) instead of the exact required commits.'],
+        ['--exact', 'Checkout the exact specified ref for each repo, regardless of what\'s stored in the lock file.']
+      ].concat(super)
+    end
+    
     def initialize(argv)
       @ref = argv.shift_argument
       @checkout_latest = argv.flag?("latest")

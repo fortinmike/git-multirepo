@@ -6,6 +6,13 @@ module MultiRepo
     self.command = "branch"
     self.summary = "Create and/or checkout a new branch for all repos."
     
+    def self.options
+      [
+        ['[branch name]', 'The name of the branch to create and checkout.'],
+        ['--force', 'Force creating the branch even if the repos contain uncommmitted changes.']
+      ].concat(super)
+    end
+    
     def initialize(argv)
       @branch_name = argv.shift_argument
       @force = argv.flag?("force")
