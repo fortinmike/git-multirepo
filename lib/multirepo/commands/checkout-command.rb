@@ -42,7 +42,7 @@ module MultiRepo
         raise MultiRepoException, "The specified revision was not managed by multirepo. Checkout reverted."
       end
       
-      if Utils.warn_of_uncommitted_changes(ConfigFile.load)
+      if Utils.check_for_uncommitted_changes(ConfigFile.load)
         main_repo.checkout(initial_revision)
         raise MultiRepoException, "'#{e.path}' contains uncommitted changes. Checkout reverted."
       end

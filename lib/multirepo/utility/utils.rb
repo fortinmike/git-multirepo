@@ -17,7 +17,7 @@ module MultiRepo
       sibling_repos.delete_if{ |r| Pathname.new(r.path).realpath == Pathname.new(".").realpath }
     end
     
-    def self.warn_of_uncommitted_changes(config_entries)
+    def self.check_for_uncommitted_changes(config_entries)
       uncommitted = false
       config_entries.each do |e|
         next unless e.repo.exists?
