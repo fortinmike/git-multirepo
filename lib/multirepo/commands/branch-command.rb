@@ -25,7 +25,7 @@ module MultiRepo
       main_repo = main_repo = Repo.new(".")
       repos = ConfigFile.load.map{ |entry| entry.repo }.push(main_repo)
 
-      unless ensure_working_copies_clean(repos)
+      unless Utils.ensure_working_copies_clean(repos)
         raise MultiRepoException, "Can't branch because not all repos are clean"
       end
 
@@ -38,14 +38,6 @@ module MultiRepo
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
-    end
-
-    def ensure_working_copies_clean(repos)
-      repos.all? do |repo|
-        clean = repo.is_clean?
-        Console.log_warning("Repo #{entry.path} has uncommitted changes") unless clean
-        return clean
-      end
     end
   end
 end
