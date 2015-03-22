@@ -9,7 +9,7 @@ module MultiRepo
       Config.instance.running_git_hook = true
 
       entries =  ConfigFile.load
-      uncommitted = Utils.check_for_uncommitted_changes(entries)
+      uncommitted = Utils.ensure_dependencies_clean(entries)
       
       if uncommitted
         Console.log_error("You must commit changes to your dependencies before you can commit the main repo")

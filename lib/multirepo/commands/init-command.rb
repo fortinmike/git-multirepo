@@ -31,7 +31,7 @@ module MultiRepo
         ConfigFile.save(entries)
         ConfigFile.stage
       
-        uncommitted = Utils.check_for_uncommitted_changes(entries)
+        uncommitted = Utils.ensure_dependencies_clean(entries)
         raise MultiRepoException, "Can't finish initialization!" if uncommitted
         
         self.update_lock_file

@@ -8,6 +8,7 @@ module MultiRepo
     
     def initialize(argv)
       @branch_name = argv.shift_argument
+      @force = argv.flag?("force")
       super
     end
     
@@ -19,13 +20,13 @@ module MultiRepo
     def run
       super
       ensure_multirepo_initialized
-
-      Console.log_step("Branching (\"#{@branch_name}\")...")
-
+      
+      Console.log_step("Branching and checking out #{@branch_name}...")
+      
       main_repo = main_repo = Repo.new(".")
       repos = ConfigFile.load.map{ |entry| entry.repo }.push(main_repo)
-
-      unless Utils.ensure_working_copies_clean(repos)
+      
+      if !Utils.ensure_working_copies_clean(repos) && !@force
         raise MultiRepoException, "Can't branch because not all repos are clean"
       end
 

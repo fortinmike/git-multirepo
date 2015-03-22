@@ -7,6 +7,7 @@ module MultiRepo
     
     def initialize(argv)
       @commit = argv.flag?("commit")
+      @force = argv.flag?("force")
       super
     end
 
@@ -16,8 +17,17 @@ module MultiRepo
       
       Console.log_step("Updating...")
       
-      LockFile.update
-      Console.log_substep("Updated lock file")
+      dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load)
+      
+      if dependencies_clean
+        LockFile.update
+        Console.log_substep("Updated lock file with latest dependency commits")
+      elsif !dependencies_clean && @force
+        LockFile.update
+        Console.log_warning("Updated lock file with latest dependency commits regardless of uncommitted changes")
+      else
+        raise MultiRepoException, "Can't update because not all dependencies are clean"
+      end
       
       self.install_pre_commit_hook
 

@@ -17,7 +17,7 @@ module MultiRepo
       sibling_repos.delete_if{ |r| Pathname.new(r.path).realpath == Pathname.new(".").realpath }
     end
     
-    def self.check_for_uncommitted_changes(config_entries)
+    def self.ensure_dependencies_clean(config_entries)
       config_entries.all? do |e|
         return true unless e.repo.exists?
         clean = e.repo.is_clean?
@@ -29,7 +29,7 @@ module MultiRepo
     def self.ensure_working_copies_clean(repos)
       repos.all? do |repo|
         clean = repo.is_clean?
-        Console.log_warning("Repo #{entry.path} contains uncommitted changes") unless clean
+        Console.log_warning("Repo #{repo.path} contains uncommitted changes") unless clean
         return clean
       end
     end
