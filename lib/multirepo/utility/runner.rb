@@ -1,4 +1,5 @@
 require "open3"
+require "multirepo/utility/console"
 
 module MultiRepo
   class Runner
@@ -16,14 +17,15 @@ module MultiRepo
       lines = []
       Open3.popen2e(cmd) do |stdin, stdout_and_stderr, thread|
         stdout_and_stderr.each do |line|
-          puts line if verbosity == Verbosity::ALWAYS_OUTPUT
+          Console.log_info(line) if verbosity == Verbosity::ALWAYS_OUTPUT || Config.instance.verbose
           lines << line
         end
         @last_command_succeeded = thread.value.success?
       end
       
       output = lines.join("")
-      puts output unless @last_command_succeeded
+      
+      Console.log_error(output) if !@last_command_succeeded && verbosity == Verbosity::OUTPUT_ON_ERROR
       
       return output
     end
