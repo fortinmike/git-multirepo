@@ -6,8 +6,16 @@ module MultiRepo
     self.command = "branch"
     self.summary = "Create and/or checkout a new branch for all repos."
     
+    def self.options
+      [
+        ['[branch name]', 'The name of the branch to create and checkout.'],
+        ['--force', 'Force creating the branch even if the repos contain uncommmitted changes.']
+      ].concat(super)
+    end
+    
     def initialize(argv)
       @branch_name = argv.shift_argument
+      @force = argv.flag?("force")
       super
     end
     
@@ -19,13 +27,13 @@ module MultiRepo
     def run
       super
       ensure_multirepo_initialized
-
-      Console.log_step("Branching (\"#{@branch_name}\")...")
-
+      
+      Console.log_step("Branching and checking out #{@branch_name}...")
+      
       main_repo = main_repo = Repo.new(".")
       repos = ConfigFile.load.map{ |entry| entry.repo }.push(main_repo)
-
-      unless ensure_working_copies_clean(repos)
+      
+      if !Utils.ensure_working_copies_clean(repos) && !@force
         raise MultiRepoException, "Can't branch because not all repos are clean"
       end
 
@@ -38,14 +46,6 @@ module MultiRepo
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
-    end
-
-    def ensure_working_copies_clean(repos)
-      repos.all? do |repo|
-        clean = repo.is_clean?
-        Console.log_warning("Repo #{entry.path} has uncommitted changes") unless clean
-        return clean
-      end
     end
   end
 end

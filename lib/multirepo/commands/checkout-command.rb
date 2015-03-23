@@ -5,15 +5,25 @@ module MultiRepo
     self.command = "checkout"
     self.summary = "Checks out the specified commit or branch of the main repo and checks out matching versions of all dependencies."
     
+    def self.options
+      [
+        ['[ref]', 'The main repo tag, branch or commit hash to checkout.'],
+        ['--latest', 'Checkout the HEAD of each dependency branch (as recorded in the lock file) instead of the exact required commits.'],
+        ['--exact', 'Checkout the exact specified ref for each repo, regardless of what\'s stored in the lock file.']
+      ].concat(super)
+    end
+    
     def initialize(argv)
       @ref = argv.shift_argument
       @checkout_latest = argv.flag?("latest")
+      @checkout_exact = argv.flag?("exact")
       super
     end
     
     def validate!
       super
       help! "You must specify a branch or commit id to checkout" unless @ref
+      help! "You can't provide more than one operation modifier (--latest, --exact, etc.)" if @checkout_latest && @checkout_exact
     end
     
     def run
@@ -40,7 +50,7 @@ module MultiRepo
         raise MultiRepoException, "The specified revision was not managed by multirepo. Checkout reverted."
       end
       
-      if Utils.warn_of_uncommitted_changes(ConfigFile.load)
+      if !Utils.ensure_dependencies_clean(ConfigFile.load)
         main_repo.checkout(initial_revision)
         raise MultiRepoException, "'#{e.path}' contains uncommitted changes. Checkout reverted."
       end
@@ -49,6 +59,7 @@ module MultiRepo
       LockFile.load.each do |lock_entry|
         config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
         revision = @checkout_latest ? lock_entry.branch : lock_entry.head
+        revision = @checkout_exact ? @ref : revision
         if config_entry.repo.checkout(revision)
           Console.log_substep("Checked out #{lock_entry.name} #{revision}")
         else
