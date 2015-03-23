@@ -26,7 +26,7 @@ module MultiRepo
     
     def self.run(full_command, show_output)
       Console.log_info(full_command) if Config.instance.verbose
-      result = Runner.run(full_command, show_output || Config.verbose)
+      result = Runner.run(full_command, show_output || Config.instance.verbose)
       @last_command_succeeded = Runner.last_command_succeeded
       return result
     end
