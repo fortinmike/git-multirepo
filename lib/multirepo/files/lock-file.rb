@@ -23,11 +23,11 @@ module MultiRepo
       
       File.write(FILE.to_s, Psych.dump(lock_entries))
       
-      Git.run_in_current_dir("add -A #{FILE.to_s}", false)
+      Git.run_in_current_dir("add -A #{FILE.to_s}", Runner::Verbosity::OUTPUT_ON_ERROR)
     end
 
     def self.commit
-      Git.run_in_current_dir("commit -m \"Updated multirepo lock file with the latest version of all dependencies\" -o -- #{FILE.to_s}", false)
+      Git.run_in_current_dir("commit -m \"Updated multirepo lock file with the latest version of all dependencies\" -o -- #{FILE.to_s}", Runner::Verbosity::OUTPUT_ON_ERROR)
     end
     
     def self.validate_components(line, components)

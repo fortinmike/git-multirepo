@@ -8,12 +8,17 @@ module MultiRepo
       attr_accessor :last_command_succeeded
     end
     
-    def self.run_in_current_dir(git_command, show_output)
-      full_command = "git #{git_command}"
-      run(full_command, show_output)
+    def self.is_inside_git_repo(path)
+      return false unless Dir.exist?("#{path}/.git")
+      return Git.run_in_working_dir(path, "rev-parse --is-inside-work-tree", Runner::Verbosity::NEVER_OUTPUT).strip == "true"
     end
     
-    def self.run_in_working_dir(path, git_command, show_output)
+    def self.run_in_current_dir(git_command, verbosity)
+      full_command = "git #{git_command}"
+      run(full_command, verbosity)
+    end
+    
+    def self.run_in_working_dir(path, git_command, verbosity)
       full_command = "git -C \"#{path}\" #{git_command}";
       
       # True fix for the -C flag issue in pre-commit hook where the status command would
@@ -21,19 +26,14 @@ module MultiRepo
       # http://thread.gmane.org/gmane.comp.version-control.git/263319/focus=263323
       full_command = "sh -c 'unset $(git rev-parse --local-env-vars); #{full_command};'" if Config.instance.running_git_hook
       
-      run(full_command, show_output)
+      run(full_command, verbosity)
     end
     
-    def self.run(full_command, show_output)
+    def self.run(full_command, verbosity)
       Console.log_info(full_command) if Config.instance.verbose
-      result = Runner.run(full_command, show_output || Config.instance.verbose)
+      result = Runner.run(full_command, verbosity)
       @last_command_succeeded = Runner.last_command_succeeded
       return result
-    end
-    
-    def self.is_inside_git_repo(path)
-      return false unless Dir.exist?("#{path}/.git")
-      return Git.run_in_working_dir(path, "rev-parse --is-inside-work-tree", false).strip == "true"
     end
   end
 end

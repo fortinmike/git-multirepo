@@ -19,16 +19,16 @@ module MultiRepo
     end
     
     def current_branch
-      branch = Git.run_in_working_dir(@path, "rev-parse --abbrev-ref HEAD", false).strip
+      branch = Git.run_in_working_dir(@path, "rev-parse --abbrev-ref HEAD", Runner::Verbosity::NEVER_OUTPUT).strip
       branch != "HEAD" ? branch : nil
     end
     
     def head_hash
-      Git.run_in_working_dir(@path, "rev-parse HEAD", false).strip
+      Git.run_in_working_dir(@path, "rev-parse HEAD", Runner::Verbosity::NEVER_OUTPUT).strip
     end
     
     def changes
-      output = Git.run_in_working_dir(@path, "status --porcelain", false)
+      output = Git.run_in_working_dir(@path, "status --porcelain", Runner::Verbosity::NEVER_OUTPUT)
       lines = output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
       lines.map { |l| Change.new(l) }
     end
@@ -40,17 +40,17 @@ module MultiRepo
     # Operations
     
     def fetch
-      Git.run_in_working_dir(@path, "fetch --progress", true)
+      Git.run_in_working_dir(@path, "fetch --progress", Runner::Verbosity::ALWAYS_OUTPUT)
       Runner.last_command_succeeded
     end
     
     def clone(url)
-      Git.run_in_current_dir("clone #{url} #{@path} --progress", true)
+      Git.run_in_current_dir("clone #{url} #{@path} --progress", Runner::Verbosity::ALWAYS_OUTPUT)
       Runner.last_command_succeeded
     end
     
     def checkout(ref)
-      Git.run_in_working_dir(@path, "checkout #{ref}", false)
+      Git.run_in_working_dir(@path, "checkout #{ref}", Runner::Verbosity::OUTPUT_ON_ERROR)
       Runner.last_command_succeeded
     end
     
