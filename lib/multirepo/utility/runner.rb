@@ -23,7 +23,7 @@ module MultiRepo
         @last_command_succeeded = thread.value.success?
       end
       
-      output = lines.join("")
+      output = lines.join("").rstrip
       
       Console.log_error(output) if !@last_command_succeeded && verbosity == Verbosity::OUTPUT_ON_ERROR
       
