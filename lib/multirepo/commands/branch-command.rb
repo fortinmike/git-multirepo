@@ -9,13 +9,15 @@ module MultiRepo
     def self.options
       [
         ['[branch name]', 'The name of the branch to create and checkout.'],
-        ['--force', 'Force creating the branch even if the repos contain uncommmitted changes.']
+        ['--force', 'Force creating the branch even if the repos contain uncommmitted changes.'],
+        ['--no-track', 'Do not configure as a remote-tracking branch on creation.']
       ].concat(super)
     end
     
     def initialize(argv)
       @branch_name = argv.shift_argument
       @force = argv.flag?("force")
+      @remote_tracking = !argv.flag?("no-track")
       super
     end
     
@@ -39,7 +41,7 @@ module MultiRepo
 
       repos.each do |repo|
         branch = repo.branch(@branch_name)
-        branch.create unless branch.exists?
+        branch.create(remote_tracking: @remote_tracking) unless branch.exists?
         branch.checkout
       end
 
