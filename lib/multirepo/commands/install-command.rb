@@ -8,7 +8,7 @@ module MultiRepo
     self.summary = "Clones and checks out dependencies as defined in the .multirepo file, and installs git-multirepo's local pre-commit hook."
     
     def run
-      super
+      validate_in_work_tree
       ensure_multirepo_initialized
       
       Console.log_step("Cloning dependencies and installing hook...")

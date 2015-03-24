@@ -21,7 +21,7 @@ module MultiRepo
     end
     
     def run
-      super
+      validate_in_work_tree
       ensure_multirepo_initialized
       ensure_repo_exists
       

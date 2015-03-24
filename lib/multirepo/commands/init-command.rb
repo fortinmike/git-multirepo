@@ -10,7 +10,7 @@ module MultiRepo
     self.summary = "Initialize the current repository as a multirepo project."
     
     def run
-      super
+      validate_in_work_tree
       Console.log_step("Initializing new multirepo config...")
       
       if ConfigFile.exists?

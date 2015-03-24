@@ -16,10 +16,6 @@ module MultiRepo
       super
     end
     
-    def run
-      validate_in_work_tree
-    end
-    
     def validate_in_work_tree
       raise MultiRepoException, "Not a git repository" unless Git.is_inside_git_repo(".")
     end

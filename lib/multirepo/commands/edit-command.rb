@@ -6,7 +6,7 @@ module MultiRepo
     self.summary = "Opens the .multirepo file in the default text editor."
     
     def run
-      super
+      validate_in_work_tree
       ensure_multirepo_initialized
       
       if OS.posix?
