@@ -41,7 +41,7 @@ module MultiRepo
 
       repos.each do |repo|
         branch = repo.branch(@branch_name)
-        branch.create(remote_tracking: @remote_tracking) unless branch.exists?
+        branch.create(@remote_tracking) unless branch.exists?
         branch.checkout
       end
 
