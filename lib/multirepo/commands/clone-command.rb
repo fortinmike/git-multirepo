@@ -27,7 +27,7 @@ module MultiRepo
     end
 
     def run
-      Console.log_step("Cloning...")
+      Console.log_step("Cloning #{url} ...")
 
       raise MultiRepoException, "A directory named #{@name} already exists" if Dir.exists?(@name)
 
@@ -38,7 +38,7 @@ module MultiRepo
       main_repo = Repo.new(main_repo_path)
       main_repo.clone(@url)
 
-      # TODO: perform multi install!
+      # TODO: Perform a multi install in the target main repo directory
             
       Console.log_step("Done!")
     rescue MultiRepoException => e
