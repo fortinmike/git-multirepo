@@ -1,6 +1,7 @@
 require "multirepo/utility/console"
 require "multirepo/utility/utils"
 require "multirepo/git/repo"
+require_relative "install-command"
 
 module MultiRepo
   class CloneCommand < Command
@@ -27,7 +28,7 @@ module MultiRepo
     end
 
     def run
-      Console.log_step("Cloning #{url} ...")
+      Console.log_step("Cloning #{@url} ...")
 
       raise MultiRepoException, "A directory named #{@name} already exists" if Dir.exists?(@name)
 
@@ -37,8 +38,13 @@ module MultiRepo
 
       main_repo = Repo.new(main_repo_path)
       main_repo.clone(@url)
-
-      # TODO: Perform a multi install in the target main repo directory
+      
+      original_path = Dir.pwd
+      Dir.chdir(main_repo_path)
+      
+      InstallCommand.new(CLAide::ARGV.new([])).install_internal
+      
+      Dir.chdir(original_path)
             
       Console.log_step("Done!")
     rescue MultiRepoException => e
