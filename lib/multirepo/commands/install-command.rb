@@ -8,11 +8,19 @@ module MultiRepo
     self.summary = "Clones and checks out dependencies as defined in the .multirepo file, and installs git-multirepo's local pre-commit hook."
     
     def run
-      super
+      validate_in_work_tree
       ensure_multirepo_initialized
       
       Console.log_step("Cloning dependencies and installing hook...")
       
+      install_internal
+      
+      Console.log_step("Done!")
+    rescue MultiRepoException => e
+      Console.log_error(e.message)
+    end
+    
+    def install_internal
       config_entries = ConfigFile.load
 
       Console.log_info("There are #{config_entries.count} dependencies to install");
@@ -20,10 +28,6 @@ module MultiRepo
       config_entries.each { |e| install(e) }
       
       self.install_pre_commit_hook
-      
-      Console.log_step("Done!")
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
     
     def install(entry)

@@ -19,7 +19,7 @@ module MultiRepo
     end
 
     def run
-      super
+      validate_in_work_tree
       ensure_multirepo_initialized
       
       Console.log_step("Updating...")

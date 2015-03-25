@@ -6,7 +6,7 @@ module MultiRepo
     self.summary = "Performs a git fetch on all dependencies."
     
     def run
-      super
+      validate_in_work_tree
       ensure_multirepo_initialized
       
       Console.log_step("Fetching dependencies...")
