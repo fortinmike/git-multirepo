@@ -17,7 +17,7 @@ module MultiRepo
       lines = []
       Open3.popen2e(cmd) do |stdin, stdout_and_stderr, thread|
         stdout_and_stderr.each do |line|
-          Console.log_info(line) if verbosity == Verbosity::ALWAYS_OUTPUT || Config.instance.verbose
+          Console.log_info(line.rstrip) if verbosity == Verbosity::ALWAYS_OUTPUT || Config.instance.verbose
           lines << line
         end
         @last_command_succeeded = thread.value.success?
