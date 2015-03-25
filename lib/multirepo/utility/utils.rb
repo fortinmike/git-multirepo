@@ -9,7 +9,6 @@ module MultiRepo
     
     def self.install_pre_commit_hook(repo_path)
       destination = repo_path ? File.join(repo_path, ".git/hooks") : ".git/hooks"
-      puts "Precommit #{destination}"
       FileUtils.cp(path_for_resource("pre-commit"), destination)
     end
     

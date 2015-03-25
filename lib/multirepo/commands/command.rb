@@ -22,7 +22,12 @@ module MultiRepo
         
     def install_pre_commit_hook(repo_path = nil)
       Utils.install_pre_commit_hook(repo_path)
-      Console.log_substep("Installed pre-commit hook")
+
+      if repo_path
+        Console.log_substep("Installed pre-commit hook for #{repo_path}")
+      else
+        Console.log_substep("Installed pre-commit hook")
+      end
     end
     
     def update_lock_file
