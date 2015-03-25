@@ -27,7 +27,7 @@ module MultiRepo
       
       config_entries.each { |e| install(e) }
       
-      self.install_pre_commit_hook
+      install_pre_commit_hook
     end
     
     def install(entry)
@@ -37,6 +37,11 @@ module MultiRepo
       else
         clone_repo(entry)
       end
+
+      # Install the pre-commit hook in the dependency repo if it is itself tracked with multirepo
+      entry_config_path = File.join(entry.repo.path, ".multirepo")
+      install_pre_commit_hook(entry.repo.path) if File.exists?(entry_config_path)
+
       checkout_branch(entry)
     end
     

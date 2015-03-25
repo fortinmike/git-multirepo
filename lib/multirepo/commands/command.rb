@@ -20,8 +20,8 @@ module MultiRepo
       raise MultiRepoException, "Not a git repository" unless Git.is_inside_git_repo(".")
     end
         
-    def install_pre_commit_hook
-      Utils.install_pre_commit_hook
+    def install_pre_commit_hook(repo_path = nil)
+      Utils.install_pre_commit_hook(repo_path)
       Console.log_substep("Installed pre-commit hook")
     end
     
