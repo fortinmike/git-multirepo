@@ -23,7 +23,7 @@ module MultiRepo
     def install_internal
       config_entries = ConfigFile.load
 
-      Console.log_info("There are #{config_entries.count} dependencies to install");
+      Console.log_substep("Installing #{config_entries.count} dependencies...");
       
       config_entries.each { |e| install(e) }
       
