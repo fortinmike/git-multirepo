@@ -36,12 +36,6 @@ module MultiRepo
         raise MultiRepoException, "Can't update because not all dependencies are clean"
       end
       
-      entries = ConfigFile.load()
-      entries.each do |entry|
-        entry_config_path = File.join(entry.repo.path, ".multirepo")
-        install_pre_commit_hook(entry.repo.path) if File.exists?(entry_config_path)
-      end
-
       self.install_pre_commit_hook
 
       if @commit

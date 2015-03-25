@@ -7,9 +7,8 @@ module MultiRepo
       File.join(gem_path, "resources/#{resource_name}")
     end
     
-    def self.install_pre_commit_hook(repo_path)
-      destination = repo_path ? File.join(repo_path, ".git/hooks") : ".git/hooks"
-      FileUtils.cp(path_for_resource("pre-commit"), destination)
+    def self.install_pre_commit_hook
+      FileUtils.cp(path_for_resource("pre-commit"), ".git/hooks")
     end
     
     def self.sibling_repos
