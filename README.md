@@ -117,6 +117,7 @@ Here is a quick rundown of commands available to you in git-multirepo:
 | add | Track an additional dependency with multirepo. |
 | branch | Create and/or checkout a new branch for all repos. |
 | checkout | Checks out the specified commit or branch of the main repo and checks out matching versions of all dependencies. |
+| clone | Clones the specified repository in a subfolder, then install it. |
 | edit | Opens the .multirepo file in the default text editor. |
 | fetch | Performs a git fetch on all dependencies. |
 | install | Clones and checks out dependencies as defined in the .multirepo file, and installs git-multirepo's local pre-commit hook. |
