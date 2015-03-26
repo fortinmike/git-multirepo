@@ -126,6 +126,8 @@ Here is a quick rundown of commands available to you in git-multirepo:
 | update | Force-updates the multirepo lock file. |
 | uninit | Removes all traces of multirepo in the current multirepo repository. |
 
+To read more about each command, use the --help flag (e.g. "$ multi clone --help").
+
 ## Metadata
 
 git-multirepo stores all of its metadata in two files:
