@@ -58,8 +58,18 @@ module MultiRepo
       config_entries = ConfigFile.load # Load the post-checkout config entries, which might be different than pre-checkout
       LockFile.load.each do |lock_entry|
         config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
+        
+        # First, make sure the repo exists on disk (in case the checked-out revision had an additional dependency)
+        unless config_entry.repo.exists?
+          Console.log_substep("Cloning missing dependency #{config_entry.path} from #{config_entry.url}")
+          config_entry.repo.clone(config_entry.url)
+        end
+        
+        # Find out the actual revision to checkout based on command flags
         revision = @checkout_latest ? lock_entry.branch : lock_entry.head
         revision = @checkout_exact ? @ref : revision
+        
+        # Checkout!
         if config_entry.repo.checkout(revision)
           Console.log_substep("Checked out #{lock_entry.name} #{revision}")
         else
