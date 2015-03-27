@@ -1,26 +1,17 @@
-require "multirepo/files/config-file"
 require "multirepo/files/lock-file"
-require "multirepo/utility/utils"
 require "multirepo/utility/console"
 
 module MultiRepo
-  class PreCommitHook
+  class PostMergeHook
     def self.run
       Config.instance.running_git_hook = true
-      
-      dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load)
-      
-      if !dependencies_clean
-        Console.log_error("You must commit changes to your dependencies before you can commit the main repo")
-        exit 1
-      end
       
       LockFile.update
       Console.log_info("Updated the lock file with current HEAD revisions for all dependencies")
       
       LockFile.commit("Automatic post-merge multirepo lock file update")
       Console.log_info("Committed the updated lock file")
-
+      
       exit 0 # Success!
     end
   end

@@ -39,7 +39,7 @@ module MultiRepo
         Console.log_info("There are no sibling repositories to add")
       end
       
-      self.install_pre_commit_hook
+      install_hooks
       
       Console.log_step("Done!")
     rescue MultiRepoException => e

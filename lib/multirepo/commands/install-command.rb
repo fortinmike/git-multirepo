@@ -5,7 +5,7 @@ require "multirepo/git/repo"
 module MultiRepo
   class InstallCommand < Command
     self.command = "install"
-    self.summary = "Clones and checks out dependencies as defined in the .multirepo file, and installs git-multirepo's local pre-commit hook."
+    self.summary = "Clones and checks out dependencies as defined in the .multirepo file, and installs git-multirepo's local hooks."
     
     def run
       validate_in_work_tree
@@ -27,7 +27,7 @@ module MultiRepo
       
       config_entries.each { |e| install(e) }
       
-      self.install_pre_commit_hook
+      install_hooks
     end
     
     def install(entry)
