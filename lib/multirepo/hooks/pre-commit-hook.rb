@@ -16,11 +16,8 @@ module MultiRepo
       end
       
       LockFile.update
-      Console.log_info("Updated the lock file with current HEAD revisions for all dependencies")
+      Console.log_info("Updated and staged lock file with current HEAD revisions for all dependencies")
       
-      LockFile.commit("Automatic post-merge multirepo lock file update")
-      Console.log_info("Committed the updated lock file")
-
       exit 0 # Success!
     end
   end
