@@ -36,7 +36,7 @@ module MultiRepo
         raise MultiRepoException, "Can't update because not all dependencies are clean"
       end
       
-      self.install_pre_commit_hook
+      install_hooks
 
       if @commit
         Console.log_substep("Committing updated lock file")

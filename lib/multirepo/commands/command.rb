@@ -19,10 +19,11 @@ module MultiRepo
     def validate_in_work_tree
       raise MultiRepoException, "Not a git repository" unless Git.is_inside_git_repo(".")
     end
-        
-    def install_pre_commit_hook
-      Utils.install_pre_commit_hook
-      Console.log_substep("Installed pre-commit hook")
+    
+    def install_hooks
+      Utils.install_hook("pre-commit")
+      Utils.install_hook("post-merge")
+      Console.log_substep("Installed git hooks")
     end
     
     def ensure_multirepo_initialized
