@@ -23,7 +23,7 @@ module MultiRepo
     def run
       validate_in_work_tree
       ensure_multirepo_initialized
-      ensure_repo_exists
+      ensure_repo_valid
       
       entry = ConfigEntry.new(Repo.new(@path))
       if ConfigFile.entry_exists?(entry)
@@ -37,9 +37,16 @@ module MultiRepo
       Console.log_error(e.message)
     end
     
-    def ensure_repo_exists
+    def ensure_repo_valid
+      raise MultiRepoException, "The provided path is not a direct sibling of the main repository" unless validate_is_sibling_repo(@path)
       raise MultiRepoException, "There is no folder at path '#{@path}'" unless Dir.exists?(@path)
       raise MultiRepoException, "'#{@path}' is not a repository" unless Repo.new(@path).exists?
+    end
+    
+    def validate_is_sibling_repo(path)
+      parent_dir = File.expand_path("..")
+      path = File.expand_path("..", path)
+      return parent_dir == path
     end
   end
 end
