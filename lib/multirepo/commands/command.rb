@@ -25,11 +25,6 @@ module MultiRepo
       Console.log_substep("Installed pre-commit hook")
     end
     
-    def update_lock_file
-      LockFile.update
-      Console.log_substep("Updated and staged lock file with current HEAD revisions for all dependencies")
-    end
-
     def ensure_multirepo_initialized
       raise MultiRepoException, "multirepo is not initialized in this repository." unless ConfigFile.exists?
     end
