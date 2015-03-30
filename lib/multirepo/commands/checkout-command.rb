@@ -5,6 +5,12 @@ module MultiRepo
     self.command = "checkout"
     self.summary = "Checks out the specified commit or branch of the main repo and checks out matching versions of all dependencies."
     
+    class CheckoutMode
+      AS_LOCK = 0
+      LATEST = 1
+      EXACT = 2
+    end
+    
     def self.options
       [
         ['[ref]', 'The main repo tag, branch or commit hash to checkout.'],
@@ -30,20 +36,37 @@ module MultiRepo
       validate_in_work_tree
       ensure_multirepo_initialized
       
-      main_repo = Repo.new(".")
-      initial_revision = main_repo.current_branch || main_repo.head_hash
-                  
       Console.log_step("Checking out #{@ref} and its dependencies...")
       
+      # Find out the checkout mode based on command-line options
+      mode = if @checkout_latest then
+        CheckoutMode::LATEST
+      elsif @checkout_exact then
+        CheckoutMode::EXACT
+      else
+        CheckoutMode::AS_LOCK
+      end
+      
+      checkout_core(@ref, mode)
+      
+      Console.log_step("Done!")
+    rescue MultiRepoException => e
+      Console.log_error(e.message)
+    end
+    
+    def checkout_core(ref, mode)
+      main_repo = Repo.new(".")
+      initial_revision = main_repo.current_branch || main_repo.head_hash
+      
       unless main_repo.is_clean?
-        raise MultiRepoException, "Can't checkout #{@ref} because the main repo contains uncommitted changes"
+        raise MultiRepoException, "Can't checkout #{ref} because the main repo contains uncommitted changes"
       end
       
-      unless main_repo.checkout(@ref)
-        raise MultiRepoException, "Couldn't perform checkout of main repo #{@ref}!"
+      unless main_repo.checkout(ref)
+        raise MultiRepoException, "Couldn't perform checkout of main repo #{ref}!"
       end
       
-      Console.log_substep("Checked out main repo #{@ref}")
+      Console.log_substep("Checked out main repo #{ref}")
       
       unless LockFile.exists?
         main_repo.checkout(initial_revision)
@@ -59,15 +82,19 @@ module MultiRepo
       LockFile.load.each do |lock_entry|
         config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
         
-        # First, make sure the repo exists on disk (in case the checked-out revision had an additional dependency)
+        # First, make sure the repo exists on disk, and clone it if it doesn't
+        # (in case the checked-out revision had an additional dependency)
         unless config_entry.repo.exists?
           Console.log_substep("Cloning missing dependency #{config_entry.path} from #{config_entry.url}")
           config_entry.repo.clone(config_entry.url)
         end
         
-        # Find out the actual revision to checkout based on command flags
-        revision = @checkout_latest ? lock_entry.branch : lock_entry.head
-        revision = @checkout_exact ? @ref : revision
+        # Find out the proper revision to checkout based on the checkout mode
+        revision = case mode
+        when CheckoutMode::AS_LOCK; lock_entry.head
+        when CheckoutMode::LATEST; lock_entry.branch
+        when CheckoutMode::EXACT; ref
+        end
         
         # Checkout!
         if config_entry.repo.checkout(revision)
@@ -76,10 +103,6 @@ module MultiRepo
           raise MultiRepoException, "Couldn't check out the appropriate version of dependency #{lock_entry.name}"
         end
       end
-      
-      Console.log_step("Done!")
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
   end
 end
