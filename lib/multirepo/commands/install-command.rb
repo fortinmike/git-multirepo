@@ -13,14 +13,14 @@ module MultiRepo
       
       Console.log_step("Cloning dependencies and installing hook...")
       
-      install_internal
+      install_core
       
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
     end
     
-    def install_internal
+    def install_core
       config_entries = ConfigFile.load
 
       Console.log_substep("Installing #{config_entries.count} dependencies...");

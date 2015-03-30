@@ -42,7 +42,7 @@ module MultiRepo
       original_path = Dir.pwd
       Dir.chdir(main_repo_path)
       
-      InstallCommand.new(CLAide::ARGV.new([])).install_internal
+      InstallCommand.new(CLAide::ARGV.new([])).install_core
       
       Dir.chdir(original_path)
             
