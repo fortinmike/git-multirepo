@@ -74,7 +74,7 @@ If you want to add another dependency later on, you can run `multi add ../NewDep
 
 If you want to checkout a previous revision (say `e690d`), you use the checkout command: `multi checkout e690d`. This will checkout the main repo's `e690d` revision and all of its dependencies with the proper revisions in detached HEAD state.
 
-If you want to setup your project on another machine, simply clone the main repo in a container directory (see above) and run `multi install`. This will clone each dependency and checkout the appropriate branches.
+If you want to setup your project on another machine, simply clone the main repo in a container directory (see above) and run `multi install`. This will clone each dependency and checkout the appropriate traces.
 
 If you want to stop using git-multirepo, run `multi uninit`. This will remove all traces of git-multirepo from your repository and working copy.
 
@@ -96,9 +96,9 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 | Merging Changes to Dependencies | easy | hard | passable |
 | Contributing Upstream | easy | easy | passable |
 | Continuous Integration | medium | medium | easy |
-| Complex Branch-Based Workflows | hard* | hard | easy |
+| Complex Branch-Based Workflows | medium* | hard | easy |
 
-(*) This should get better in future versions of git-multirepo.
+(*) Ongoing work should make this easier in future versions of git-multirepo.
 
 ## Limitations
 
@@ -134,7 +134,7 @@ git-multirepo stores all of its metadata in two files:
 
 | File | Format | Contents |
 |------|--------|----------|
-| .multirepo | YAML | A collection of your project's dependencies. For each dependency, stores its **local path** relative to the main repo, the **remote URL** and the **work branch** your project depends upon.
+| .multirepo | YAML | A collection of your project's dependencies. For each dependency, stores its **local path** relative to the main repo and the **remote URL** your project depends upon.
 | .multirepo.lock | YAML | For each dependency, stores the **commit hash** and **branch** on which the dependency was when the main repo was committed. The dependency's **name** is also included but only serves as a reference to make inspecting the lock file easier. |
 
 The information contained in .multirepo and .multirepo.lock allow one-step cloning of a project and all its dependencies, and checking out any prior revision of the main project with appropriate revisions of all of its dependencies, respectively.
