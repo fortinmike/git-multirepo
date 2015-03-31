@@ -1,5 +1,3 @@
-![git-multirepo](images/logo.png)
-
 # git-multirepo
 
 [![Gem Version](https://badge.fury.io/rb/git-multirepo.svg)](http://badge.fury.io/rb/git-multirepo)
