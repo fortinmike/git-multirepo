@@ -7,8 +7,12 @@ module MultiRepo
       File.join(gem_path, "resources/#{resource_name}")
     end
     
-    def self.install_hook(name)
-      FileUtils.cp(path_for_resource(name), ".git/hooks")
+    def self.is_multirepo_enabled(path)
+      File.exists?(File.join(path, ".multirepo"))
+    end
+    
+    def self.install_hook(name, path)
+      FileUtils.cp(path_for_resource(name), File.join(path, ".git/hooks"))
     end
     
     def self.sibling_repos
