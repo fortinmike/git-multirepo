@@ -12,7 +12,7 @@ module MultiRepo
       [
         ['[url]', 'The repository to clone.'],
         ['[name]', 'The name of the containing folder that will be created.'],
-        ['[ref]', 'The branch, tag or commit hash to checkout. Checkout will use "master" if unspecified.']
+        ['[ref]', 'The branch, tag or commit id to checkout. Checkout will use "master" if unspecified.']
       ].concat(super)
     end
     

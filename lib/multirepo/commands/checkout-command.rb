@@ -13,7 +13,7 @@ module MultiRepo
     
     def self.options
       [
-        ['[ref]', 'The main repo tag, branch or commit hash to checkout.'],
+        ['[ref]', 'The main repo tag, branch or commit id to checkout.'],
         ['--latest', 'Checkout the HEAD of each dependency branch (as recorded in the lock file) instead of the exact required commits.'],
         ['--exact', 'Checkout the exact specified ref for each repo, regardless of what\'s stored in the lock file.']
       ].concat(super)

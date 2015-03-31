@@ -9,7 +9,7 @@ module MultiRepo
     self.summary = "Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local hooks."
     
     def self.options
-      [['[ref]', 'The branch, tag or commit hash to checkout. Checkout will use "master" if unspecified.']].concat(super)
+      [['[ref]', 'The branch, tag or commit id to checkout. Checkout will use "master" if unspecified.']].concat(super)
     end
     
     def initialize(argv)
