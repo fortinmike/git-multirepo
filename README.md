@@ -48,7 +48,7 @@ In essence:
 1. You tell git-multirepo what your dependencies are.
 2. Each time you commit the main repo, git-multirepo tracks what revision of each dependency is required by the project (don't worry, it ensures that you don't forget to commit changes to dependencies beforehand; more on that later).
 3. If you ever want to go back to a previous version of your project, git-multirepo handles checking out the main repo and appropriate revisions of all of its dependencies in a single, seamless operation.
-4. Setting up the project on a new machine is only a single `git clone` and `multi install` away.
+4. Setting up the project on a new machine is only a single `multi clone` away.
 
 ## Example
 
