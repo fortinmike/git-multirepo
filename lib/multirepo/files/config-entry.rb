@@ -8,14 +8,12 @@ module MultiRepo
     attr_accessor :id
     attr_accessor :path
     attr_accessor :url
-    attr_accessor :branch
     attr_accessor :repo
     
     def encode_with(coder)
       coder["id"] = @id
       coder["path"] = @path
       coder["url"] = @url
-      coder["branch"] = @branch
     end
     
     def ==(entry)
@@ -28,7 +26,6 @@ module MultiRepo
       @id = SecureRandom.uuid
       @path = repo.path
       @url = repo.exists? ? repo.remote('origin').url : nil
-      @branch = repo.exists? ? repo.current_branch : nil
     end
     
     def repo
