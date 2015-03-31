@@ -11,13 +11,15 @@ module MultiRepo
     def self.options
       [
         ['[url]', 'The repository to clone.'],
-        ['[name]', 'The name of the containing folder that will be created.']
+        ['[name]', 'The name of the containing folder that will be created.'],
+        ['[ref]', 'The branch, tag or commit hash to checkout. Checkout will use "master" if unspecified.']
       ].concat(super)
     end
     
     def initialize(argv)
       @url = argv.shift_argument
       @name = argv.shift_argument
+      @ref = argv.shift_argument
       super
     end
 
@@ -42,7 +44,8 @@ module MultiRepo
       original_path = Dir.pwd
       Dir.chdir(main_repo_path)
       
-      InstallCommand.new(CLAide::ARGV.new([])).install_core
+      install_command = InstallCommand.new(CLAide::ARGV.new([]))
+      install_command.install_core(@ref)
       
       Dir.chdir(original_path)
             
