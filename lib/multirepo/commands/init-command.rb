@@ -22,7 +22,7 @@ module MultiRepo
       if sibling_repos.any?
         entries = []
         sibling_repos.each do |repo|
-          if Console.ask_yes_no("Do you want to add '#{repo.path}' (#{repo.remote('origin').url} #{repo.current_branch}) as a dependency?")
+          if Console.ask_yes_no("Do you want to add '#{repo.path}' as a dependency?\n  Repo: #{repo.remote('origin').url} #{repo.current_branch}")
             entries.push(ConfigEntry.new(repo))
             Console.log_substep("Added the repository '#{repo.path}' to the .multirepo file")
           end
