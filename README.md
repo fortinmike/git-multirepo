@@ -74,9 +74,9 @@ If you want to add another dependency later on, you can run `multi add ../NewDep
 
 If you want to checkout a previous revision (say `e690d`), you use the checkout command: `multi checkout e690d`. This will checkout the main repo's `e690d` revision and all of its dependencies with the proper revisions in detached HEAD state.
 
-If you want to setup your project on another machine, simply clone the main repo in a container directory (see above) and run `multi install`. This will clone each dependency and checkout the appropriate traces.
+If you want to setup your project on another machine, simply run `multi clone` with the appropriate parameters. This will clone the project and each of its dependencies, then checkout the appropriate work branches.
 
-If you want to stop using git-multirepo, run `multi uninit`. This will remove all traces of git-multirepo from your repository and working copy.
+If you want to stop using git-multirepo, run `multi uninit`. This will remove all traces of git-multirepo from your repository and working copy, including local git hooks.
 
 ## Advantages
 
