@@ -6,7 +6,7 @@ require "multirepo/commands/checkout-command"
 module MultiRepo
   class InstallCommand < Command
     self.command = "install"
-    self.summary = "Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local hooks."
+    self.summary = "Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local git hooks."
     
     def self.options
       [['[ref]', 'The branch, tag or commit id to checkout. Checkout will use "master" if unspecified.']].concat(super)

@@ -120,7 +120,7 @@ Here is a quick rundown of commands available to you in git-multirepo:
 | clone | Clones the specified repository in a subfolder, then installs it. |
 | edit | Opens the .multirepo file in the default text editor. |
 | fetch | Performs a git fetch on all dependencies. |
-| install | Clones and checks out dependencies as defined in the .multirepo file, and installs git-multirepo's local pre-commit hook. |
+| install | Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local git hooks. |
 | open | Opens all dependencies in the current OS's file explorer. |
 | remove | Removes the specified dependency from multirepo. |
 | update | Force-updates the multirepo lock file. |
