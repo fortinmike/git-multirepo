@@ -32,11 +32,6 @@ module MultiRepo
         
         ConfigFile.save(entries)
         ConfigFile.stage
-      
-        dependencies_clean = Utils.ensure_dependencies_clean(entries)
-        raise MultiRepoException, "Can't finish initialization!" unless dependencies_clean
-        
-        LockFile.update
       else
         Console.log_info("There are no sibling repositories to add")
       end
