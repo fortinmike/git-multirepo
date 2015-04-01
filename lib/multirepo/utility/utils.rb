@@ -23,10 +23,11 @@ module MultiRepo
     
     def self.ensure_dependencies_clean(config_entries)
       config_entries.all? do |e|
-        return true unless e.repo.exists?
+        next true unless e.repo.exists?
         clean = e.repo.is_clean?
+        Console.log_info("Dependency '#{e.repo.path}' is clean") if clean
         Console.log_warning("Dependency '#{e.repo.path}' contains uncommitted changes") unless clean
-        return clean
+        next clean
       end
     end
     
@@ -34,7 +35,7 @@ module MultiRepo
       repos.all? do |repo|
         clean = repo.is_clean?
         Console.log_warning("Repo #{repo.path} contains uncommitted changes") unless clean
-        return clean
+        next clean
       end
     end
 
