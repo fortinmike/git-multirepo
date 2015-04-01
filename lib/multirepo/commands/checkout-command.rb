@@ -85,7 +85,7 @@ module MultiRepo
         # First, make sure the repo exists on disk, and clone it if it doesn't
         # (in case the checked-out revision had an additional dependency)
         unless config_entry.repo.exists?
-          Console.log_substep("Cloning missing dependency #{config_entry.path} from #{config_entry.url}")
+          Console.log_substep("Cloning missing dependency '#{config_entry.path}' from #{config_entry.url}")
           config_entry.repo.clone(config_entry.url)
         end
         

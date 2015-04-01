@@ -34,7 +34,7 @@ module MultiRepo
     def self.ensure_working_copies_clean(repos)
       repos.all? do |repo|
         clean = repo.is_clean?
-        Console.log_warning("Repo #{repo.path} contains uncommitted changes") unless clean
+        Console.log_warning("Repo '#{repo.path}' contains uncommitted changes") unless clean
         next clean
       end
     end

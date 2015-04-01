@@ -65,7 +65,7 @@ module MultiRepo
     end
     
     def clone_repo(entry)
-      Console.log_substep("Cloning '#{entry.url} to #{entry.repo.path}'")
+      Console.log_substep("Cloning #{entry.url} into '#{entry.repo.path}'")
       raise MultiRepoException, "Could not clone remote #{entry.url}" unless entry.repo.clone(entry.url)
     end
     

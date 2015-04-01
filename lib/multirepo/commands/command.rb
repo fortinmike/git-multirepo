@@ -26,7 +26,7 @@ module MultiRepo
       ConfigFile.load.each do |entry|
         if Utils.is_multirepo_enabled(entry.repo.path)
           install_hooks(entry.repo.path)
-          Console.log_substep("Installed hooks in multirepo-enabled dependency #{entry.repo.path}")
+          Console.log_substep("Installed hooks in multirepo-enabled dependency '#{entry.repo.path}'")
         end
       end
     end
