@@ -22,21 +22,25 @@ module MultiRepo
     end
     
     def self.ensure_dependencies_clean(config_entries)
-      config_entries.all? do |e|
-        next true unless e.repo.exists?
-        clean = e.repo.is_clean?
-        Console.log_info("Dependency '#{e.repo.path}' is clean") if clean
-        Console.log_warning("Dependency '#{e.repo.path}' contains uncommitted changes") unless clean
-        next clean
+      clean = true
+      config_entries.each do |e|
+        next unless e.repo.exists?
+        dependency_clean = e.repo.is_clean?
+        clean &= dependency_clean
+        Console.log_info("Dependency '#{e.repo.path}' is clean") if dependency_clean
+        Console.log_warning("Dependency '#{e.repo.path}' contains uncommitted changes") unless dependency_clean
       end
+      return clean
     end
     
     def self.ensure_working_copies_clean(repos)
-      repos.all? do |repo|
-        clean = repo.is_clean?
-        Console.log_warning("Repo '#{repo.path}' contains uncommitted changes") unless clean
-        next clean
+      clean = true
+      repos.each do |repo|
+        dependency_clean = e.repo.is_clean?
+        clean &= dependency_clean
+        Console.log_warning("Repo '#{repo.path}' contains uncommitted changes") unless dependency_clean
       end
+      return clean
     end
 
     def self.convert_to_windows_path(unix_path)
