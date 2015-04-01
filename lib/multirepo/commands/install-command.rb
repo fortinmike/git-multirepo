@@ -35,14 +35,17 @@ module MultiRepo
 
       Console.log_substep("Installing #{config_entries.count} dependencies...");
       
-      # Clone or fetch configured repos
-      config_entries.each { |e| clone_or_fetch(e) }
+      # Clone or fetch all configured dependencies
+      config_entries.each { |entry| clone_or_fetch(entry) }
       
-      # Checkout the repos as specified in the lock file
+      # Checkout the appropriate branches as specified in the lock file
       checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
       checkout_command.checkout_core(ref || "master", CheckoutCommand::CheckoutMode::LATEST)
       
       install_hooks
+      Console.log_substep("Installed git hooks in main repo")
+      
+      install_hooks_in_multirepo_enabled_dependencies
     end
     
     def clone_or_fetch(entry)
@@ -62,7 +65,7 @@ module MultiRepo
     end
     
     def clone_repo(entry)
-      Console.log_substep("Cloning '#{entry.url} to #{entry.repo.path}'")
+      Console.log_substep("Cloning #{entry.url} into '#{entry.repo.path}'")
       raise MultiRepoException, "Could not clone remote #{entry.url}" unless entry.repo.clone(entry.url)
     end
     

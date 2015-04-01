@@ -11,12 +11,12 @@ module MultiRepo
       dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load)
       
       if !dependencies_clean
-        Console.log_error("You must commit changes to your dependencies before you can commit the main repo")
+        Console.log_error("multirepo: You must commit changes to your dependencies before you can commit the main repo")
         exit 1
       end
       
       LockFile.update
-      Console.log_info("Updated and staged lock file with current HEAD revisions for all dependencies")
+      Console.log_info("multirepo: Updated and staged lock file with current HEAD revisions for all dependencies")
       
       exit 0 # Success!
     end

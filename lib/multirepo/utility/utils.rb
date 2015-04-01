@@ -7,8 +7,12 @@ module MultiRepo
       File.join(gem_path, "resources/#{resource_name}")
     end
     
-    def self.install_hook(name)
-      FileUtils.cp(path_for_resource(name), ".git/hooks")
+    def self.is_multirepo_enabled(path)
+      File.exists?(File.join(path, ".multirepo"))
+    end
+    
+    def self.install_hook(name, path)
+      FileUtils.cp(path_for_resource(name), File.join(path, ".git/hooks"))
     end
     
     def self.sibling_repos
@@ -19,18 +23,19 @@ module MultiRepo
     
     def self.ensure_dependencies_clean(config_entries)
       config_entries.all? do |e|
-        return true unless e.repo.exists?
+        next true unless e.repo.exists?
         clean = e.repo.is_clean?
+        Console.log_info("Dependency '#{e.repo.path}' is clean") if clean
         Console.log_warning("Dependency '#{e.repo.path}' contains uncommitted changes") unless clean
-        return clean
+        next clean
       end
     end
     
     def self.ensure_working_copies_clean(repos)
       repos.all? do |repo|
         clean = repo.is_clean?
-        Console.log_warning("Repo #{repo.path} contains uncommitted changes") unless clean
-        return clean
+        Console.log_warning("Repo '#{repo.path}' contains uncommitted changes") unless clean
+        next clean
       end
     end
 

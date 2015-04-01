@@ -24,8 +24,12 @@ module MultiRepo
       
       Console.log_step("Updating...")
       
-      dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load)
+      install_hooks
+      Console.log_substep("Installed git hooks in main repo")
       
+      install_hooks_in_multirepo_enabled_dependencies
+      
+      dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load)
       if dependencies_clean
         LockFile.update
         Console.log_substep("Updated lock file with latest dependency commits")
@@ -36,8 +40,6 @@ module MultiRepo
         raise MultiRepoException, "Can't update because not all dependencies are clean"
       end
       
-      install_hooks
-
       if @commit
         Console.log_substep("Committing updated lock file")
         LockFile.commit

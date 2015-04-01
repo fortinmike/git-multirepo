@@ -39,7 +39,7 @@ module MultiRepo
       FileUtils.mkpath(main_repo_path)
 
       main_repo = Repo.new(main_repo_path)
-      main_repo.clone(@url)
+      raise MultiRepoException, "Could not clone repo from #{@url}" unless main_repo.clone(@url)
       
       original_path = Dir.pwd
       Dir.chdir(main_repo_path)

@@ -20,14 +20,25 @@ module MultiRepo
       raise MultiRepoException, "Not a git repository" unless Git.is_inside_git_repo(".")
     end
     
-    def install_hooks
-      Utils.install_hook("pre-commit")
-      Utils.install_hook("post-merge")
-      Console.log_substep("Installed git hooks")
+    def install_hooks_in_multirepo_enabled_dependencies
+      # Install the local git hooks in dependency repos
+      # if they are themselves tracked with multirepo
+      ConfigFile.load.each do |entry|
+        if Utils.is_multirepo_enabled(entry.repo.path)
+          install_hooks(entry.repo.path)
+          Console.log_substep("Installed hooks in multirepo-enabled dependency '#{entry.repo.path}'")
+        end
+      end
+    end
+    
+    def install_hooks(path = nil)
+      actual_path = path || "."
+      Utils.install_hook("pre-commit", actual_path)
+      Utils.install_hook("post-merge", actual_path)
     end
     
     def ensure_multirepo_initialized
-      raise MultiRepoException, "multirepo is not initialized in this repository." unless ConfigFile.exists?
+      raise MultiRepoException, "multirepo is not initialized in this repository." unless Utils.is_multirepo_enabled(".")
     end
   end
 end
