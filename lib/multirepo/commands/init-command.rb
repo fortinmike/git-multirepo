@@ -22,7 +22,9 @@ module MultiRepo
       if sibling_repos.any?
         entries = []
         sibling_repos.each do |repo|
-          if Console.ask_yes_no("Do you want to add '#{repo.path}' as a dependency?\n  Repo: #{repo.remote('origin').url} #{repo.current_branch}")
+          origin_desc = repo.remote('origin').url || "[none]"
+          current_branch = repo.current_branch
+          if Console.ask_yes_no("Do you want to add '#{repo.path}' as a dependency?\n  [origin: '#{origin_desc}', branch: #{current_branch}]")
             entries.push(ConfigEntry.new(repo))
             Console.log_substep("Added the repository '#{repo.path}' to the .multirepo file")
           end
@@ -40,6 +42,7 @@ module MultiRepo
       end
       
       install_hooks
+      Console.log_substep("Installed git hooks")
       
       Console.log_step("Done!")
     rescue MultiRepoException => e
