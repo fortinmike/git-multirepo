@@ -11,7 +11,7 @@ module MultiRepo
       dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load)
       
       if !dependencies_clean
-        Console.log_error("multirepo: You must commit changes to your dependencies before you can merge the main repo")
+        Console.log_error("multirepo: You must commit changes to your dependencies before you can merge this repo")
         exit 1
       end
       
