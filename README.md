@@ -66,9 +66,9 @@ Say you want to track an existing project with git-multirepo:
 2. `cd` into the *AwesomeApp* directory (aka the "main repo").
 3. Run `multi init`.
 4. You will get prompted to add *Dependency1* and *Dependency2* to multirepo; do so.
-5. git-multirepo reads all required information from dependency repos and initializes itself, storing its metadata files in the main repo, under version control.
+5. git-multirepo reads all required information from dependency repos and initializes itself, storing its metadata in the main repo, under version control.
 
-From now on, each time you commit the main repo git-multirepo tracks &mdash; using a pre-commit hook &mdash; which revision of each dependency is required for that main repo revision, and where to get them. The pre-commit hook also ensures that you won't commit the main repo before its dependencies so that you always get a valid state stored under version control.
+From now on, each time you commit the main repo git-multirepo tracks &mdash; using local git hooks &mdash; which revision of each dependency is required for that main repo revision, and where to get them. The hooks also ensure that you won't commit the main repo before its dependencies so that you always get a valid state stored under version control.
 
 If you want to add another dependency later on, you can run `multi add ../NewDependency` and you can do the opposite with `multi remove ../SomeOtherDependency`.
 
@@ -80,13 +80,14 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 
 ## Advantages
 
-- Makes setting up the project on a new machine a breeze.
-- Works really well for multiple projects that share a common set of constantly evolving dependencies.
+- Makes setting up a project on a new machine a breeze.
+- Really effective when working on multiple projects that share a common set of constantly evolving dependencies.
 - Each dependency's repository is totally independent from the main repository, which simplifies a lot of things (merges, contributing upstream, etc.) and works well with git GUIs.
 - While the repositories are independent, git-multirepo makes sure to track everything that's required to bring back a previous version of your project in a valid state.
+- It supports sub-dependencies (e.g. dependencies that have dependencies of their own) so that you can bring back any subset of your project in a valid state at will.
 - Much more approachable to novice developers than submodules or subtrees.
 - Once setup, there is little need for git-multirepo commands, so you are free to use whatever tools you like to work with your git repos.
-- Low possibility of human error (such as forgetting to contribute dependency changes back to the appropriate remotes, forgetting to commit dependencies before committing the main project, etc.)
+- Low possibility of human error (such as forgetting to contribute changes to dependencies back to the appropriate remotes, forgetting to commit dependencies in the proper order, etc.)
 - You're not stuck with git-multirepo. It stores its metadata as [YAML](http://www.yaml.org) in the main repo. You can clone and checkout appropriate revisions of your dependencies by hand without git-multirepo if you need to. The information is there, in human-readable form.
 
 | How It Handles... | git-multirepo | git submodules | git subtrees |
@@ -102,8 +103,8 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 
 ## Limitations
 
-- git-multirepo should be considered beta at the moment. All of the core features work as described, though. Suggestions and contributions are welcome.
-- The project and its dependencies must live beside each other on disk (for now).
+- git-multirepo should be considered beta at the moment. Suggestions and contributions are welcome.
+- The project and its dependencies must live beside each other on disk.
 - Some more commands need to be implemented to facilitate branch-heavy workflows.
 - You must (ideally) install the tool on your CI server: `gem install git-multirepo`
 
