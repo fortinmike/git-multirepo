@@ -24,11 +24,6 @@ module MultiRepo
       
       Console.log_step("Updating...")
       
-      install_hooks
-      Console.log_substep("Installed git hooks in main repo")
-      
-      install_hooks_in_multirepo_enabled_dependencies
-      
       dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load)
       if dependencies_clean
         LockFile.update
