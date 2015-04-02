@@ -45,7 +45,7 @@ module MultiRepo
       Dir.chdir(main_repo_path)
       
       install_command = InstallCommand.new(CLAide::ARGV.new([]))
-      install_command.install_core(@ref)
+      install_command.install_dependencies_step(@ref)
       
       Dir.chdir(original_path)
             
