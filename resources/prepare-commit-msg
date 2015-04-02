@@ -3,4 +3,4 @@
 require "rubygems"
 require "git-multirepo"
 
-MultiRepo::PreMergeHook.run
+MultiRepo::PrepareCommitMsgHook.run(ARGV)
