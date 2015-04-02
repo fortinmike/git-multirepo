@@ -6,6 +6,8 @@ module MultiRepo
     def self.run
       Config.instance.running_git_hook = true
       
+      Console.log_step("multirepo: Performing post-merge operations...")
+      
       LockFile.update
       Console.log_info("multirepo: Updated the lock file with current HEAD revisions for all dependencies")
       

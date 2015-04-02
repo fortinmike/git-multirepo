@@ -17,11 +17,13 @@ module MultiRepo
     end
     
     def self.pre_commit
+      Console.log_step("multirepo: Performing pre-commit operations...")
       ensure_dependencies_clean
       update_lock_file
     end
     
     def self.pre_merge
+      Console.log_step("multirepo: Performing pre-merge operations...")
       ensure_dependencies_clean
     end
     
@@ -35,7 +37,7 @@ module MultiRepo
     
     def self.update_lock_file
       LockFile.update
-      Console.log_info("multirepo: Updated and staged lock file with current HEAD revisions for all dependencies")
+      Console.log_substep("multirepo: Updated and staged lock file with current HEAD revisions for all dependencies")
     end
   end
 end
