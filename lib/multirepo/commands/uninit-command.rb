@@ -11,8 +11,7 @@ module MultiRepo
       
       File.delete(".multirepo")
       File.delete(".multirepo.lock")
-      File.delete(".git/hooks/pre-commit")
-      File.delete(".git/hooks/post-merge")
+      uninstall_hooks
       
       Console.log_step("All traces of multirepo have been removed from this repository")
     rescue MultiRepoException => e

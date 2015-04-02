@@ -34,7 +34,14 @@ module MultiRepo
     def install_hooks(path = nil)
       actual_path = path || "."
       Utils.install_hook("pre-commit", actual_path)
+      Utils.install_hook("pre-merge", actual_path)
       Utils.install_hook("post-merge", actual_path)
+    end
+    
+    def uninstall_hooks
+      File.delete(".git/hooks/pre-commit")
+      File.delete(".git/hooks/pre-merge")
+      File.delete(".git/hooks/post-merge")
     end
     
     def ensure_multirepo_initialized
