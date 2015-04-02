@@ -47,14 +47,14 @@ module MultiRepo
         CheckoutMode::AS_LOCK
       end
       
-      checkout_core(@ref, mode)
+      checkout_step(@ref, mode)
       
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
     end
     
-    def checkout_core(ref, mode)
+    def checkout_step(ref, mode)
       main_repo = Repo.new(".")
       initial_revision = main_repo.current_branch || main_repo.head_hash
       
