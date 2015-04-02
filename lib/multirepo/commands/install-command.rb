@@ -9,9 +9,7 @@ module MultiRepo
     self.summary = "Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local git hooks."
     
     def self.options
-      [
-        ['-hooks', 'Only install local git hooks.']
-      ].concat(super)
+      [['-hooks', 'Only install local git hooks.']].concat(super)
     end
     
     def initialize(argv)

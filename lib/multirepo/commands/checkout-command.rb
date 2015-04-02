@@ -73,16 +73,15 @@ module MultiRepo
         main_repo.checkout(initial_revision)
         raise MultiRepoException, "This revision is not managed by multirepo. Checkout reverted."
       end
+      
+      unless Utils.ensure_dependencies_clean(ConfigFile.load)
+        main_repo.checkout(initial_revision)
+        raise MultiRepoException, "'#{e.path}' contains uncommitted changes. Checkout reverted."
+      end
     end
     
     def dependencies_checkout_step(mode, ref = nil)
       config_entries = ConfigFile.load # Post-main-repo checkout config entries might be different than pre-checkout
-      
-      unless Utils.ensure_dependencies_clean(config_entries)
-        main_repo.checkout(initial_revision)
-        raise MultiRepoException, "'#{e.path}' contains uncommitted changes. Checkout reverted."
-      end
-      
       LockFile.load.each { |lock_entry| perform_dependency_checkout(config_entries, lock_entry, ref, mode) }
     end
     

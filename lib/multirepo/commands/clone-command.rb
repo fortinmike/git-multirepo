@@ -19,7 +19,7 @@ module MultiRepo
     def initialize(argv)
       @url = argv.shift_argument
       @name = argv.shift_argument
-      @ref = argv.shift_argument
+      @ref = argv.shift_argument || "master"
       super
     end
 
@@ -35,23 +35,30 @@ module MultiRepo
       raise MultiRepoException, "A directory named #{@name} already exists" if Dir.exists?(@name)
 
       main_repo_path = "#{@name}/#{@name}"
+      main_repo = Repo.new(main_repo_path)
       
       # Recursively create the directory where we'll clone the main repo
       FileUtils.mkpath(main_repo_path)
       
       # Clone the specified remote in the just-created directory
-      main_repo = Repo.new(main_repo_path)
       raise MultiRepoException, "Could not clone repo from #{@url}" unless main_repo.clone(@url)
       
-      # Switch to the appropriate main repo ref so that install reads the proper config file
-      checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
-      checkout_command.main_repo_checkout_step(@ref)
-      
-      # Install
+      # Change directory to enter the just-cloned main repo
       original_path = Dir.pwd
       Dir.chdir(main_repo_path)
+      
+      # Checkout the specified appropriate main repo ref so that install reads the proper config file
+      unless main_repo.checkout(@ref)
+        raise MultiRepoException, "Couldn't perform checkout of main repo #{ref}!"
+      end
+      
+      Console.log_substep("Checked out main repo #{@ref}")
+      
+      # Install
       install_command = InstallCommand.new(CLAide::ARGV.new([]))
       install_command.install_dependencies_step
+      
+      # Go back to the original directory the command was run in
       Dir.chdir(original_path)
       
       Console.log_step("Done!")
