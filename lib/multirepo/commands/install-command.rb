@@ -29,7 +29,7 @@ module MultiRepo
         Console.log_step("Installing hooks in main repo and all dependencies...")
         install_hooks_step
       else
-        Console.log_step("Cloning dependencies and installing hook...")
+        Console.log_step("Cloning dependencies and installing hooks...")
         install_dependencies_step(@ref)
       end
       
@@ -79,12 +79,6 @@ module MultiRepo
     def clone_repo(entry)
       Console.log_substep("Cloning #{entry.url} into '#{entry.repo.path}'")
       raise MultiRepoException, "Could not clone remote #{entry.url}" unless entry.repo.clone(entry.url)
-    end
-    
-    def checkout_branch(entry)
-      branch = entry.repo.branch(entry.branch);
-      raise MultiRepoException, "Could not checkout branch #{branch.name}" unless branch.checkout
-      Console.log_substep("Checked out branch #{branch.name} -> origin/#{branch.name}")
     end
     
     # Validation
