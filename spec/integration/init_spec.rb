@@ -13,11 +13,7 @@ RSpec.describe("Init") do
     pending
   end
   
-  it "installs the pre-commit hook" do
-    pending
-  end
-
-  it "installs the post-merge hook" do
+  it "installs the hooks" do
     pending
   end
   
