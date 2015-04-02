@@ -2,7 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/git-multirepo.svg)](http://badge.fury.io/rb/git-multirepo)
 [![Code Climate](https://codeclimate.com/github/fortinmike/git-multirepo/badges/gpa.svg)](https://codeclimate.com/github/fortinmike/git-multirepo)
-[![License](http://img.shields.io/:license-mit-blue.svg)](http://mit-license.org)
+[![License](http://img.shields.io/:license-mit-blue.svg)](https://github.com/fortinmike/git-multirepo/blob/master/LICENSE)
 
 Track multiple Git repositories side-by-side.
 
