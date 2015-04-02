@@ -47,14 +47,15 @@ module MultiRepo
         CheckoutMode::AS_LOCK
       end
       
-      checkout_step(@ref, mode)
+      main_repo_checkout_step(@ref)
+      dependencies_checkout_step(mode, @ref)
       
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
     end
-    
-    def checkout_step(ref, mode)
+            
+    def main_repo_checkout_step(ref)
       main_repo = Repo.new(".")
       initial_revision = main_repo.current_branch || main_repo.head_hash
       
@@ -70,19 +71,22 @@ module MultiRepo
       
       unless LockFile.exists?
         main_repo.checkout(initial_revision)
-        raise MultiRepoException, "The specified revision was not managed by multirepo. Checkout reverted."
+        raise MultiRepoException, "This revision is not managed by multirepo. Checkout reverted."
       end
+    end
+    
+    def dependencies_checkout_step(mode, ref = nil)
+      config_entries = ConfigFile.load # Post-main-repo checkout config entries might be different than pre-checkout
       
-      unless Utils.ensure_dependencies_clean(ConfigFile.load)
+      unless Utils.ensure_dependencies_clean(config_entries)
         main_repo.checkout(initial_revision)
         raise MultiRepoException, "'#{e.path}' contains uncommitted changes. Checkout reverted."
       end
       
-      config_entries = ConfigFile.load # Post-checkout config entries might be different than pre-checkout
-      LockFile.load.each { |lock_entry| perform_checkout(config_entries, lock_entry, ref, mode) }
+      LockFile.load.each { |lock_entry| perform_dependency_checkout(config_entries, lock_entry, ref, mode) }
     end
     
-    def perform_checkout(config_entries, lock_entry, ref, mode)
+    def perform_dependency_checkout(config_entries, lock_entry, ref, mode)
       # Find the config entry that matches the given lock entry
       config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
       

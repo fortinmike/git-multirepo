@@ -35,20 +35,25 @@ module MultiRepo
       raise MultiRepoException, "A directory named #{@name} already exists" if Dir.exists?(@name)
 
       main_repo_path = "#{@name}/#{@name}"
-
+      
+      # Recursively create the directory where we'll clone the main repo
       FileUtils.mkpath(main_repo_path)
-
+      
+      # Clone the specified remote in the just-created directory
       main_repo = Repo.new(main_repo_path)
       raise MultiRepoException, "Could not clone repo from #{@url}" unless main_repo.clone(@url)
       
+      # Switch to the appropriate main repo ref so that install reads the proper config file
+      checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
+      checkout_command.main_repo_checkout_step(@ref)
+      
+      # Install
       original_path = Dir.pwd
       Dir.chdir(main_repo_path)
-      
       install_command = InstallCommand.new(CLAide::ARGV.new([]))
-      install_command.install_dependencies_step(@ref)
-      
+      install_command.install_dependencies_step
       Dir.chdir(original_path)
-            
+      
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
