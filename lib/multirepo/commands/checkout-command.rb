@@ -78,30 +78,33 @@ module MultiRepo
         raise MultiRepoException, "'#{e.path}' contains uncommitted changes. Checkout reverted."
       end
       
-      config_entries = ConfigFile.load # Load the post-checkout config entries, which might be different than pre-checkout
-      LockFile.load.each do |lock_entry|
-        config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
-        
-        # First, make sure the repo exists on disk, and clone it if it doesn't
-        # (in case the checked-out revision had an additional dependency)
-        unless config_entry.repo.exists?
-          Console.log_substep("Cloning missing dependency '#{config_entry.path}' from #{config_entry.url}")
-          config_entry.repo.clone(config_entry.url)
-        end
-        
-        # Find out the proper revision to checkout based on the checkout mode
-        revision = case mode
-        when CheckoutMode::AS_LOCK; lock_entry.head
-        when CheckoutMode::LATEST; lock_entry.branch
-        when CheckoutMode::EXACT; ref
-        end
-        
-        # Checkout!
-        if config_entry.repo.checkout(revision)
-          Console.log_substep("Checked out #{lock_entry.name} #{revision}")
-        else
-          raise MultiRepoException, "Couldn't check out the appropriate version of dependency #{lock_entry.name}"
-        end
+      config_entries = ConfigFile.load # Post-checkout config entries might be different than pre-checkout
+      LockFile.load.each { |lock_entry| perform_checkout(config_entries, lock_entry, ref, mode) }
+    end
+    
+    def perform_checkout(config_entries, lock_entry, ref, mode)
+      # Find the config entry that matches the given lock entry
+      config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
+      
+      # Make sure the repo exists on disk, and clone it if it doesn't
+      # (in case the checked-out revision had an additional dependency)
+      unless config_entry.repo.exists?
+        Console.log_substep("Cloning missing dependency '#{config_entry.path}' from #{config_entry.url}")
+        config_entry.repo.clone(config_entry.url)
+      end
+      
+      # Find out the proper revision to checkout based on the checkout mode
+      revision = case mode
+      when CheckoutMode::AS_LOCK; lock_entry.head
+      when CheckoutMode::LATEST; lock_entry.branch
+      when CheckoutMode::EXACT; ref
+      end
+      
+      # Checkout!
+      if config_entry.repo.checkout(revision)
+        Console.log_substep("Checked out #{lock_entry.name} #{revision}")
+      else
+        raise MultiRepoException, "Couldn't check out the appropriate version of dependency #{lock_entry.name}"
       end
     end
   end
