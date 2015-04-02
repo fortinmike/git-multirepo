@@ -9,10 +9,14 @@ module MultiRepo
     self.summary = "Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local git hooks."
     
     def self.options
-      [['[ref]', 'The branch, tag or commit id to checkout. Checkout will use "master" if unspecified.']].concat(super)
+      [
+        ['-hooks', 'Only install local git hooks.'],
+        ['[ref]', 'The branch, tag or commit id to checkout. Checkout will use "master" if unspecified.']
+      ].concat(super)
     end
     
     def initialize(argv)
+      @hooks = argv.flag?("hooks")
       @ref = argv.shift_argument
       super
     end
@@ -21,18 +25,22 @@ module MultiRepo
       validate_in_work_tree
       ensure_multirepo_initialized
       
-      Console.log_step("Cloning dependencies and installing hook...")
-      
-      install_core(@ref)
+      if @hooks
+        Console.log_step("Installing hooks in main repo and all dependencies...")
+        install_hooks_step
+      else
+        Console.log_step("Cloning dependencies and installing hook...")
+        install_dependencies_step(@ref)
+      end
       
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
     end
     
-    def install_core(ref)
+    def install_dependencies_step(ref)
       config_entries = ConfigFile.load
-
+      
       Console.log_substep("Installing #{config_entries.count} dependencies...");
       
       # Clone or fetch all configured dependencies
@@ -40,8 +48,12 @@ module MultiRepo
       
       # Checkout the appropriate branches as specified in the lock file
       checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
-      checkout_command.checkout_core(ref || "master", CheckoutCommand::CheckoutMode::LATEST)
+      checkout_command.checkout_step(ref || "master", CheckoutCommand::CheckoutMode::LATEST)
       
+      install_hooks_step
+    end
+    
+    def install_hooks_step
       install_hooks
       Console.log_substep("Installed git hooks in main repo")
       
