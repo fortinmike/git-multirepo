@@ -3,4 +3,9 @@
 require "claide"
 require "commands"
 
+trap("INT") do
+  puts "\rAbort, abort!!" # \r hides the interrupt control characters
+  exit
+end
+
 MultiRepo::Command.run(ARGV)
