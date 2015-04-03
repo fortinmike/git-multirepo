@@ -20,7 +20,7 @@ module MultiRepo
     def validate!
       path = Config.instance.git_executable
       is_git_exe = path =~ /.*(git)|(git.exe)$/
-      file_exists = File.exists?(path)
+      file_exists = path == "git" || File.exists?(path)
       help! "Invalid git executable '#{path}'" unless is_git_exe && file_exists
     end
     
