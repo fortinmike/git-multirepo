@@ -27,7 +27,7 @@ module MultiRepo
     end
 
     def self.commit(message = nil)
-      message = message || "Updated multirepo lock file with the latest version of all dependencies"
+      message = message || "[multirepo] Updated lock file"
       Git.run_in_current_dir("commit -m \"#{message}\" -o -- #{FILE.to_s}", Runner::Verbosity::OUTPUT_ON_ERROR)
     end
     

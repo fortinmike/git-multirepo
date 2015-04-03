@@ -8,6 +8,8 @@ module MultiRepo
     def self.run
       Config.instance.running_git_hook = true
       
+      Console.log_step("multirepo: Performing pre-commit operations...")
+      
       dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load)
       
       if !dependencies_clean
