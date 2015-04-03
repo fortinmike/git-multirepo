@@ -19,7 +19,7 @@ module MultiRepo
     def initialize(argv)
       @url = argv.shift_argument
       @name = argv.shift_argument
-      @ref = argv.shift_argument
+      @ref = argv.shift_argument || "master"
       super
     end
 
@@ -35,20 +35,33 @@ module MultiRepo
       raise MultiRepoException, "A directory named #{@name} already exists" if Dir.exists?(@name)
 
       main_repo_path = "#{@name}/#{@name}"
-
-      FileUtils.mkpath(main_repo_path)
-
       main_repo = Repo.new(main_repo_path)
+      
+      # Recursively create the directory where we'll clone the main repo
+      FileUtils.mkpath(main_repo_path)
+      
+      # Clone the specified remote in the just-created directory
       raise MultiRepoException, "Could not clone repo from #{@url}" unless main_repo.clone(@url)
       
+      # Checkout the specified main repo ref so that install reads the proper config file
+      unless main_repo.checkout(@ref)
+        raise MultiRepoException, "Couldn't perform checkout of main repo #{@ref}!"
+      end
+      
+      Console.log_substep("Checked out main repo #{@ref}")
+      
+      # Make sure the ref we just checked out is multirepo-enabled
+      unless Utils.is_multirepo_enabled(main_repo_path)
+        raise MultiRepoException, "Ref #{@ref} is not multirepo-enabled"
+      end
+      
+      # Install
       original_path = Dir.pwd
       Dir.chdir(main_repo_path)
-      
       install_command = InstallCommand.new(CLAide::ARGV.new([]))
-      install_command.install_dependencies_step(@ref)
-      
+      install_command.install_dependencies_step
       Dir.chdir(original_path)
-            
+      
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)

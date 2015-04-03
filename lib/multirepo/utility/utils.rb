@@ -8,7 +8,8 @@ module MultiRepo
     end
     
     def self.is_multirepo_enabled(path)
-      File.exists?(File.join(path, ".multirepo"))
+      File.exists?(File.join(path, ".multirepo")) &&
+      File.exists?(File.join(path, ".multirepo.lock"))
     end
     
     def self.install_hook(name, path)

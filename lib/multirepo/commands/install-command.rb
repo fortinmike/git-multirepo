@@ -9,15 +9,11 @@ module MultiRepo
     self.summary = "Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local git hooks."
     
     def self.options
-      [
-        ['-hooks', 'Only install local git hooks.'],
-        ['[ref]', 'The branch, tag or commit id to checkout. Checkout will use "master" if unspecified.']
-      ].concat(super)
+      [['-hooks', 'Only install local git hooks.']].concat(super)
     end
     
     def initialize(argv)
       @hooks = argv.flag?("hooks")
-      @ref = argv.shift_argument
       super
     end
         
@@ -29,8 +25,8 @@ module MultiRepo
         Console.log_step("Installing hooks in main repo and all dependencies...")
         install_hooks_step
       else
-        Console.log_step("Cloning dependencies and installing hook...")
-        install_dependencies_step(@ref)
+        Console.log_step("Cloning dependencies and installing hooks...")
+        install_dependencies_step
       end
       
       Console.log_step("Done!")
@@ -38,17 +34,17 @@ module MultiRepo
       Console.log_error(e.message)
     end
     
-    def install_dependencies_step(ref)
+    def install_dependencies_step
+      # Read config entries as-is on disk, without prior checkout
       config_entries = ConfigFile.load
-      
       Console.log_substep("Installing #{config_entries.count} dependencies...");
       
-      # Clone or fetch all configured dependencies
+      # Clone or fetch all configured dependencies to make sure nothing is missing locally
       config_entries.each { |entry| clone_or_fetch(entry) }
       
       # Checkout the appropriate branches as specified in the lock file
       checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
-      checkout_command.checkout_step(ref || "master", CheckoutCommand::CheckoutMode::LATEST)
+      checkout_command.dependencies_checkout_step(CheckoutCommand::CheckoutMode::LATEST)
       
       install_hooks_step
     end
@@ -79,12 +75,6 @@ module MultiRepo
     def clone_repo(entry)
       Console.log_substep("Cloning #{entry.url} into '#{entry.repo.path}'")
       raise MultiRepoException, "Could not clone remote #{entry.url}" unless entry.repo.clone(entry.url)
-    end
-    
-    def checkout_branch(entry)
-      branch = entry.repo.branch(entry.branch);
-      raise MultiRepoException, "Could not checkout branch #{branch.name}" unless branch.checkout
-      Console.log_substep("Checked out branch #{branch.name} -> origin/#{branch.name}")
     end
     
     # Validation
