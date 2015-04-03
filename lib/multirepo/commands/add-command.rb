@@ -7,7 +7,7 @@ module MultiRepo
     self.summary = "Track an additional dependency with multirepo."
     
     def self.options
-      [['[path]', 'The relative path to the new dependency (e.g. ../MyNewDependency)']].concat(super)
+      [['<path>', 'The relative path to the new dependency (e.g. ../MyNewDependency)']].concat(super)
     end
     
     def initialize(argv)

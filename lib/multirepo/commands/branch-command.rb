@@ -8,9 +8,9 @@ module MultiRepo
     
     def self.options
       [
-        ['[branch name]', 'The name of the branch to create and checkout.'],
-        ['--force', 'Force creating the branch even if the repos contain uncommmitted changes.'],
-        ['--no-track', 'Do not configure as a remote-tracking branch on creation.']
+        ['<branch name>', 'The name of the branch to create and checkout.'],
+        ['[--force]', 'Force creating the branch even if the repos contain uncommmitted changes.'],
+        ['[--no-track]', 'Do not configure as a remote-tracking branch on creation.']
       ].concat(super)
     end
     

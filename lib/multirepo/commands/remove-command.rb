@@ -8,8 +8,8 @@ module MultiRepo
     
     def self.options
       [
-        ['[path]', 'The relative path to the dependency to remove (e.g. ../MyOldDependency).'],
-        ['--delete', 'Delete the dependency on disk in addition to removing it from the multirepo config.']
+        ['<path>', 'The relative path to the dependency to remove (e.g. ../MyOldDependency).'],
+        ['[--delete]', 'Delete the dependency on disk in addition to removing it from the multirepo config.']
       ].concat(super)
     end
     
