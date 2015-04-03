@@ -10,6 +10,8 @@ An alternative approach to manage constantly evolving dependencies.
 
 Check out [the project's to-do list](https://www.pivotaltracker.com/n/projects/1256156) to get an idea of upcoming enhancements.
 
+You can download a handy cheat sheet [here](https://github.com/fortinmike/git-multirepo/raw/master/docs/git-multirepo-cheatsheet.docx).
+
 ## Motivation
 
 By now the
