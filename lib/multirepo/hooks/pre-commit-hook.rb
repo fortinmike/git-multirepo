@@ -8,17 +8,17 @@ module MultiRepo
     def self.run
       Config.instance.running_git_hook = true
       
-      Console.log_step("multirepo: Performing pre-commit operations...")
+      Console.log_step("Performing pre-commit operations...")
       
       dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load)
       
       if !dependencies_clean
-        Console.log_error("multirepo: You must commit changes to your dependencies before you can commit this repo")
+        Console.log_error("You must commit changes to your dependencies before you can commit this repo")
         exit 1
       end
       
       LockFile.update
-      Console.log_info("multirepo: Updated and staged lock file with current HEAD revisions for all dependencies")
+      Console.log_info("Updated and staged lock file with current HEAD revisions for all dependencies")
       
       exit 0 # Success!
     end

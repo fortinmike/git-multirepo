@@ -14,13 +14,13 @@ module MultiRepo
     end
     
     def self.pre_merge
-      Console.log_step("multirepo: Performing pre-merge operations...")
+      Console.log_step("Performing pre-merge operations...")
       ensure_dependencies_clean
     end
     
     def self.ensure_dependencies_clean
       unless Utils.ensure_dependencies_clean(ConfigFile.load)
-        Console.log_error("multirepo: You must commit changes to your dependencies before you can commit this repo")
+        Console.log_error("You must commit changes to your dependencies before you can commit this repo")
         exit 1
       end
     end
