@@ -9,5 +9,8 @@ module MultiRepo
     
     attr_accessor :running_git_hook
     @running_git_hook = false
+
+    attr_accessor :git_executable
+    @git_executable = nil
   end
 end

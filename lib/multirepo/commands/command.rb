@@ -13,7 +13,15 @@ module MultiRepo
     
     def initialize(argv)
       Config.instance.verbose = argv.flag?("verbose") ? true : false
+      Config.instance.git_executable = argv.option("git-exe", "git")
       super
+    end
+
+    def validate!
+      path = Config.instance.git_executable
+      is_git_exe = path =~ /.*(git)|(git.exe)$/
+      file_exists = File.exists?(path)
+      help! "Invalid git executable '#{path}'" unless is_git_exe && file_exists
     end
     
     def validate_in_work_tree

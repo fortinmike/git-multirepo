@@ -14,12 +14,12 @@ module MultiRepo
     end
     
     def self.run_in_current_dir(git_command, verbosity)
-      full_command = "git #{git_command}"
+      full_command = "#{git_executable} #{git_command}"
       run(full_command, verbosity)
     end
     
     def self.run_in_working_dir(path, git_command, verbosity)
-      full_command = "git -C \"#{path}\" #{git_command}";
+      full_command = "#{git_executable} -C \"#{path}\" #{git_command}";
       
       # True fix for the -C flag issue in pre-commit hook where the status command would
       # fail to provide correct results if a pathspec was provided when performing a commit.
@@ -34,6 +34,10 @@ module MultiRepo
       result = Runner.run(full_command, verbosity)
       @last_command_succeeded = Runner.last_command_succeeded
       return result
+    end
+
+    def self.git_executable
+      Config.instance.git_executable || "git"
     end
   end
 end
