@@ -47,7 +47,11 @@ module MultiRepo
         CheckoutMode::AS_LOCK
       end
       
-      main_repo_checkout_step(@ref)
+      main_repo = Repo.new(".")
+      initial_revision = main_repo.current_branch || main_repo.head_hash
+      
+      main_repo_checkout_step(main_repo, initial_revision, @ref)
+      ensure_dependencies_clean_step(initial_revision)
       dependencies_checkout_step(mode, @ref)
       
       Console.log_step("Done!")
@@ -55,28 +59,30 @@ module MultiRepo
       Console.log_error(e.message)
     end
             
-    def main_repo_checkout_step(ref)
-      main_repo = Repo.new(".")
-      initial_revision = main_repo.current_branch || main_repo.head_hash
-      
+    def main_repo_checkout_step(main_repo, initial_revision, ref)
+      # Make sure the main repo is clean before attempting a checkout
       unless main_repo.is_clean?
         raise MultiRepoException, "Can't checkout #{ref} because the main repo contains uncommitted changes"
       end
       
+      # Checkout the specified ref
       unless main_repo.checkout(ref)
         raise MultiRepoException, "Couldn't perform checkout of main repo #{ref}!"
       end
       
       Console.log_substep("Checked out main repo #{ref}")
       
-      unless LockFile.exists?
+      # After checkout, make sure we're working with a multirepo-enabled ref
+      unless Utils.is_multirepo_enabled(".")
         main_repo.checkout(initial_revision)
         raise MultiRepoException, "This revision is not managed by multirepo. Checkout reverted."
       end
-      
+    end
+    
+    def ensure_dependencies_clean_step(initial_revision)
       unless Utils.ensure_dependencies_clean(ConfigFile.load)
         main_repo.checkout(initial_revision)
-        raise MultiRepoException, "'#{e.path}' contains uncommitted changes. Checkout reverted."
+        raise MultiRepoException, "Checkout reverted."
       end
     end
     

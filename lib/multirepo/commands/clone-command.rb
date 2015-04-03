@@ -48,7 +48,7 @@ module MultiRepo
         raise MultiRepoException, "Couldn't perform checkout of main repo #{@ref}!"
       end
       
-      Console.log_info("Checked out main repo #{@ref}")
+      Console.log_substep("Checked out main repo #{@ref}")
       
       # Make sure the ref we just checked out is multirepo-enabled
       unless Utils.is_multirepo_enabled(main_repo_path)
