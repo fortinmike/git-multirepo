@@ -1,5 +1,6 @@
 require "multirepo/utility/console"
 require "multirepo/files/config-file"
+require "multirepo/files/lock-file"
 
 module MultiRepo
   class BranchCommand < Command
@@ -30,8 +31,8 @@ module MultiRepo
       validate_in_work_tree
       ensure_multirepo_initialized
       
-      Console.log_step("Branching and checking out #{@branch_name}...")
-      
+      Console.log_step("Branching...")
+
       main_repo = main_repo = Repo.new(".")
       repos = ConfigFile.load.map{ |entry| entry.repo }.push(main_repo)
       
@@ -40,10 +41,16 @@ module MultiRepo
       end
 
       repos.each do |repo|
+        Console.log_substep("Branching and checking out #{repo.path} #{@branch_name} ...")
+
         branch = repo.branch(@branch_name)
         branch.create(@remote_tracking) unless branch.exists?
         branch.checkout
       end
+
+      Console.log_substep("Updating and committing lock file")
+      LockFile.update
+      LockFile.commit("[multirepo] Post-branch lock file update")
 
       Console.log_step("Done!")
     rescue MultiRepoException => e
