@@ -3,14 +3,14 @@
   name: git-multirepo-dummy
   id: e27695e9-e21d-4ad1-81b8-0ed587574c38
   head: 7b7d470d3822fd490fb6681dd05b42ab4b6c1a2b
-  branch: boung
+  branch: master
 - !ruby/object:MultiRepo::LockEntry
   name: git-multirepo-dummy-dep1
   id: dcb567d6-7456-494a-b7b5-adc208a87f2f
   head: 3ec4ed57dd7db27c55e9ddf00737c888b9171778
-  branch: boung
+  branch: master
 - !ruby/object:MultiRepo::LockEntry
   name: git-multirepo-dummy-dep2
   id: e0dc3ed7-4b6b-4052-8783-668b405e4941
   head: 1b8465fcd4f9e5821640bb45ad8c22c960b64517
-  branch: boung
+  branch: master
