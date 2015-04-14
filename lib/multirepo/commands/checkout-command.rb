@@ -34,7 +34,7 @@ module MultiRepo
     
     def run
       validate_in_work_tree
-      ensure_multirepo_initialized
+      ensure_multirepo_enabled
       
       Console.log_step("Checking out #{@ref} and its dependencies...")
       
@@ -73,9 +73,9 @@ module MultiRepo
       Console.log_substep("Checked out main repo #{ref}")
       
       # After checkout, make sure we're working with a multirepo-enabled ref
-      unless Utils.is_multirepo_enabled(".")
+      unless Utils.is_multirepo_tracked(".")
         main_repo.checkout(initial_revision)
-        raise MultiRepoException, "This revision is not managed by multirepo. Checkout reverted."
+        raise MultiRepoException, "This revision is not tracked by multirepo. Checkout reverted."
       end
     end
     

@@ -19,7 +19,7 @@ module MultiRepo
         
     def run
       validate_in_work_tree
-      ensure_multirepo_initialized
+      ensure_multirepo_tracked
       
       if @hooks
         Console.log_step("Installing hooks in main repo and all dependencies...")

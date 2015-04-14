@@ -22,7 +22,7 @@ module MultiRepo
     
     def run
       validate_in_work_tree
-      ensure_multirepo_initialized
+      ensure_multirepo_enabled
       ensure_repo_valid
       
       entry = ConfigEntry.new(Repo.new(@path))

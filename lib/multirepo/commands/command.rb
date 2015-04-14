@@ -30,7 +30,7 @@ module MultiRepo
     
     def install_hooks_in_multirepo_enabled_dependencies
       # Install the local git hooks in dependency repos
-      # if they are themselves tracked with multirepo
+      # if they are themselves multirepo-enabled
       ConfigFile.load.each do |entry|
         if Utils.is_multirepo_enabled(entry.repo.path)
           install_hooks(entry.repo.path)
@@ -52,8 +52,12 @@ module MultiRepo
       File.delete(".git/hooks/post-merge")
     end
     
-    def ensure_multirepo_initialized
+    def ensure_multirepo_enabled
       raise MultiRepoException, "multirepo is not initialized in this repository." unless Utils.is_multirepo_enabled(".")
+    end
+
+    def ensure_multirepo_tracked
+      raise MultiRepoException, "This revision is not tracked by multirepo." unless Utils.is_multirepo_tracked(".")
     end
   end
 end

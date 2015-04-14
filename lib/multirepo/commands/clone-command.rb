@@ -50,9 +50,9 @@ module MultiRepo
       
       Console.log_substep("Checked out main repo #{@ref}")
       
-      # Make sure the ref we just checked out is multirepo-enabled
-      unless Utils.is_multirepo_enabled(main_repo_path)
-        raise MultiRepoException, "Ref #{@ref} is not multirepo-enabled"
+      # Make sure the ref we just checked out is tracked by multirepo
+      unless Utils.is_multirepo_tracked(main_repo_path)
+        raise MultiRepoException, "Ref #{@ref} is not tracked by multirepo"
       end
       
       # Install
