@@ -46,7 +46,7 @@ module MultiRepo
     end
     
     def self.print_prefix
-      print $stdout.isatty ? "> ".white : "multirepo: "
+      print $stdout.isatty ? "> ".white : "[multirepo] "
     end
   end
 end
