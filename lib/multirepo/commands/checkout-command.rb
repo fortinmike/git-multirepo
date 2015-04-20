@@ -51,7 +51,7 @@ module MultiRepo
       initial_revision = main_repo.current_branch || main_repo.head_hash
       
       main_repo_checkout_step(main_repo, initial_revision, @ref)
-      ensure_dependencies_clean_step(initial_revision)
+      ensure_dependencies_clean_step(main_repo, initial_revision)
       dependencies_checkout_step(mode, @ref)
       
       Console.log_step("Done!")
@@ -79,7 +79,7 @@ module MultiRepo
       end
     end
     
-    def ensure_dependencies_clean_step(initial_revision)
+    def ensure_dependencies_clean_step(main_repo, initial_revision)
       unless Utils.ensure_dependencies_clean(ConfigFile.load)
         main_repo.checkout(initial_revision)
         raise MultiRepoException, "Checkout reverted."
