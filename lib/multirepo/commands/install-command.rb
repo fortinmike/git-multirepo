@@ -27,6 +27,7 @@ module MultiRepo
       else
         Console.log_step("Cloning dependencies and installing hooks...")
         install_dependencies_step
+        install_hooks_step
       end
       
       Console.log_step("Done!")
@@ -45,8 +46,6 @@ module MultiRepo
       # Checkout the appropriate branches as specified in the lock file
       checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
       checkout_command.dependencies_checkout_step(CheckoutCommand::CheckoutMode::LATEST)
-      
-      install_hooks_step
     end
     
     def install_hooks_step
