@@ -62,7 +62,16 @@ module MultiRepo
     def update_gitattributes(path = nil)
       actual_path = path || "."
       gitattributes_file = File.join(actual_path, ".gitattributes")
-      Console.log_warning("Not implemented!!! Update file: #{gitattributes_file}")
+      add_line_if_missing(gitattributes_file, ".multirepo.lock merge=ours")
+    end
+
+    def add_line_if_missing(path, line)
+      unless File.exists?(path)
+        File.open(path, 'w') { |f| f.puts(line) }
+      else
+        line_exists = File.readlines(path).grep(/#{line}/).any?
+        File.open(path, 'a') { |f| f.puts(line) } unless line_exists
+      end
     end
     
     def ensure_multirepo_enabled
