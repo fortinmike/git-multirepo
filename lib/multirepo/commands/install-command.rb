@@ -24,10 +24,12 @@ module MultiRepo
       if @hooks
         Console.log_step("Installing hooks in main repo and all dependencies...")
         install_hooks_step
+        update_gitattributes_step
       else
         Console.log_step("Cloning dependencies and installing hooks...")
         install_dependencies_step
         install_hooks_step
+        update_gitattributes_step
       end
       
       Console.log_step("Done!")
@@ -53,6 +55,13 @@ module MultiRepo
       Console.log_substep("Installed git hooks in main repo")
       
       install_hooks_in_multirepo_enabled_dependencies
+    end
+
+    def update_gitattributes_step
+      update_gitattributes
+      Console.log_substep("Updated .gitattributes file")
+
+      update_gitattributes_in_multirepo_enabled_dependencies
     end
     
     def clone_or_fetch(entry)

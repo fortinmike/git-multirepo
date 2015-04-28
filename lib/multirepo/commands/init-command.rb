@@ -38,6 +38,9 @@ module MultiRepo
       
       install_hooks
       Console.log_substep("Installed git hooks")
+
+      update_gitattributes
+      Console.log_substep("Updated .gitattributes file")
       
       Console.log_step("Done!")
     rescue MultiRepoException => e

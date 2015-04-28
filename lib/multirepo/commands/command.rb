@@ -29,12 +29,19 @@ module MultiRepo
     end
     
     def install_hooks_in_multirepo_enabled_dependencies
-      # Install the local git hooks in dependency repos
-      # if they are themselves multirepo-enabled
       ConfigFile.load.each do |entry|
         if Utils.is_multirepo_enabled(entry.repo.path)
           install_hooks(entry.repo.path)
           Console.log_substep("Installed hooks in multirepo-enabled dependency '#{entry.repo.path}'")
+        end
+      end
+    end
+
+    def update_gitattributes_in_multirepo_enabled_dependencies
+      ConfigFile.load.each do |entry|
+        if Utils.is_multirepo_enabled(entry.repo.path)
+          update_gitattributes(entry.repo.path)
+          Console.log_substep("Updated .gitattributes in multirepo-enabled dependency '#{entry.repo.path}'")
         end
       end
     end
@@ -50,6 +57,12 @@ module MultiRepo
       File.delete(".git/hooks/pre-commit")
       File.delete(".git/hooks/prepare-commit-msg")
       File.delete(".git/hooks/post-merge")
+    end
+
+    def update_gitattributes(path = nil)
+      actual_path = path || "."
+      gitattributes_file = File.join(actual_path, ".gitattributes")
+      Console.log_warning("Not implemented!!! Update file: #{gitattributes_file}")
     end
     
     def ensure_multirepo_enabled
