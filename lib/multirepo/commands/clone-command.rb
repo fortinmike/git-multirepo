@@ -59,8 +59,7 @@ module MultiRepo
       original_path = Dir.pwd
       Dir.chdir(main_repo_path)
       install_command = InstallCommand.new(CLAide::ARGV.new([]))
-      install_command.install_dependencies_step
-      install_command.install_hooks_step
+      install_command.full_install
       Dir.chdir(original_path)
       
       Console.log_step("Done!")

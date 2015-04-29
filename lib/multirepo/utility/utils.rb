@@ -55,12 +55,12 @@ module MultiRepo
       components.join(File::ALT_SEPARATOR)
     end
     
-    def self.append_line_if_missing(path, line)
+    def self.append_if_missing(path, string_to_locate, string_to_append)
       unless File.exists?(path)
-        File.open(path, 'w') { |f| f.puts(line) }
+        File.open(path, 'w') { |f| f.puts(string_to_append) }
       else
-        line_exists = File.readlines(path).grep(/#{line}/).any?
-        File.open(path, 'a') { |f| f.puts(line) } unless line_exists
+        string_located = File.readlines(path).grep(/#{string_to_locate}/).any?
+        File.open(path, 'a') { |f| f.puts(string_to_append) } unless string_located
       end
     end
   end

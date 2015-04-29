@@ -26,13 +26,18 @@ module MultiRepo
         install_hooks_step
       else
         Console.log_step("Cloning dependencies and installing hooks...")
-        install_dependencies_step
-        install_hooks_step
+        full_install
       end
       
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
+    end
+    
+    def full_install
+      install_dependencies_step
+      install_hooks_step
+      update_gitconfigs_step
     end
     
     def install_dependencies_step
@@ -49,10 +54,23 @@ module MultiRepo
     end
     
     def install_hooks_step
-      install_hooks
+      install_hooks(".")
       Console.log_substep("Installed git hooks in main repo")
       
-      install_hooks_in_multirepo_enabled_dependencies
+      multirepo_enabled_dependencies.each do |e|
+        install_hooks(entry.repo.path)
+        Console.log_substep("Installed hooks in multirepo-enabled dependency '#{entry.repo.path}'")
+      end
+    end
+    
+    def update_gitconfigs_step
+      update_gitconfig(".")
+      Console.log_substep("Updated .git/config file")
+      
+      multirepo_enabled_dependencies.each do |entry|
+        update_gitconfig(entry.repo.path)
+        Console.log_substep("Updated .git/config in multirepo-enabled dependency '#{entry.repo.path}'")
+      end
     end
     
     def clone_or_fetch(entry)

@@ -20,7 +20,8 @@ module MultiRepo
       
       add_sibling_repos_step
       install_hooks_step
-      setup_gitattributes_step
+      update_gitattributes_step
+      update_gitconfig_step
       
       Console.log_step("Done!")
     rescue MultiRepoException => e
@@ -49,16 +50,18 @@ module MultiRepo
     end
     
     def install_hooks_step
-      install_hooks
+      install_hooks(".")
       Console.log_substep("Installed git hooks")
     end
     
-    def setup_gitattributes_step
-      Utils.append_line_if_missing("./.gitattributes", ".multirepo.lock merge=ours")
+    def update_gitattributes_step
+      Utils.append_if_missing("./.gitattributes", ".multirepo.lock", ".multirepo.lock merge=ours")
       Console.log_substep("Updated .gitattributes file")
-      
-      FileUtils.cp(Utils.path_for_resource(".gitconfig"), ".gitconfig")
-      Console.log_substep("Updated .gitconfig file")
+    end
+    
+    def update_gitconfig_step
+      update_gitconfig(".")
+      Console.log_substep("Updated .git/config file")
     end
     
     def check_repo_exists

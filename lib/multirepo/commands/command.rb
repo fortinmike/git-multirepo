@@ -28,16 +28,7 @@ module MultiRepo
       raise MultiRepoException, "Not a git repository" unless Git.is_inside_git_repo(".")
     end
     
-    def install_hooks_in_multirepo_enabled_dependencies
-      ConfigFile.load.each do |entry|
-        if Utils.is_multirepo_enabled(entry.repo.path)
-          install_hooks(entry.repo.path)
-          Console.log_substep("Installed hooks in multirepo-enabled dependency '#{entry.repo.path}'")
-        end
-      end
-    end
-    
-    def install_hooks(path = nil)
+    def install_hooks(path)
       actual_path = path || "."
       Utils.install_hook("pre-commit", actual_path)
       Utils.install_hook("prepare-commit-msg", actual_path)
@@ -48,6 +39,16 @@ module MultiRepo
       File.delete(".git/hooks/pre-commit")
       File.delete(".git/hooks/prepare-commit-msg")
       File.delete(".git/hooks/post-merge")
+    end
+    
+    def update_gitconfig(path)
+      actual_path = path || "."
+      puts "TODO: #{File.join(actual_path, '.git/config')}"
+      #FileUtils.cp(Utils.path_for_resource(".gitconfig"), File.join(actual_path, ".gitconfig"))
+    end
+    
+    def multirepo_enabled_dependencies
+      ConfigFile.load.select { |e| Utils.is_multirepo_enabled(e.repo.path) }
     end
     
     def ensure_multirepo_enabled
