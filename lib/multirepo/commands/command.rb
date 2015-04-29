@@ -43,8 +43,13 @@ module MultiRepo
     
     def update_gitconfig(path)
       actual_path = path || "."
-      puts "TODO: #{File.join(actual_path, '.git/config')}"
-      #FileUtils.cp(Utils.path_for_resource(".gitconfig"), File.join(actual_path, ".gitconfig"))
+      resource_file = Utils.path_for_resource(".gitconfig")
+      target_file = File.join(actual_path, '.git/config')
+      
+      template = File.read(resource_file)
+      first_template_line = template.lines.first
+      
+      Utils.append_if_missing(target_file, first_template_line, template)
     end
     
     def multirepo_enabled_dependencies
