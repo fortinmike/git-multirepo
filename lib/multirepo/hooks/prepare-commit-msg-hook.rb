@@ -11,6 +11,9 @@ module MultiRepo
       pre_merge if argv[1] == "merge"
       
       exit 0 # Success!
+    rescue StandardError => e
+      Console.log_error("Pre-merge hook failed to execute! #{e.message}")
+      exit 1 # Something went wrong!
     end
     
     def self.pre_merge
