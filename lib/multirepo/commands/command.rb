@@ -36,15 +36,6 @@ module MultiRepo
         end
       end
     end
-
-    def update_gitattributes_in_multirepo_enabled_dependencies
-      ConfigFile.load.each do |entry|
-        if Utils.is_multirepo_enabled(entry.repo.path)
-          update_gitattributes(entry.repo.path)
-          Console.log_substep("Updated .gitattributes in multirepo-enabled dependency '#{entry.repo.path}'")
-        end
-      end
-    end
     
     def install_hooks(path = nil)
       actual_path = path || "."
@@ -57,21 +48,6 @@ module MultiRepo
       File.delete(".git/hooks/pre-commit")
       File.delete(".git/hooks/prepare-commit-msg")
       File.delete(".git/hooks/post-merge")
-    end
-
-    def update_gitattributes(path = nil)
-      actual_path = path || "."
-      gitattributes_file = File.join(actual_path, ".gitattributes")
-      add_line_if_missing(gitattributes_file, ".multirepo.lock merge=ours")
-    end
-
-    def add_line_if_missing(path, line)
-      unless File.exists?(path)
-        File.open(path, 'w') { |f| f.puts(line) }
-      else
-        line_exists = File.readlines(path).grep(/#{line}/).any?
-        File.open(path, 'a') { |f| f.puts(line) } unless line_exists
-      end
     end
     
     def ensure_multirepo_enabled

@@ -11,12 +11,23 @@ module MultiRepo
     
     def run
       validate_in_work_tree
-      Console.log_step("Initializing new multirepo config...")
-      
+          
       if ConfigFile.exists?
         return unless Console.ask_yes_no(".multirepo file already exists. Reinitialize?")
       end
       
+      Console.log_step("Initializing new multirepo config...")
+      
+      add_sibling_repos_step
+      install_hooks_step
+      write_gitattributes_step
+      
+      Console.log_step("Done!")
+    rescue MultiRepoException => e
+      Console.log_error(e.message)
+    end
+    
+    def add_sibling_repos_step
       sibling_repos = Utils.sibling_repos
       
       if sibling_repos.any?
@@ -35,16 +46,16 @@ module MultiRepo
       else
         Console.log_info("There are no sibling repositories to add")
       end
-      
+    end
+    
+    def install_hooks_step
       install_hooks
       Console.log_substep("Installed git hooks")
-
-      update_gitattributes
+    end
+    
+    def write_gitattributes_step
+      Utils.append_line_if_missing("./.gitattributes", ".multirepo.lock merge=ours")
       Console.log_substep("Updated .gitattributes file")
-      
-      Console.log_step("Done!")
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
     
     def check_repo_exists

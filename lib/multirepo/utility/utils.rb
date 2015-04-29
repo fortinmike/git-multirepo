@@ -54,5 +54,14 @@ module MultiRepo
       components = Pathname.new(unix_path).each_filename.to_a
       components.join(File::ALT_SEPARATOR)
     end
+    
+    def self.append_line_if_missing(path, line)
+      unless File.exists?(path)
+        File.open(path, 'w') { |f| f.puts(line) }
+      else
+        line_exists = File.readlines(path).grep(/#{line}/).any?
+        File.open(path, 'a') { |f| f.puts(line) } unless line_exists
+      end
+    end
   end
 end
