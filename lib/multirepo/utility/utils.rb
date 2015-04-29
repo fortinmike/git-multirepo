@@ -59,7 +59,7 @@ module MultiRepo
       unless File.exists?(path)
         File.open(path, 'w') { |f| f.puts(string_to_append) }
       else
-        string_located = File.readlines(path).grep(/#{string_to_locate}/).any?
+        string_located = File.readlines(path).grep(string_to_locate).any?
         File.open(path, 'a') { |f| f.puts(string_to_append) } unless string_located
       end
     end
