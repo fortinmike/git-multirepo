@@ -16,7 +16,10 @@ module MultiRepo
     end
     
     def self.install_hook(name, path)
-      FileUtils.cp(path_for_resource(name), File.join(path, ".git/hooks"))
+      destination_path = File.join(path, ".git/hooks")
+      destination_file = File.join(destination_path, name)
+      FileUtils.cp(path_for_resource(name), destination_file)
+      FileUtils.chmod(0755, destination_file) # -rwxr-xr-x
     end
     
     def self.sibling_repos
