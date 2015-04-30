@@ -18,6 +18,7 @@ module MultiRepo
       end
       
       LockFile.update
+      LockFile.stage
       Console.log_info("Updated and staged lock file with current HEAD revisions for all dependencies")
       
       exit 0 # Success!

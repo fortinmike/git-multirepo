@@ -22,7 +22,9 @@ module MultiRepo
       lock_entries = config_entries.map { |c| LockEntry.new(c) }
       
       File.write(FILE.to_s, Psych.dump(lock_entries))
-      
+    end
+    
+    def self.stage
       Git.run_in_current_dir("add -A #{FILE.to_s}", Runner::Verbosity::OUTPUT_ON_ERROR)
     end
 
