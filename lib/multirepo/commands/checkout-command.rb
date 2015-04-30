@@ -50,7 +50,7 @@ module MultiRepo
       main_repo = Repo.new(".")
       initial_revision = main_repo.current_branch || main_repo.head_hash
       
-      unless proceed_if_merge_commit(main_repo, @ref, mode)
+      unless proceed_if_merge_commit?(main_repo, @ref, mode)
         raise MultiRepoException, "Aborting checkout"
       end
       
@@ -95,7 +95,7 @@ module MultiRepo
       LockFile.load.each { |lock_entry| perform_dependency_checkout(config_entries, lock_entry, ref, mode) }
     end
     
-    def proceed_if_merge_commit(main_repo, ref, mode)
+    def proceed_if_merge_commit?(main_repo, ref, mode)
       return true unless main_repo.commit(ref).is_merge?
       
       case mode
