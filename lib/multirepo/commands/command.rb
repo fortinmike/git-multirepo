@@ -47,7 +47,7 @@ module MultiRepo
       template = File.read(resource_file)
       first_template_line = template.lines.first
       
-      Utils.append_if_missing(target_file, first_template_line, template)
+      Utils.append_if_missing(target_file, Regexp.new(Regexp.quote(first_template_line)), template)
     end
     
     def multirepo_enabled_dependencies

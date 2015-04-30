@@ -79,7 +79,7 @@ module MultiRepo
     end
     
     def update_gitattributes_step
-      Utils.append_if_missing("./.gitattributes", ".multirepo.lock", ".multirepo.lock merge=ours")
+      Utils.append_if_missing("./.gitattributes", /^.multirepo.lock .*/, ".multirepo.lock merge=ours")
       Console.log_substep("Updated .gitattributes file")
     end
     
