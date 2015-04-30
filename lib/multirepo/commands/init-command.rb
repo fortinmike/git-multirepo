@@ -9,23 +9,41 @@ module MultiRepo
     self.command = "init"
     self.summary = "Initialize the current repository as a multirepo project."
     
+    def self.options
+      [['[--extras]', 'Keep the current .multirepo config file as-is and initialize everything else.']].concat(super)
+    end
+    
+    def initialize(argv)
+      @only_extras = argv.flag?("extras")
+      super
+    end
+    
     def run
       validate_in_work_tree
-          
-      if ConfigFile.exists?
-        return unless Console.ask_yes_no(".multirepo file already exists. Reinitialize?")
+      
+      if @only_extras
+        Console.log_step("Initializing extras...")
+        initialize_extras_step
+      else
+        Console.log_step("Initializing multirepo...")
+        full_initialize_step
       end
-      
-      Console.log_step("Initializing new multirepo config...")
-      
-      add_sibling_repos_step
-      install_hooks_step
-      update_gitattributes_step
-      update_gitconfig_step
       
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
+    end
+    
+    def full_initialize_step
+      if ConfigFile.exists?
+        reinitialize = Console.ask_yes_no(".multirepo file already exists. Reinitialize?")
+        raise MultiRepoException, "Initialization aborted" unless reinitialize
+      end
+      
+      Console.log_substep("Creating new multirepo config...")
+      
+      add_sibling_repos_step
+      initialize_extras_step
     end
     
     def add_sibling_repos_step
@@ -47,6 +65,12 @@ module MultiRepo
       else
         Console.log_info("There are no sibling repositories to add")
       end
+    end
+    
+    def initialize_extras_step
+      install_hooks_step
+      update_gitattributes_step
+      update_gitconfig_step
     end
     
     def install_hooks_step
