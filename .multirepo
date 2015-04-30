@@ -3,14 +3,15 @@
   id: e27695e9-e21d-4ad1-81b8-0ed587574c38
   path: ../git-multirepo-dummy/
   url: git@github.com:fortinmike/git-multirepo-dummy.git
-  branch: master
 - !ruby/object:MultiRepo::ConfigEntry
   id: dcb567d6-7456-494a-b7b5-adc208a87f2f
   path: ../git-multirepo-dummy-dep1/
   url: git@github.com:fortinmike/git-multirepo-dummy-dep1.git
-  branch: master
 - !ruby/object:MultiRepo::ConfigEntry
   id: e0dc3ed7-4b6b-4052-8783-668b405e4941
   path: ../git-multirepo-dummy-dep2/
   url: git@github.com:fortinmike/git-multirepo-dummy-dep2.git
-  branch: master
+- !ruby/object:MultiRepo::ConfigEntry
+  id: ad6472a5-7238-447f-a54e-50f50197e21e
+  path: ../git-multirepo-migrations/
+  url: git@github.com:fortinmike/git-multirepo-migrations.git

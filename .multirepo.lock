@@ -14,3 +14,8 @@
   id: e0dc3ed7-4b6b-4052-8783-668b405e4941
   head: 1b8465fcd4f9e5821640bb45ad8c22c960b64517
   branch: master
+- !ruby/object:MultiRepo::LockEntry
+  name: git-multirepo-migrations
+  id: ad6472a5-7238-447f-a54e-50f50197e21e
+  head: b0904dd4972bc9884d54d65aa0af91d9901d6716
+  branch: master
