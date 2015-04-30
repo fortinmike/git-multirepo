@@ -31,12 +31,10 @@ module MultiRepo
     def install_hooks(path)
       actual_path = path || "."
       Utils.install_hook("pre-commit", actual_path)
-      Utils.install_hook("prepare-commit-msg", actual_path)
     end
     
     def uninstall_hooks
       File.delete(".git/hooks/pre-commit")
-      File.delete(".git/hooks/prepare-commit-msg")
     end
     
     def update_gitconfig(path)
