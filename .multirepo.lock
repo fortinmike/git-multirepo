@@ -17,7 +17,5 @@
 - !ruby/object:MultiRepo::LockEntry
   name: git-multirepo-migrations
   id: ad6472a5-7238-447f-a54e-50f50197e21e
-  head: 'fatal: Cannot change to ''../git-multirepo-migrations/'': No such file or
-    directory'
-  branch: 'fatal: Cannot change to ''../git-multirepo-migrations/'': No such file
-    or directory'
+  head: b0904dd4972bc9884d54d65aa0af91d9901d6716
+  branch: master

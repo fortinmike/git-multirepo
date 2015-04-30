@@ -42,30 +42,31 @@ module MultiRepo
         raise MultiRepoException, "Initialization aborted" unless reinitialize
       end
       
-      Console.log_substep("Creating new multirepo config...")
-      
-      add_sibling_repos_step
+      unless add_sibling_repos_step
+        raise MultiRepoException, "There are no sibling repositories to track as dependencies. Initialization aborted."
+      end
+
       initialize_extras_step
     end
     
     def add_sibling_repos_step
       sibling_repos = Utils.sibling_repos
+      return false unless sibling_repos.any?
+
+      Console.log_substep("Creating new multirepo config...")
       
-      if sibling_repos.any?
-        entries = []
-        sibling_repos.each do |repo|
-          origin_desc = repo.remote('origin').url || "[none]"
-          current_branch = repo.current_branch
-          if Console.ask_yes_no("Do you want to add '#{repo.path}' as a dependency?\n  [origin: '#{origin_desc}', branch: #{current_branch}]")
-            entries.push(ConfigEntry.new(repo))
-            Console.log_substep("Added the repository '#{repo.path}' to the .multirepo file")
-          end
+      entries = []
+      sibling_repos.each do |repo|
+        origin_desc = repo.remote('origin').url || "[none]"
+        current_branch = repo.current_branch
+        if Console.ask_yes_no("Do you want to add '#{repo.path}' as a dependency?\n  [origin: '#{origin_desc}', branch: #{current_branch}]")
+          entries.push(ConfigEntry.new(repo))
+          Console.log_substep("Added the repository '#{repo.path}' to the .multirepo file")
         end
-        
-        ConfigFile.save(entries)
-      else
-        Console.log_info("There are no sibling repositories to add")
       end
+      
+      ConfigFile.save(entries)
+      return true
     end
     
     def initialize_extras_step
