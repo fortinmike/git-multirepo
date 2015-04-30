@@ -28,8 +28,7 @@ module MultiRepo
       Git.run_in_current_dir("add -A #{FILE.to_s}", Runner::Verbosity::OUTPUT_ON_ERROR)
     end
 
-    def self.commit(message = nil)
-      message = message || "[multirepo] Updated lock file"
+    def self.commit(message)
       Git.run_in_current_dir("commit -m \"#{message}\" -o -- #{FILE.to_s}", Runner::Verbosity::OUTPUT_ON_ERROR)
     end
     

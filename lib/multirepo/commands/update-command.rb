@@ -37,7 +37,7 @@ module MultiRepo
       
       if @commit
         Console.log_substep("Committing updated lock file")
-        LockFile.commit
+        LockFile.commit("[multirepo] Manually updated lock file")
       end
       
       Console.log_step("Done!")
