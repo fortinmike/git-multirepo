@@ -29,10 +29,6 @@ module MultiRepo
       help! "Invalid git executable '#{path}'" unless is_git_exe && file_exists
     end
     
-    def validate_in_work_tree
-      raise MultiRepoException, "Not a git repository" unless Git.is_inside_git_repo(".")
-    end
-    
     def install_hooks(path)
       actual_path = path || "."
       Utils.install_hook("pre-commit", actual_path)
@@ -55,6 +51,10 @@ module MultiRepo
     
     def multirepo_enabled_dependencies
       ConfigFile.load.select { |e| Utils.is_multirepo_enabled(e.repo.path) }
+    end
+    
+    def ensure_in_work_tree
+      raise MultiRepoException, "Not a git repository" unless Git.is_inside_git_repo(".")
     end
     
     def ensure_multirepo_enabled

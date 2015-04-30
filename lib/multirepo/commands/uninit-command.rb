@@ -7,7 +7,7 @@ module MultiRepo
     
     def run
       super
-      validate_in_work_tree
+      ensure_in_work_tree
       
       FileUtils.rm_f(".multirepo")
       FileUtils.rm_f(".multirepo.lock")

@@ -26,7 +26,7 @@ module MultiRepo
     
     def run
       super
-      validate_in_work_tree
+      ensure_in_work_tree
       ensure_multirepo_enabled
       
       repo = Repo.new(@path)
