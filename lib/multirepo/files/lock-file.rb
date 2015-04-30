@@ -21,7 +21,11 @@ module MultiRepo
       config_entries = ConfigFile.load
       lock_entries = config_entries.map { |c| LockEntry.new(c) }
       
-      File.write(FILE.to_s, Psych.dump(lock_entries))
+      old_content = File.read(FILE.to_s)
+      new_content = Psych.dump(lock_entries)
+      File.write(FILE.to_s, new_content)
+      
+      return new_content != old_content
     end
     
     def self.stage
