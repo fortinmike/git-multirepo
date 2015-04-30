@@ -9,6 +9,7 @@ module MultiRepo
     self.summary = "Opens all dependencies in the current OS's file explorer."
     
     def run
+      super
       validate_in_work_tree
       ensure_multirepo_enabled
       

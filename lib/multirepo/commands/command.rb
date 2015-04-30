@@ -12,9 +12,14 @@ module MultiRepo
     self.description = DESCRIPTION
     
     def initialize(argv)
+      @argv = argv
       Config.instance.verbose = argv.flag?("verbose") ? true : false
       Config.instance.git_executable = argv.option("git-exe", "git")
       super
+    end
+    
+    def run
+      help! "Unknown argument(s): #{@argv.remainder.join(', ')}" unless @argv.empty?
     end
 
     def validate!
