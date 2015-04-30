@@ -57,7 +57,7 @@ module MultiRepo
       install_hooks(".")
       Console.log_substep("Installed git hooks in main repo")
       
-      multirepo_enabled_dependencies.each do |e|
+      multirepo_enabled_dependencies.each do |entry|
         install_hooks(entry.repo.path)
         Console.log_substep("Installed hooks in multirepo-enabled dependency '#{entry.repo.path}'")
       end
