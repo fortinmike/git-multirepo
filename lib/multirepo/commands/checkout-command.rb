@@ -50,10 +50,14 @@ module MultiRepo
       main_repo = Repo.new(".")
       initial_revision = main_repo.current_branch || main_repo.head_hash
       
+      unless proceed_if_merge_commit?(main_repo, @ref, mode)
+        raise MultiRepoException, "Aborting checkout"
+      end
+      
       main_repo_checkout_step(main_repo, initial_revision, @ref)
       ensure_dependencies_clean_step(main_repo, initial_revision)
       dependencies_checkout_step(mode, @ref)
-      
+            
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
@@ -89,6 +93,22 @@ module MultiRepo
     def dependencies_checkout_step(mode, ref = nil)
       config_entries = ConfigFile.load # Post-main-repo checkout config entries might be different than pre-checkout
       LockFile.load.each { |lock_entry| perform_dependency_checkout(config_entries, lock_entry, ref, mode) }
+    end
+    
+    def proceed_if_merge_commit?(main_repo, ref, mode)
+      return true unless main_repo.commit(ref).is_merge?
+      
+      case mode
+      when CheckoutMode::AS_LOCK
+        Console.log_error("The specified ref is a merge commit and an \"as-lock\" checkout was requested.")
+        Console.log_error("The resulting checkout would most probably not result in a valid project state.")
+        return false
+      when CheckoutMode::LATEST
+        Console.log_warning("The specified ref is a merge commit and a \"latest\" checkout was requested.")
+        Console.log_warning("The work branches recorded in the branch from which the merge was performed will be checked out.")
+      end
+      
+      return true
     end
     
     def perform_dependency_checkout(config_entries, lock_entry, ref, mode)

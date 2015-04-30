@@ -21,6 +21,9 @@ module MultiRepo
       Console.log_info("Updated and staged lock file with current HEAD revisions for all dependencies")
       
       exit 0 # Success!
+    rescue StandardError => e
+      Console.log_error("Pre-commit hook failed to execute! #{e.message}")
+      exit 1 # Something went wrong!
     end
   end
 end

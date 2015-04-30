@@ -1,5 +1,6 @@
 require_relative "branch"
 require_relative "remote"
+require_relative "commit"
 require_relative "change"
 
 module MultiRepo
@@ -62,6 +63,10 @@ module MultiRepo
     
     def remote(name)
       Remote.new(self, name)
+    end
+    
+    def commit(ref)
+      Commit.new(self, ref)
     end
   end
 end
