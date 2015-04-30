@@ -30,7 +30,6 @@ module MultiRepo
         Console.log_info("There is already an entry for '#{@path}' in the .multirepo file")
       else
         ConfigFile.add_entry(entry)
-        ConfigFile.stage
         Console.log_step("Added '#{@path}' to the .multirepo file")
       end
     rescue MultiRepoException => e

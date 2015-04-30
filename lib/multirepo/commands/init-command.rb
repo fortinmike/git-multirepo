@@ -61,7 +61,6 @@ module MultiRepo
         end
         
         ConfigFile.save(entries)
-        ConfigFile.stage
       else
         Console.log_info("There are no sibling repositories to add")
       end

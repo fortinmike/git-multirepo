@@ -30,9 +30,5 @@ module MultiRepo
     def self.remove_entry(entry)
       save(load.delete_if { |e| e == entry })
     end
-
-    def self.stage
-      Git.run_in_current_dir("add -A -f #{FILE.to_s}", Runner::Verbosity::NEVER_OUTPUT)
-    end
   end
 end

@@ -9,10 +9,6 @@ RSpec.describe("Init") do
     pending
   end
   
-  it "stages the config file" do
-    pending
-  end
-  
   it "installs the hooks" do
     pending
   end
