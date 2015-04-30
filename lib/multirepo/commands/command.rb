@@ -39,7 +39,7 @@ module MultiRepo
     end
     
     def uninstall_hooks
-      File.delete(".git/hooks/pre-commit")
+      FileUtils.rm_f(".git/hooks/pre-commit")
     end
     
     def update_gitconfig(path)

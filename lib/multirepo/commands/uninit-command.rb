@@ -9,8 +9,8 @@ module MultiRepo
       super
       validate_in_work_tree
       
-      File.delete(".multirepo")
-      File.delete(".multirepo.lock")
+      FileUtils.rm_f(".multirepo")
+      FileUtils.rm_f(".multirepo.lock")
       uninstall_hooks
       
       Console.log_step("All traces of multirepo have been removed from this repository")
