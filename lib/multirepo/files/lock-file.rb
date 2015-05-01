@@ -35,11 +35,5 @@ module MultiRepo
     def self.commit(message)
       Git.run_in_current_dir("commit -m \"#{message}\" -o -- #{FILE.to_s}", Runner::Verbosity::OUTPUT_ON_ERROR)
     end
-    
-    def self.validate_components(line, components)
-      unless components.count == 2
-        raise MultiRepoException, "Wrong entry format in .multirepo.lock file: #{line}"
-      end
-    end
   end
 end
