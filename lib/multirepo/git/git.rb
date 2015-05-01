@@ -8,11 +8,6 @@ module MultiRepo
       attr_accessor :last_command_succeeded
     end
     
-    def self.is_inside_git_repo(path)
-      return false unless Dir.exist?("#{path}/.git")
-      return Git.run_in_working_dir(path, "rev-parse --is-inside-work-tree", Runner::Verbosity::NEVER_OUTPUT).strip == "true"
-    end
-    
     def self.run_in_current_dir(git_command, verbosity)
       full_command = "#{git_executable} #{git_command}"
       run(full_command, verbosity)

@@ -54,7 +54,9 @@ module MultiRepo
     end
     
     def ensure_in_work_tree
-      raise MultiRepoException, "Not a git repository" unless Git.is_inside_git_repo(".")
+      repo = Repo.new(".")
+      raise MultiRepoException, "Not a git repository" unless repo.exists?
+      raise MultiRepoException, "HEAD is unborn (you must perform at least one commit)" unless repo.head_born?
     end
     
     def ensure_multirepo_enabled

@@ -16,7 +16,13 @@ module MultiRepo
     # Inspection
     
     def exists?
-      Git.is_inside_git_repo(@path)
+      return false unless Dir.exist?("#{@path}/.git")
+      return Git.run_in_working_dir(@path, "rev-parse --is-inside-work-tree", Runner::Verbosity::NEVER_OUTPUT).strip == "true"
+    end
+    
+    def head_born?
+      result = Git.run_in_working_dir(@path, "rev-parse HEAD --", Runner::Verbosity::NEVER_OUTPUT).strip
+      return !result.start_with?("fatal: bad revision")
     end
     
     def current_branch
