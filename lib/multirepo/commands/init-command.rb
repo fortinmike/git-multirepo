@@ -55,15 +55,10 @@ module MultiRepo
 
       Console.log_substep("Creating new multirepo config...")
       
-      entries = []
-      sibling_repos.each do |repo|
-        origin_desc = repo.remote('origin').url || "[none]"
-        current_branch = repo.current_branch
-        if Console.ask_yes_no("Do you want to add '#{repo.path}' as a dependency?\n  [origin: '#{origin_desc}', branch: #{current_branch}]")
-          entries.push(ConfigEntry.new(repo))
-          Console.log_substep("Added the repository '#{repo.path}' to the .multirepo file")
-        end
-      end
+      valid_repos = find_valid_repos(sibling_repos)
+      entries = create_entries(valid_repos)
+      
+      raise MultiRepoException, "No sibling repositories were added as dependencies; aborting." unless entries.any?
       
       ConfigFile.save(entries)
       return true
@@ -88,6 +83,26 @@ module MultiRepo
     def update_gitconfig_step
       update_gitconfig(".")
       Console.log_substep("Updated .git/config file")
+    end
+    
+    def find_valid_repos(repos)
+      repos.select do |repo|
+        next true if repo.head_born?
+        Console.log_warning("Ignoring repo '#{repo.path}' because its HEAD is unborn. You must perform at least one commit.")
+      end
+    end
+    
+    def create_entries(repos)
+      repos.map do |repo|
+        origin_url = repo.remote('origin').url
+        current_branch = repo.current_branch
+        
+        if Console.ask_yes_no("Do you want to add '#{repo.path}' as a dependency?\n  [origin: #{origin_url || "NONE"}, branch: #{current_branch}]")
+          raise MultiRepoException, "Repo 'origin' remote url is not set; aborting." unless origin_url
+          next ConfigEntry.new(repo)
+          Console.log_substep("Added the repository '#{repo.path}' to the .multirepo file")
+        end
+      end
     end
     
     def check_repo_exists
