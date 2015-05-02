@@ -25,7 +25,6 @@ module MultiRepo
     end
     
     def self.run(full_command, verbosity)
-      Console.log_info(full_command) if Config.instance.verbose
       result = Runner.run(full_command, verbosity)
       @last_command_succeeded = Runner.last_command_succeeded
       return result
