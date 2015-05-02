@@ -55,22 +55,20 @@ module MultiRepo
     end
     
     def install_hooks_step
-      install_hooks(".")
-      Console.log_substep("Installed git hooks in main repo")
-      
-      multirepo_enabled_dependencies.each do |entry|
-        install_hooks(entry.repo.path)
-        Console.log_substep("Installed hooks in multirepo-enabled dependency '#{entry.repo.path}'")
-      end
+      perform_in_main_repo_and_dependencies("Installed git hooks") { |repo| install_hooks(repo) }
     end
     
     def update_gitconfigs_step
-      update_gitconfig(".")
-      Console.log_substep("Updated .git/config file")
+      perform_in_main_repo_and_dependencies("Updated .git/config file") { |repo| update_gitconfig(repo) }
+    end
+    
+    def perform_in_main_repo_and_dependencies(message_prefix, &operation)
+      operation.call(".")
+      Console.log_substep("#{message_prefix} in main repo")
       
       multirepo_enabled_dependencies.each do |entry|
-        update_gitconfig(entry.repo.path)
-        Console.log_substep("Updated .git/config in multirepo-enabled dependency '#{entry.repo.path}'")
+        operation.call(entry.repo.path)
+        Console.log_substep("#{message_prefix} in multirepo-enabled dependency '#{entry.repo.path}'")
       end
     end
     
