@@ -1,6 +1,6 @@
 require "multirepo/utility/console"
 require "multirepo/files/config-file"
-require "multirepo/files/lock-file"
+require "multirepo/files/tracking-files"
 
 module MultiRepo
   class BranchCommand < Command
@@ -35,7 +35,7 @@ module MultiRepo
       Console.log_step("Branching...")
 
       main_repo = Repo.new(".")
-      repos = ConfigFile.load.map{ |entry| entry.repo }.push(main_repo)
+      repos = ConfigFile.load_entries.map{ |entry| entry.repo }.push(main_repo)
       
       if !Utils.ensure_working_copies_clean(repos) && !@force
         raise MultiRepoException, "Can't branch because not all repos are clean"
@@ -49,9 +49,9 @@ module MultiRepo
         branch.checkout
       end
 
-      Console.log_substep("Updating and committing lock file")
-      LockFile.update
-      LockFile.commit("[multirepo] Post-branch lock file update")
+      Console.log_substep("Updating and committing tracking files")
+      TrackingFiles.update
+      TrackingFiles.commit("[multirepo] Post-branch tracking files update")
 
       Console.log_step("Done!")
     rescue MultiRepoException => e

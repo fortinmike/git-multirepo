@@ -2,6 +2,7 @@ require "multirepo/utility/console"
 require "multirepo/utility/utils"
 require "multirepo/files/config-file"
 require "multirepo/files/lock-file"
+require "multirepo/files/tracking-files"
 require "multirepo/commands/command"
 
 module MultiRepo
@@ -60,7 +61,7 @@ module MultiRepo
       
       raise MultiRepoException, "No sibling repositories were added as dependencies; aborting." unless entries.any?
       
-      ConfigFile.save(entries)
+      ConfigFile.save_entries(entries)
       return true
     end
     
@@ -76,7 +77,11 @@ module MultiRepo
     end
     
     def update_gitattributes_step
-      Utils.append_if_missing("./.gitattributes", /^.multirepo.lock .*/, ".multirepo.lock merge=ours")
+      TrackingFiles::FILE_CLASSES.each do |c|
+        filename = c::FILENAME
+        regex_escaped_filename = Regexp.quote(filename)
+        Utils.append_if_missing("./.gitattributes", /^#{regex_escaped_filename} .*/, "#{filename} merge=ours")
+      end
       Console.log_substep("Updated .gitattributes file")
     end
     

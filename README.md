@@ -126,18 +126,19 @@ Here is a quick rundown of commands available to you in git-multirepo:
 | install | Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local git hooks. |
 | open | Opens all dependencies in the current OS's file explorer. |
 | remove | Removes the specified dependency from multirepo. |
-| update | Force-updates the multirepo lock file. |
+| update | Force-updates the multirepo tracking files. |
 | uninit | Removes all traces of multirepo in the current multirepo repository. |
 
 To read more about each command, use the `--help` flag (e.g. `$ multi clone --help`).
 
 ## Metadata
 
-git-multirepo stores all of its metadata in two files:
+git-multirepo stores all of its metadata in three files:
 
-| File | Format | Contents |
-|------|--------|----------|
-| .multirepo | YAML | A collection of your project's dependencies. For each dependency, stores its **local path** relative to the main repo and the **remote URL** your project depends upon.
-| .multirepo.lock | YAML | For each dependency, stores the **commit hash** and **branch** on which the dependency was when the main repo was committed. The dependency's **name** is also included but only serves as a reference to make inspecting the lock file easier. |
+| File | Format | Updated | Contents |
+|------|--------|---------|----------|
+| .multirepo | YAML | at initialization | A collection of your project's dependencies. For each dependency, stores its **local path** relative to the main repo and the **remote URL** your project depends upon.
+| .multirepo.lock | YAML | before each commit | For each dependency, stores the **commit hash** and **branch** on which the dependency was when the main repo was committed. The dependency's **name** is also included but only serves as a reference to make inspecting the lock file easier. |
+| .multirepo.meta | YAML | before each commit | Various git-multirepo metadata, such as the **git-multirepo version** that the last commit was performed with. |
 
 The information contained in .multirepo and .multirepo.lock allow one-step cloning of a project and all its dependencies, and checking out any prior revision of the main project with appropriate revisions of all of its dependencies, respectively.

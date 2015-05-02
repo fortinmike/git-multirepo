@@ -1,14 +1,15 @@
 require "multirepo/utility/console"
+require "multirepo/files/tracking-files"
 
 module MultiRepo
   class UpdateCommand < Command
     self.command = "update"
-    self.summary = "Force-updates the multirepo lock file."
+    self.summary = "Force-updates the multirepo tracking files."
     
     def self.options
       [
-        ['[--force]', 'Update the lock file even if dependencies contain uncommitted changes.'],
-        ['[--commit]', 'Commit the lock file after updating it.']
+        ['[--force]', 'Update the tracking files even if dependencies contain uncommitted changes.'],
+        ['[--commit]', 'Commit the tracking files after updating them.']
       ].concat(super)
     end
     
@@ -25,11 +26,11 @@ module MultiRepo
       
       Console.log_step("Updating...")
       
-      dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load)
+      dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load_entries)
       if dependencies_clean
-        update_lock_file_step("Updated lock file with latest dependency commits")
+        update_lock_file_step("Updated tracking files")
       elsif !dependencies_clean && @force
-        update_lock_file_step("Force-updated lock file with latest dependency commits (ignoring uncommitted changes)")
+        update_lock_file_step("Force-updated tracking files (ignoring uncommitted changes)")
       else
         raise MultiRepoException, "Can't update because not all dependencies are clean"
       end
@@ -40,15 +41,19 @@ module MultiRepo
     end
     
     def update_lock_file_step(log_message)
-      changed = LockFile.update
+      changed = TrackingFiles.update
       
-      if changed && @commit
-        Console.log_substep("Committing updated lock file")
-        LockFile.commit("[multirepo] Manually updated lock file")
+      if changed
+        Console.log_substep("Updated tracking files")
+      else
+        Console.log_substep("Tracking files are already up-to-date")
+      end
+      
+      if @commit
+        committed = TrackingFiles.commit("[multirepo] Updated tracking files manually")
+        Console.log_substep("Committed tracking files") if committed
       elsif changed
         Console.log_substep(log_message)
-      else
-        Console.log_info("Lock file is already up-to-date")
       end
     end
   end

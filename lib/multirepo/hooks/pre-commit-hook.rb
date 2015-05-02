@@ -1,5 +1,5 @@
 require "multirepo/files/config-file"
-require "multirepo/files/lock-file"
+require "multirepo/files/tracking-files"
 require "multirepo/utility/utils"
 require "multirepo/utility/console"
 
@@ -10,16 +10,16 @@ module MultiRepo
       
       Console.log_step("Performing pre-commit operations...")
       
-      dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load)
+      dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load_entries)
       
       if !dependencies_clean
         Console.log_error("You must commit changes to your dependencies before you can commit this repo")
         exit 1
       end
       
-      LockFile.update
-      LockFile.stage
-      Console.log_info("Updated and staged lock file with current HEAD revisions for all dependencies")
+      TrackingFiles.update
+      TrackingFiles.stage
+      Console.log_info("Updated and staged tracking files")
       
       exit 0 # Success!
     rescue StandardError => e
