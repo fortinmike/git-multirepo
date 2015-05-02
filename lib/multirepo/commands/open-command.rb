@@ -13,7 +13,7 @@ module MultiRepo
       ensure_in_work_tree
       ensure_multirepo_enabled
       
-      ConfigFile.load.each do |entry|
+      ConfigFile.load_entries.each do |entry|
         if OS.osx?
           `open "#{entry.repo.path}"`
         elsif OS.windows?

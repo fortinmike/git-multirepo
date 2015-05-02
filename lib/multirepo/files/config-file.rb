@@ -12,7 +12,7 @@ module MultiRepo
       FILE.exist?
     end
     
-    def self.load
+    def self.load_entries
       Psych.load(FILE.read)
     end
     

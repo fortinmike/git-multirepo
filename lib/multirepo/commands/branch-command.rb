@@ -35,7 +35,7 @@ module MultiRepo
       Console.log_step("Branching...")
 
       main_repo = Repo.new(".")
-      repos = ConfigFile.load.map{ |entry| entry.repo }.push(main_repo)
+      repos = ConfigFile.load_entries.map{ |entry| entry.repo }.push(main_repo)
       
       if !Utils.ensure_working_copies_clean(repos) && !@force
         raise MultiRepoException, "Can't branch because not all repos are clean"

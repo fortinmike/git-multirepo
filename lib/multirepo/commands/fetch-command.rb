@@ -12,7 +12,7 @@ module MultiRepo
       
       Console.log_step("Fetching dependencies...")
       
-      ConfigFile.load.each do |entry|
+      ConfigFile.load_entries.each do |entry|
         Console.log_substep("Fetching from #{entry.repo.remote('origin').url}...")
         entry.repo.fetch
       end

@@ -11,7 +11,7 @@ module MultiRepo
       
       Console.log_step("Performing pre-commit operations...")
       
-      dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load)
+      dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load_entries)
       
       if !dependencies_clean
         Console.log_error("You must commit changes to your dependencies before you can commit this repo")

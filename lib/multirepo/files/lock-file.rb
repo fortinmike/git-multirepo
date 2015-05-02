@@ -14,12 +14,12 @@ module MultiRepo
       FILE.exist?
     end
     
-    def self.load
+    def self.load_entries
       Psych.load(FILE.read)
     end
     
     def self.update
-      config_entries = ConfigFile.load
+      config_entries = ConfigFile.load_entries
       lock_entries = config_entries.map { |c| LockEntry.new(c) }
       
       old_content = File.read(FILE_NAME)

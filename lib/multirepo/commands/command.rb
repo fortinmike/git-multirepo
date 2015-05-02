@@ -50,7 +50,7 @@ module MultiRepo
     end
     
     def multirepo_enabled_dependencies
-      ConfigFile.load.select { |e| Utils.is_multirepo_enabled(e.repo.path) }
+      ConfigFile.load_entries.select { |e| Utils.is_multirepo_enabled(e.repo.path) }
     end
     
     def ensure_in_work_tree
