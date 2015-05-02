@@ -42,14 +42,13 @@ module MultiRepo
     
     def update_lock_file_step(log_message)
       changed = TrackingFiles.update
+      Console.log_info("Tracking files are already up-to-date") unless changed
       
-      if changed && @commit
-        Console.log_substep("Committing updated tracking files")
-        TrackingFiles.commit("[multirepo] Updated tracking files manually")
+      if @commit
+        committed = TrackingFiles.commit("[multirepo] Updated tracking files manually")
+        Console.log_substep("Committed tracking files") if committed
       elsif changed
         Console.log_substep(log_message)
-      else
-        Console.log_info("Tracking files are already up-to-date")
       end
     end
   end

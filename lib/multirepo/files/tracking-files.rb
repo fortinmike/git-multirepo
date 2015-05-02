@@ -11,19 +11,30 @@ module MultiRepo
     end
     
     def self.stage
-      FILE_CLASSES.each do |c|
-        Git.run_in_current_dir("add --force #{c::FILENAME}", Runner::Verbosity::OUTPUT_ON_ERROR)
-      end
+      Git.run_in_current_dir("add --force -- #{files_pathspec}", Runner::Verbosity::OUTPUT_ON_ERROR)
     end
     
     def self.commit(message)
       stage
-      pathspec = FILE_CLASSES.map{ |c| c::FILENAME }.join(" ")
-      Git.run_in_current_dir("commit -m \"#{message}\" -o -- #{pathspec}", Runner::Verbosity::OUTPUT_ON_ERROR)
+      
+      output = Git.run_in_current_dir("ls-files --modified --others -- #{files_pathspec}", Runner::Verbosity::NEVER_OUTPUT)
+      files_are_untracked_or_modified = output.strip != ""
+      
+      output = Git.run_in_current_dir("diff --name-only --cached -- #{files_pathspec}", Runner::Verbosity::NEVER_OUTPUT)
+      files_are_staged = output.strip != ""
+      
+      must_commit = files_are_untracked_or_modified || files_are_staged
+      Git.run_in_current_dir("commit -m \"#{message}\" --only -- #{files_pathspec}", Runner::Verbosity::OUTPUT_ON_ERROR) if must_commit
+            
+      return must_commit
     end
     
     def self.delete
       FILE_CLASSES.each { |c| FileUtils.rm_f(c::FILENAME) }
+    end
+    
+    def self.files_pathspec
+      FILE_CLASSES.map{ |c| c::FILENAME }.join(" ")
     end
   end
 end
