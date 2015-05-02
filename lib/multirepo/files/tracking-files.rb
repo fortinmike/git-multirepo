@@ -17,6 +17,7 @@ module MultiRepo
     end
     
     def self.commit(message)
+      stage
       pathspec = FILE_CLASSES.map{ |c| c::FILENAME }.join(" ")
       Git.run_in_current_dir("commit -m \"#{message}\" -o -- #{pathspec}", Runner::Verbosity::OUTPUT_ON_ERROR)
     end
