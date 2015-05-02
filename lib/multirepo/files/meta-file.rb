@@ -3,13 +3,14 @@ require "psych"
 
 require "info"
 require "multirepo/git/git"
+require_relative "tracking-file"
 require_relative "lock-entry"
 require_relative "config-file"
 
 module MultiRepo
-  class MetaFile
+  class MetaFile < TrackingFile
     FILE = Pathname.new(".multirepo.meta")
-    FILE_NAME = FILE.to_s
+    FILENAME = FILE.to_s
     
     attr_accessor :version
     
@@ -27,7 +28,7 @@ module MultiRepo
     
     def self.update
       content = Psych.dump(MetaFile.new)
-      File.write(FILE_NAME, content)
+      return update_internal(FILENAME, content)
     end
   end
 end

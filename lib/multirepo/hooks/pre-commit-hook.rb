@@ -19,7 +19,7 @@ module MultiRepo
       
       TrackingFiles.update
       TrackingFiles.stage
-      Console.log_info("Updated and staged lock file with current HEAD revisions for all dependencies")
+      Console.log_info("Updated and staged tracking files")
       
       exit 0 # Success!
     rescue StandardError => e

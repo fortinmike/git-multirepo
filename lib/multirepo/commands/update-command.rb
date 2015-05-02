@@ -4,12 +4,12 @@ require "multirepo/files/tracking-files"
 module MultiRepo
   class UpdateCommand < Command
     self.command = "update"
-    self.summary = "Force-updates the multirepo lock file."
+    self.summary = "Force-updates the multirepo tracking files."
     
     def self.options
       [
-        ['[--force]', 'Update the lock file even if dependencies contain uncommitted changes.'],
-        ['[--commit]', 'Commit the lock file after updating it.']
+        ['[--force]', 'Update the tracking files even if dependencies contain uncommitted changes.'],
+        ['[--commit]', 'Commit the tracking files after updating them.']
       ].concat(super)
     end
     
@@ -28,9 +28,9 @@ module MultiRepo
       
       dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load_entries)
       if dependencies_clean
-        update_lock_file_step("Updated lock file with latest dependency commits")
+        update_lock_file_step("Updated tracking files")
       elsif !dependencies_clean && @force
-        update_lock_file_step("Force-updated lock file with latest dependency commits (ignoring uncommitted changes)")
+        update_lock_file_step("Force-updated tracking files (ignoring uncommitted changes)")
       else
         raise MultiRepoException, "Can't update because not all dependencies are clean"
       end
@@ -45,7 +45,7 @@ module MultiRepo
       
       if changed && @commit
         Console.log_substep("Committing updated tracking files")
-        TrackingFiles.commit("[multirepo] Manually updated tracking files")
+        TrackingFiles.commit("[multirepo] Updated tracking files manually")
       elsif changed
         Console.log_substep(log_message)
       else
