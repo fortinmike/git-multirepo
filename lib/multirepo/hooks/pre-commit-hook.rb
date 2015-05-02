@@ -1,6 +1,5 @@
 require "multirepo/files/config-file"
-require "multirepo/files/lock-file"
-require "multirepo/files/meta-file"
+require "multirepo/files/tracking-files"
 require "multirepo/utility/utils"
 require "multirepo/utility/console"
 
@@ -18,8 +17,8 @@ module MultiRepo
         exit 1
       end
       
-      LockFile.update
-      LockFile.stage
+      TrackingFiles.update
+      TrackingFiles.stage
       Console.log_info("Updated and staged lock file with current HEAD revisions for all dependencies")
       
       exit 0 # Success!

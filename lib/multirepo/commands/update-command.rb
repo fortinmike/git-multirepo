@@ -1,4 +1,5 @@
 require "multirepo/utility/console"
+require "multirepo/files/tracking-files"
 
 module MultiRepo
   class UpdateCommand < Command
@@ -40,15 +41,15 @@ module MultiRepo
     end
     
     def update_lock_file_step(log_message)
-      changed = LockFile.update
+      changed = TrackingFiles.update
       
       if changed && @commit
-        Console.log_substep("Committing updated lock file")
-        LockFile.commit("[multirepo] Manually updated lock file")
+        Console.log_substep("Committing updated tracking files")
+        TrackingFiles.commit("[multirepo] Manually updated tracking files")
       elsif changed
         Console.log_substep(log_message)
       else
-        Console.log_info("Lock file is already up-to-date")
+        Console.log_info("Tracking files are already up-to-date")
       end
     end
   end

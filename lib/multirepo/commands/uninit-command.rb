@@ -10,7 +10,7 @@ module MultiRepo
       ensure_in_work_tree
       
       FileUtils.rm_f(".multirepo")
-      FileUtils.rm_f(".multirepo.lock")
+      TrackingFiles.delete
       uninstall_hooks
       
       Console.log_step("All traces of multirepo have been removed from this repository")

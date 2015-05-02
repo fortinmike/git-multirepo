@@ -1,6 +1,6 @@
 require "multirepo/utility/console"
 require "multirepo/files/config-file"
-require "multirepo/files/lock-file"
+require "multirepo/files/tracking-files"
 
 module MultiRepo
   class BranchCommand < Command
@@ -49,9 +49,9 @@ module MultiRepo
         branch.checkout
       end
 
-      Console.log_substep("Updating and committing lock file")
-      LockFile.update
-      LockFile.commit("[multirepo] Post-branch lock file update")
+      Console.log_substep("Updating and committing tracking files")
+      TrackingFiles.update
+      TrackingFiles.commit("[multirepo] Post-branch tracking files update")
 
       Console.log_step("Done!")
     rescue MultiRepoException => e
