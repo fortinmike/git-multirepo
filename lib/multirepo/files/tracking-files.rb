@@ -7,7 +7,11 @@ module MultiRepo
     FILE_CLASSES = [MetaFile, LockFile]
     
     def self.update
-      return FILE_CLASSES.any? { |c| c.update }
+      updated = true
+      return FILE_CLASSES.each do |file_class|
+        updated &= file_class.update
+      end
+      return updated
     end
     
     def self.stage
