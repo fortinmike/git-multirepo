@@ -16,7 +16,7 @@ module MultiRepo
       Psych.load(FILE.read)
     end
     
-    def self.save(entries)
+    def self.save_entries(entries)
       File.write(FILE_NAME, Psych.dump(entries))
     end
     

@@ -60,7 +60,7 @@ module MultiRepo
       
       raise MultiRepoException, "No sibling repositories were added as dependencies; aborting." unless entries.any?
       
-      ConfigFile.save(entries)
+      ConfigFile.save_entries(entries)
       return true
     end
     
