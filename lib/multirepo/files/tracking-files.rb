@@ -12,7 +12,7 @@ module MultiRepo
     
     def self.stage
       FILE_CLASSES.each do |c|
-        Git.run_in_current_dir("add -A #{c::FILENAME}", Runner::Verbosity::OUTPUT_ON_ERROR)
+        Git.run_in_current_dir("add --force #{c::FILENAME}", Runner::Verbosity::OUTPUT_ON_ERROR)
       end
     end
     
