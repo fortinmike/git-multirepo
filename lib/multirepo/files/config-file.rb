@@ -6,6 +6,7 @@ require_relative "config-entry"
 module MultiRepo
   class ConfigFile
     FILE = Pathname.new(".multirepo")
+    FILE_NAME = FILE.to_s
     
     def self.exists?
       FILE.exist?
@@ -16,7 +17,7 @@ module MultiRepo
     end
     
     def self.save(entries)
-      File.write(FILE.to_s, Psych.dump(entries))
+      File.write(FILE_NAME, Psych.dump(entries))
     end
     
     def self.entry_exists?(entry)
