@@ -19,7 +19,10 @@ module MultiRepo
       # True fix for the -C flag issue in pre-commit hook where the status command would
       # fail to provide correct results if a pathspec was provided when performing a commit.
       # http://thread.gmane.org/gmane.comp.version-control.git/263319/focus=263323
-      full_command = "sh -c 'unset $(git rev-parse --local-env-vars); #{full_command};'" if Config.instance.running_git_hook
+      
+      if Config.instance.running_git_hook
+        full_command = "sh -c 'unset $(git rev-parse --local-env-vars); #{full_command};'" 
+      end
       
       run(full_command, verbosity)
     end
