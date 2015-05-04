@@ -32,10 +32,12 @@ module MultiRepo
     def install_hooks(path)
       actual_path = path || "."
       Utils.install_hook("pre-commit", actual_path)
+      Utils.install_hook("post-commit", actual_path)
     end
     
     def uninstall_hooks
       FileUtils.rm_f(".git/hooks/pre-commit")
+      FileUtils.rm_f(".git/hooks/post-commit")
     end
     
     def update_gitconfig(path)
