@@ -21,15 +21,15 @@ module MultiRepo
     end
     
     def self.entry_exists?(entry)
-      load.any? { |e| e == entry }
+      load_entries.any? { |e| e == entry }
     end
     
     def self.add_entry(entry)
-      save(load.push(entry))
+      save_entries(load_entries.push(entry))
     end
     
     def self.remove_entry(entry)
-      save(load.delete_if { |e| e == entry })
+      save_entries(load_entries.delete_if { |e| e == entry })
     end
   end
 end
