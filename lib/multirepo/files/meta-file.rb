@@ -9,26 +9,34 @@ require_relative "config-file"
 
 module MultiRepo
   class MetaFile < TrackingFile
-    FILE = Pathname.new(".multirepo.meta")
-    FILENAME = FILE.to_s
+    FILENAME = ".multirepo.meta"
     
     attr_accessor :version
     
-    def initialize
+    def initialize(path)
+      @path = path
       @version = MultiRepo::VERSION
+    end
+    
+    def file
+      File.join(@path, FILENAME)
+    end
+    
+    def filename
+      FILENAME
     end
     
     def encode_with(coder)
       coder["version"] = @version
     end
         
-    def self.load
-      Psych.load(FILE.read)
+    def load
+      Psych.load(file)
     end
     
-    def self.update
-      content = Psych.dump(MetaFile.new)
-      return update_internal(FILENAME, content)
+    def update
+      content = Psych.dump(self)
+      return update_internal(file, content)
     end
   end
 end

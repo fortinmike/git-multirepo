@@ -4,13 +4,11 @@ require_relative "lock-file"
 
 module MultiRepo
   class TrackingFiles
-    FILE_CLASSES = [MetaFile, LockFile]
+    FILES = [MetaFile.new("."), LockFile.new(".")]
     
     def self.update
       updated = false
-      FILE_CLASSES.each do |file_class|
-        updated |= file_class.update
-      end
+      FILES.each { |f| updated |= f.update }
       return updated
     end
     
@@ -34,11 +32,11 @@ module MultiRepo
     end
     
     def self.delete
-      FILE_CLASSES.each { |c| FileUtils.rm_f(c::FILENAME) }
+      FILES.each { |f| FileUtils.rm_f(f.file) }
     end
     
     def self.files_pathspec
-      FILE_CLASSES.map{ |c| c::FILENAME }.join(" ")
+      FILES.map{ |f| f.file }.join(" ")
     end
   end
 end

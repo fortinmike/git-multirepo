@@ -26,7 +26,7 @@ module MultiRepo
       
       Console.log_step("Updating...")
       
-      dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.load_entries)
+      dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.new(".").load_entries)
       if dependencies_clean
         update_lock_file_step("Updated tracking files")
       elsif !dependencies_clean && @force

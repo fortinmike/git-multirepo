@@ -15,7 +15,7 @@ module MultiRepo
       Console.log_substep("Cleaning main repo...")
       clean(".")
       
-      ConfigFile.load_entries.each do |entry|
+      ConfigFile.new(".").load_entries.each do |entry|
         Console.log_substep("Cleaning #{entry.repo.path} ...")
         clean(entry.repo.path)
       end
