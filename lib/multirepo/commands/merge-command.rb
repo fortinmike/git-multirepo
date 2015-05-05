@@ -1,5 +1,5 @@
 require "multirepo/utility/console"
-require "multirepo/model/node"
+require "multirepo/nodes/node"
 
 module MultiRepo
   class MergeCommand < Command
