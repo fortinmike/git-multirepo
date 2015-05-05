@@ -91,7 +91,8 @@ module MultiRepo
       end
     end
     
-    def dependencies_checkout_step(main_repo, mode, ref = nil)
+    def dependencies_checkout_step(mode, ref = nil)
+      puts ref
       config_entries = ConfigFile.new(".").load_entries # Post-main-repo checkout config entries might be different than pre-checkout
       LockFile.new(".").load_entries.each { |lock_entry| perform_dependency_checkout(config_entries, lock_entry, ref, mode) }
     end
@@ -115,6 +116,9 @@ module MultiRepo
     def perform_dependency_checkout(config_entries, lock_entry, ref, mode)
       # Find the config entry that matches the given lock entry
       config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
+      
+      puts lock_entry.inspect
+      puts config_entry.repo.inspect
       
       # Make sure the repo exists on disk, and clone it if it doesn't
       # (in case the checked-out revision had an additional dependency)
