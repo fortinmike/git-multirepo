@@ -28,6 +28,7 @@ module MultiRepo
       Console.log_step("Merging #{@ref} ...")
       
       root_dependency = Node.new(".")
+      
       puts root_dependency.inspect
       puts root_dependency.children.inspect
             

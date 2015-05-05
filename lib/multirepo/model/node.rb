@@ -4,14 +4,15 @@ module MultiRepo
   class Node
     attr_accessor :path
     
-    def initialize(path)
+    def initialize(path, depth = 0)
       @path = path
+      @depth = depth
     end
     
     def children
       return [] unless Utils.is_multirepo_enabled(@path)
       config_entries = ConfigFile.new(@path).load_entries
-      return config_entries.map { |e| Node.new(e.path) }
+      return config_entries.map { |e| Node.new(e.path, @depth + 1) }
     end
     
     def ==(object)
