@@ -81,8 +81,17 @@ module MultiRepo
     end
     
     def dependencies_checkout_step(mode, ref = nil)
-      config_entries = ConfigFile.new(".").load_entries # Post-main-repo checkout config entries might be different than pre-checkout
-      LockFile.new(".").load_entries.each { |lock_entry| perform_dependency_checkout(config_entries, lock_entry, ref, mode) }
+      # Post-main-repo checkout config entries might be different than pre-checkout
+      config_entries = ConfigFile.new(".").load_entries
+      LockFile.new(".").load_entries.each do |lock_entry|
+        # Find the config entry that matches the given lock entry
+        config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
+        
+        # Find out the proper revision to checkout based on the checkout mode
+        revision = CommitSelector.ref_for_mode(mode, ref, lock_entry)
+        
+        perform_dependency_checkout(config_entries, lock_entry, revision)
+      end
     end
     
     def proceed_if_merge_commit?(main_repo, ref, mode)
@@ -101,9 +110,8 @@ module MultiRepo
       return true
     end
     
-    def perform_dependency_checkout(config_entries, lock_entry, ref, mode)
-      # Find the config entry that matches the given lock entry
-      config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
+    def perform_dependency_checkout(config_entry, revision)
+      dependency_name = config_entry.repo.basename
       
       # Make sure the repo exists on disk, and clone it if it doesn't
       # (in case the checked-out revision had an additional dependency)
@@ -112,14 +120,11 @@ module MultiRepo
         config_entry.repo.clone(config_entry.url)
       end
       
-      # Find out the proper revision to checkout based on the checkout mode
-      revision = CommitSelector.ref_for_mode(mode, ref, lock_entry)
-      
       # Checkout!
       if config_entry.repo.checkout(revision)
-        Console.log_substep("Checked out #{lock_entry.name} #{revision}")
+        Console.log_substep("Checked out #{dependency_name} #{revision}")
       else
-        raise MultiRepoException, "Couldn't check out the appropriate version of dependency #{lock_entry.name}"
+        raise MultiRepoException, "Couldn't check out the appropriate version of dependency #{dependency_name}"
       end
     end
   end
