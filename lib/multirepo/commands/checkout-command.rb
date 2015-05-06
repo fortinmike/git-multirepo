@@ -1,15 +1,10 @@
 require "multirepo/utility/console"
+require "multirepo/logic/commit-selector"
 
 module MultiRepo
   class CheckoutCommand < Command
     self.command = "checkout"
     self.summary = "Checks out the specified commit or branch of the main repo and checks out matching versions of all dependencies."
-    
-    class CheckoutMode
-      AS_LOCK = 0
-      LATEST = 1
-      EXACT = 2
-    end
     
     def self.options
       [
@@ -40,13 +35,7 @@ module MultiRepo
       Console.log_step("Checking out #{@ref} and its dependencies...")
       
       # Find out the checkout mode based on command-line options
-      mode = if @checkout_latest then
-        CheckoutMode::LATEST
-      elsif @checkout_exact then
-        CheckoutMode::EXACT
-      else
-        CheckoutMode::AS_LOCK
-      end
+      mode = CommitSelector.mode_for_args(@checkout_latest, @checkout_exact)
       
       main_repo = Repo.new(".")
       initial_revision = main_repo.current_branch || main_repo.head_hash
@@ -100,11 +89,11 @@ module MultiRepo
       return true unless main_repo.commit(ref).is_merge?
       
       case mode
-      when CheckoutMode::AS_LOCK
+      when CommitSelectionMode::AS_LOCK
         Console.log_error("The specified ref is a merge commit and an \"as-lock\" checkout was requested.")
         Console.log_error("The resulting checkout would most probably not result in a valid project state.")
         return false
-      when CheckoutMode::LATEST
+      when CommitSelectionMode::LATEST
         Console.log_warning("The specified ref is a merge commit and a \"latest\" checkout was requested.")
         Console.log_warning("The work branches recorded in the branch from which the merge was performed will be checked out.")
       end
@@ -124,11 +113,7 @@ module MultiRepo
       end
       
       # Find out the proper revision to checkout based on the checkout mode
-      revision = case mode
-      when CheckoutMode::AS_LOCK; lock_entry.head
-      when CheckoutMode::LATEST; lock_entry.branch
-      when CheckoutMode::EXACT; ref
-      end
+      revision = CommitSelector.ref_for_mode(mode, ref, lock_entry)
       
       # Checkout!
       if config_entry.repo.checkout(revision)
