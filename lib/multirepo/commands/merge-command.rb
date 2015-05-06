@@ -27,11 +27,10 @@ module MultiRepo
       
       Console.log_step("Merging #{@ref} ...")
       
-      root_dependency = Node.new(".")
+      root_node = Node.new(".")
       
-      puts root_dependency.inspect
-      puts root_dependency.children.inspect
-            
+      puts root_node.ordered_descendants_including_self.inspect
+      
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
