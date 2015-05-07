@@ -47,7 +47,7 @@ module MultiRepo
     # Operations
     
     def fetch
-      Git.run_in_working_dir(@path, "fetch --progress", Runner::Verbosity::ALWAYS_OUTPUT)
+      Git.run_in_working_dir(@path, "fetch --prune --progress", Runner::Verbosity::ALWAYS_OUTPUT)
       Runner.last_command_succeeded
     end
     
