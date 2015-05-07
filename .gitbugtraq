@@ -1,0 +1,3 @@
+[bugtraq "pivotal"]
+  url = https://www.pivotaltracker.com/story/show/%BUGID%
+  logRegex = (\\b\\d{8}\\b)
