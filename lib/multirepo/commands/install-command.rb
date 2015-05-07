@@ -51,7 +51,7 @@ module MultiRepo
       
       # Checkout the appropriate branches as specified in the lock file
       checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
-      checkout_command.dependencies_checkout_step(CommitSelectionMode::LATEST)
+      checkout_command.dependencies_checkout_step(RevisionSelectionMode::LATEST)
     end
     
     def install_hooks_step

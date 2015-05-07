@@ -1,5 +1,6 @@
 require "multirepo/utility/console"
-require "multirepo/logic/commit-selector"
+require "multirepo/logic/revision-selector"
+require "multirepo/logic/performer"
 
 module MultiRepo
   class CheckoutCommand < Command
@@ -35,7 +36,7 @@ module MultiRepo
       Console.log_step("Checking out #{@ref} and its dependencies...")
       
       # Find out the checkout mode based on command-line options
-      mode = CommitSelector.mode_for_args(@checkout_latest, @checkout_exact)
+      mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
       
       main_repo = Repo.new(".")
       initial_revision = main_repo.current_branch || main_repo.head_hash
@@ -81,15 +82,7 @@ module MultiRepo
     end
     
     def dependencies_checkout_step(mode, ref = nil)
-      # Post-main-repo checkout config entries might be different than pre-checkout
-      config_entries = ConfigFile.new(".").load_entries
-      LockFile.new(".").load_entries.each do |lock_entry|
-        # Find the config entry that matches the given lock entry
-        config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
-        
-        # Find out the proper revision to checkout based on the checkout mode
-        revision = CommitSelector.ref_for_mode(mode, ref, lock_entry)
-        
+      Performer.perform_on_dependencies(mode, ref) do |config_entry, lock_entry, revision|
         perform_dependency_checkout(config_entry, revision)
       end
     end
@@ -98,11 +91,11 @@ module MultiRepo
       return true unless main_repo.commit(ref).is_merge?
       
       case mode
-      when CommitSelectionMode::AS_LOCK
+      when RevisionSelectionMode::AS_LOCK
         Console.log_error("The specified ref is a merge commit and an \"as-lock\" checkout was requested.")
         Console.log_error("The resulting checkout would most probably not result in a valid project state.")
         return false
-      when CommitSelectionMode::LATEST
+      when RevisionSelectionMode::LATEST
         Console.log_warning("The specified ref is a merge commit and a \"latest\" checkout was requested.")
         Console.log_warning("The work branches recorded in the branch from which the merge was performed will be checked out.")
       end
