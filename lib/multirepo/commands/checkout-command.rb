@@ -85,12 +85,12 @@ module MultiRepo
       config_entries = ConfigFile.new(".").load_entries
       LockFile.new(".").load_entries.each do |lock_entry|
         # Find the config entry that matches the given lock entry
-        config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
+        config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
         
         # Find out the proper revision to checkout based on the checkout mode
         revision = CommitSelector.ref_for_mode(mode, ref, lock_entry)
         
-        perform_dependency_checkout(config_entries, lock_entry, revision)
+        perform_dependency_checkout(config_entry, revision)
       end
     end
     

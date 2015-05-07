@@ -1,5 +1,3 @@
-require_relative "commit-selection-mode"
-
 module MultiRepo
   class CommitSelectionMode
     AS_LOCK = 0
@@ -8,7 +6,7 @@ module MultiRepo
   end
   
   class CommitSelector
-    def mode_for_args(checkout_latest, checkout_exact)
+    def self.mode_for_args(checkout_latest, checkout_exact)
       if checkout_latest then
         CommitSelectionMode::LATEST
       elsif checkout_exact then
@@ -18,7 +16,7 @@ module MultiRepo
       end
     end
     
-    def ref_for_mode(mode, ref, lock_entry)
+    def self.ref_for_mode(mode, ref, lock_entry)
       case mode
       when CommitSelectionMode::AS_LOCK; lock_entry.head
       when CommitSelectionMode::LATEST; lock_entry.branch
