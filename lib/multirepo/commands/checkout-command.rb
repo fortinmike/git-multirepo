@@ -43,11 +43,18 @@ module MultiRepo
         raise MultiRepoException, "Aborting checkout"
       end
       
+      checkout_core(main_repo, mode)
+            
+      Console.log_step("Done!")
+    rescue MultiRepoException => e
+      Console.log_error(e.message)
+    end
+    
+    def checkout_core(main_repo, mode)
       initial_revision = main_repo.current_branch || main_repo.head_hash
       begin
         # Checkout first because the current ref might not be multirepo-enabled
         checkout_main_repo_step(main_repo)
-        
         # Only then can we check for dependencies and make sure they are clean
         ensure_dependencies_clean_step(main_repo)
       rescue MultiRepoException => e
@@ -56,10 +63,6 @@ module MultiRepo
         raise e
       end
       dependencies_checkout_step(mode, @ref)
-            
-      Console.log_step("Done!")
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
     
     def checkout_main_repo_step(main_repo)
