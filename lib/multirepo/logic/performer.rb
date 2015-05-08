@@ -31,7 +31,7 @@ module MultiRepo
       config_lock_pairs = build_config_lock_pairs(config_entries, lock_entries)
       dependency_ordered_nodes = Node.new(".").ordered_descendants
       
-      ordered_pairs = dependency_ordered_nodes.map { |e|  } do |node|
+      ordered_pairs = dependency_ordered_nodes.map do |node|
         pair = config_lock_pairs.find { |pair| pair.config_entry.path == node.path } 
       end
       
