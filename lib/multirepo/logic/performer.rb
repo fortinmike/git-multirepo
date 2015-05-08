@@ -1,3 +1,5 @@
+require "ostruct"
+
 require "multirepo/files/config-file"
 require "multirepo/files/lock-file"
 
@@ -24,10 +26,30 @@ module MultiRepo
     
     def self.perform_on_dependencies(&operation)
       config_entries = ConfigFile.new(".").load_entries
-      LockFile.new(".").load_entries.each do |lock_entry|
+      lock_entries = LockFile.new(".").load_entries
+      
+      config_lock_pairs = build_config_lock_pairs(config_entries, lock_entries)
+      dependency_ordered_nodes = Node.new(".").ordered_descendants
+      
+      ordered_pairs = dependency_ordered_nodes.map { |e|  } do |node|
+        pair = config_lock_pairs.find { |pair| pair.config_entry.path == node.path } 
+      end
+      
+      ordered_pairs.each { |pair| operation.call(pair.config_entry, pair.lock_entry) }
+    end
+    
+    private
+    
+    def self.build_config_lock_pairs(config_entries, lock_entries)
+      lock_entries.map do |lock_entry|
         # Find the config entry that matches the given lock entry
-        config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
-        operation.call(config_entry, lock_entry)
+        config_entry = config_entries.find{ |config_entry| config_entry.id == lock_entry.id }
+        
+        pair = OpenStruct.new
+        pair.config_entry = config_entry
+        pair.lock_entry = lock_entry
+        
+        next pair
       end
     end
   end

@@ -3,7 +3,6 @@ require "multirepo/git/repo"
 
 module MultiRepo
   class LockEntry
-    attr_accessor :config_entry
     attr_accessor :name
     attr_accessor :id
     attr_accessor :head
