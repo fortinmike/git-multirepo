@@ -36,8 +36,11 @@ module MultiRepo
       
       Console.log_step("Merging #{@ref} ...")
       
-      root_node = Node.new(".")
+      # Checkout the specified main repo ref
+      checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
+      checkout_command.main(RevisionSelectionMode::LATEST)
       
+      root_node = Node.new(".")
       puts root_node.ordered_descendants_including_self.inspect
       
       Console.log_step("Done!")

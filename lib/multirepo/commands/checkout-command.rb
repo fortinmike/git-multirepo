@@ -31,53 +31,44 @@ module MultiRepo
     def run
       super
       ensure_in_work_tree
-      ensure_multirepo_enabled
       
       Console.log_step("Checking out #{@ref} and its dependencies...")
-      
+        
       # Find out the checkout mode based on command-line options
       mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
       
       main_repo = Repo.new(".")
-      initial_revision = main_repo.current_branch || main_repo.head_hash
       
       unless proceed_if_merge_commit?(main_repo, @ref, mode)
         raise MultiRepoException, "Aborting checkout"
       end
       
-      main_repo_checkout_step(main_repo, initial_revision, @ref)
-      ensure_dependencies_clean_step(main_repo, initial_revision)
+      initial_revision = main_repo.current_branch || main_repo.head_hash
+      begin
+        # Checkout first because the current ref might not be multirepo-enabled
+        checkout_main_repo_step(main_repo)
+        
+        # Only then can we check for dependencies and make sure they are clean
+        ensure_dependencies_clean_step(main_repo)
+      rescue MultiRepoException => e
+        Console.log_error("Reverting main repo checkout")
+        main_repo.checkout(initial_revision)
+        raise e
+      end
       dependencies_checkout_step(mode, @ref)
             
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
     end
-            
-    def main_repo_checkout_step(main_repo, initial_revision, ref)
-      # Make sure the main repo is clean before attempting a checkout
-      unless main_repo.is_clean?
-        raise MultiRepoException, "Can't checkout #{ref} because the main repo contains uncommitted changes"
-      end
-      
-      # Checkout the specified ref
-      unless main_repo.checkout(ref)
-        raise MultiRepoException, "Couldn't perform checkout of main repo #{ref}!"
-      end
-      
-      Console.log_substep("Checked out main repo #{ref}")
-      
-      # After checkout, make sure we're working with a multirepo-enabled ref
-      unless Utils.is_multirepo_tracked(".")
-        main_repo.checkout(initial_revision)
-        raise MultiRepoException, "This revision is not tracked by multirepo. Checkout reverted."
-      end
+    
+    def checkout_main_repo_step(main_repo)
+      Performer.perform_main_repo_checkout(main_repo, @ref)
     end
     
-    def ensure_dependencies_clean_step(main_repo, initial_revision)
+    def ensure_dependencies_clean_step(main_repo)
       unless Utils.ensure_dependencies_clean(ConfigFile.new(".").load_entries)
-        main_repo.checkout(initial_revision)
-        raise MultiRepoException, "Checkout reverted."
+        raise MultiRepoException, "Dependencies are not clean!"
       end
     end
     
