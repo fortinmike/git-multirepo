@@ -34,7 +34,6 @@ module MultiRepo
         next unless e.repo.exists?
         dependency_clean = e.repo.is_clean?
         clean &= dependency_clean
-        Console.log_info("Dependency '#{e.repo.path}' is clean") if dependency_clean
         Console.log_warning("Dependency '#{e.repo.path}' contains uncommitted changes") unless dependency_clean
       end
       return clean

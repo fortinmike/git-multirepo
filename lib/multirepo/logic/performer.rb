@@ -32,7 +32,7 @@ module MultiRepo
       dependency_ordered_nodes = Node.new(".").ordered_descendants
       
       ordered_pairs = dependency_ordered_nodes.map do |node|
-        pair = config_lock_pairs.find { |pair| pair.config_entry.path == node.path } 
+        pair = config_lock_pairs.find { |pair| pair.config_entry.path == node.path }
       end
       
       ordered_pairs.each { |pair| operation.call(pair.config_entry, pair.lock_entry) }
@@ -42,8 +42,7 @@ module MultiRepo
     
     def self.build_config_lock_pairs(config_entries, lock_entries)
       lock_entries.map do |lock_entry|
-        # Find the config entry that matches the given lock entry
-        config_entry = config_entries.find{ |config_entry| config_entry.id == lock_entry.id }
+        config_entry = config_entry_for_lock_entry(config_entries, lock_entry)
         
         pair = OpenStruct.new
         pair.config_entry = config_entry
@@ -51,6 +50,10 @@ module MultiRepo
         
         next pair
       end
+    end
+    
+    def self.config_entry_for_lock_entry(config_entries, lock_entry)
+      config_entries.find { |config_entry| config_entry.id == lock_entry.id }
     end
   end
 end

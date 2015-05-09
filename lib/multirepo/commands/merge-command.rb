@@ -1,4 +1,4 @@
-require "multirepo/utility/console"
+require "multirepo/utility/console" 
 require "multirepo/logic/node"
 require "multirepo/logic/revision-selector"
 require "multirepo/logic/performer"
@@ -6,7 +6,7 @@ require "multirepo/logic/performer"
 module MultiRepo
   class MergeCommand < Command
     self.command = "merge"
-    self.summary = "Performs a git merge on all dependencies, in the proper order."
+    self.summary = "Performs a git merge on all dependencies and the main repo, in the proper order."
     
     def self.options
       [
@@ -36,16 +36,76 @@ module MultiRepo
       
       Console.log_step("Merging #{@ref} ...")
       
-      # Checkout the specified main repo ref
-      checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
-      checkout_command.main(RevisionSelectionMode::LATEST)
+      main_repo = Repo.new(".")
       
-      root_node = Node.new(".")
-      puts root_node.ordered_descendants_including_self.inspect
+      # Keep the initial revision because we're going to need to come back to it later
+      initial_revision = main_repo.current_branch || main_repo.head_hash
+      
+      # Find out the checkout mode based on command-line options
+      mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
+      
+      begin
+        merge_core(main_repo, initial_revision, mode)
+      rescue MultiRepoException => e
+        Performer.perform_main_repo_checkout(main_repo, initial_revision)
+        raise e
+      end
       
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
+    end
+    
+    def merge_core(main_repo, initial_revision, mode)
+      config_file = ConfigFile.new(".")
+      
+      # Load entries prior to checkout so that we can compare them later
+      pre_checkout_config_entries = config_file.load_entries
+      
+      # Checkout the specified main repo ref to find out which dependency refs to merge
+      Performer.perform_main_repo_checkout(main_repo, @ref)
+      
+      # Load config entries for the ref we're going to merge
+      post_checkout_config_entries = config_file.load_entries
+      
+      # Auto-merge would be too complex if the specified ref does not have the same dependencies
+      ensure_dependencies_match(pre_checkout_config_entries, post_checkout_config_entries)
+            
+      Console.log_substep("Merging would do the following:")
+      
+      Performer.perform_on_dependencies do |config_entry, lock_entry|
+        revision = RevisionSelector.ref_for_mode(mode, @ref, lock_entry)
+        Console.log_info("#{lock_entry.name}: Merge #{revision} into current branch")
+      end
+      
+      raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
+      
+      # Checkout the initial revision to perform the merge in it
+      Performer.perform_main_repo_checkout(main_repo, initial_revision)
+      
+      Console.log_step("Performing merge")
+      
+      Performer.perform_on_dependencies do |config_entry, lock_entry|
+        Console.log_info("#{lock_entry.name}: Merging #{revision} into current branch...")
+        Git.run_in_working_dir(config_entry.path, "merge #{ref}", Runner::Verbosity::OUTPUT_ALWAYS)
+      end
+    end
+    
+    def ensure_dependencies_match(pre_checkout_config_entries, post_checkout_config_entries)
+      perfect_match = true
+      pre_checkout_config_entries.each do |pre_entry|
+        found = post_checkout_config_entries.find { |post_entry| post_entry.id = pre_entry.id }
+        perfect_match &= found
+        Console.log_warning("Dependency '#{pre_entry.repo.path}' was not found in the target ref") unless found
+      end
+      
+      unless perfect_match
+        raise MultiRepoException, "Dependencies differ, please merge manually"
+      end
+      
+      if post_checkout_config_entries.count > pre_checkout_config_entries.count
+        raise MultiRepoException, "There are more dependencies in the specified ref, please merge manually"
+      end
     end
   end
 end
