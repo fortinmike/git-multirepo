@@ -10,7 +10,7 @@ module MultiRepo
     end
 
     def exists?
-      lines = Git.run_in_working_dir(@repo.path, "branch", Runner::Verbosity::NEVER_OUTPUT).split("\n")
+      lines = Git.run_in_working_dir(@repo.path, "branch", Runner::Verbosity::OUTPUT_NEVER).split("\n")
       branch_names = lines.map { |line| line.tr("* ", "")}
       branch_names.include?(@name)
     end

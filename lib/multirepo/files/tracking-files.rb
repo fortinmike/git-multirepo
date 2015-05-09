@@ -19,10 +19,10 @@ module MultiRepo
     def self.commit(message)
       stage
       
-      output = Git.run_in_current_dir("ls-files --modified --others -- #{files_pathspec}", Runner::Verbosity::NEVER_OUTPUT)
+      output = Git.run_in_current_dir("ls-files --modified --others -- #{files_pathspec}", Runner::Verbosity::OUTPUT_NEVER)
       files_are_untracked_or_modified = output.strip != ""
       
-      output = Git.run_in_current_dir("diff --name-only --cached -- #{files_pathspec}", Runner::Verbosity::NEVER_OUTPUT)
+      output = Git.run_in_current_dir("diff --name-only --cached -- #{files_pathspec}", Runner::Verbosity::OUTPUT_NEVER)
       files_are_staged = output.strip != ""
       
       must_commit = files_are_untracked_or_modified || files_are_staged

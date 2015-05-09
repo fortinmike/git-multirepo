@@ -17,25 +17,25 @@ module MultiRepo
     
     def exists?
       return false unless Dir.exist?("#{@path}/.git")
-      return Git.run_in_working_dir(@path, "rev-parse --is-inside-work-tree", Runner::Verbosity::NEVER_OUTPUT).strip == "true"
+      return Git.run_in_working_dir(@path, "rev-parse --is-inside-work-tree", Runner::Verbosity::OUTPUT_NEVER).strip == "true"
     end
     
     def head_born?
-      result = Git.run_in_working_dir(@path, "rev-parse HEAD --", Runner::Verbosity::NEVER_OUTPUT).strip
+      result = Git.run_in_working_dir(@path, "rev-parse HEAD --", Runner::Verbosity::OUTPUT_NEVER).strip
       return !result.start_with?("fatal: bad revision")
     end
     
     def current_branch
-      branch = Git.run_in_working_dir(@path, "rev-parse --abbrev-ref HEAD", Runner::Verbosity::NEVER_OUTPUT).strip
+      branch = Git.run_in_working_dir(@path, "rev-parse --abbrev-ref HEAD", Runner::Verbosity::OUTPUT_NEVER).strip
       branch != "HEAD" ? branch : nil
     end
     
     def head_hash
-      Git.run_in_working_dir(@path, "rev-parse HEAD", Runner::Verbosity::NEVER_OUTPUT).strip
+      Git.run_in_working_dir(@path, "rev-parse HEAD", Runner::Verbosity::OUTPUT_NEVER).strip
     end
     
     def changes
-      output = Git.run_in_working_dir(@path, "status --porcelain", Runner::Verbosity::NEVER_OUTPUT)
+      output = Git.run_in_working_dir(@path, "status --porcelain", Runner::Verbosity::OUTPUT_NEVER)
       lines = output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
       lines.map { |l| Change.new(l) }
     end
@@ -47,12 +47,12 @@ module MultiRepo
     # Operations
     
     def fetch
-      Git.run_in_working_dir(@path, "fetch --progress", Runner::Verbosity::ALWAYS_OUTPUT)
+      Git.run_in_working_dir(@path, "fetch --progress", Runner::Verbosity::OUTPUT_ALWAYS)
       Runner.last_command_succeeded
     end
     
     def clone(url)
-      Git.run_in_current_dir("clone #{url} #{@path} --progress", Runner::Verbosity::ALWAYS_OUTPUT)
+      Git.run_in_current_dir("clone #{url} #{@path} --progress", Runner::Verbosity::OUTPUT_ALWAYS)
       Runner.last_command_succeeded
     end
     

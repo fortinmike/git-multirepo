@@ -26,7 +26,7 @@ module MultiRepo
     end
     
     def clean(repo_path)
-      Git.run_in_working_dir(repo_path, "clean -df", Runner::Verbosity::ALWAYS_OUTPUT)
+      Git.run_in_working_dir(repo_path, "clean -df", Runner::Verbosity::OUTPUT_ALWAYS)
     end
   end
 end
