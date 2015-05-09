@@ -62,6 +62,14 @@ module MultiRepo
       # Load entries prior to checkout so that we can compare them later
       pre_checkout_config_entries = config_file.load_entries
       
+      # Ensure the main repo is clean
+      raise MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.clean?
+      
+      # Ensure dependencies are clean
+      unless Utils.ensure_dependencies_clean(pre_checkout_config_entries)
+        raise MultiRepoException, "Dependencies are not clean; merge aborted"
+      end
+      
       # Checkout the specified main repo ref to find out which dependency refs to merge
       Performer.perform_main_repo_checkout(main_repo, @ref)
       
@@ -77,19 +85,25 @@ module MultiRepo
         revision = RevisionSelector.revision_for_mode(mode, @ref, lock_entry)
         Console.log_info("#{lock_entry.name}: Merge #{revision} into current branch")
       end
+      Console.log_info("[main repo]: Merge #{@ref} into current branch")
       
       raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
+      
+      Console.log_step("Performing merge...")
       
       # Checkout the initial revision to perform the merge in it
       Performer.perform_main_repo_checkout(main_repo, initial_revision)
       
-      Console.log_step("Performing merge")
-      
+      # Merge dependencies
       Performer.perform_on_dependencies do |config_entry, lock_entry|
         revision = RevisionSelector.revision_for_mode(mode, @ref, lock_entry)
-        Console.log_info("#{lock_entry.name}: Merging #{revision} into current branch...")
+        Console.log_substep("#{lock_entry.name}: Merging #{revision} into current branch...")
         Git.run_in_working_dir(config_entry.path, "merge #{revision}", Runner::Verbosity::OUTPUT_ALWAYS)
       end
+      
+      # Merge the main repo
+      Console.log_substep("[main repo]: Merging #{@ref} into current branch...")
+      Git.run_in_current_dir("merge #{@ref}", Runner::Verbosity::OUTPUT_ALWAYS)
     end
     
     def ensure_dependencies_match(pre_checkout_config_entries, post_checkout_config_entries)

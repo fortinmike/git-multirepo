@@ -40,7 +40,7 @@ module MultiRepo
       lines.map { |l| Change.new(l) }
     end
     
-    def is_clean?
+    def clean?
       return changes.count == 0
     end
     
