@@ -33,7 +33,7 @@ module MultiRepo
       ensure_in_work_tree
       
       Console.log_step("Checking out #{@ref} and its dependencies...")
-        
+      
       # Find out the checkout mode based on command-line options
       mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
       
