@@ -74,7 +74,7 @@ module MultiRepo
       Console.log_substep("Merging would do the following:")
       
       Performer.perform_on_dependencies do |config_entry, lock_entry|
-        revision = RevisionSelector.ref_for_mode(mode, @ref, lock_entry)
+        revision = RevisionSelector.revision_for_mode(mode, @ref, lock_entry)
         Console.log_info("#{lock_entry.name}: Merge #{revision} into current branch")
       end
       
@@ -86,8 +86,9 @@ module MultiRepo
       Console.log_step("Performing merge")
       
       Performer.perform_on_dependencies do |config_entry, lock_entry|
+        revision = RevisionSelector.revision_for_mode(mode, @ref, lock_entry)
         Console.log_info("#{lock_entry.name}: Merging #{revision} into current branch...")
-        Git.run_in_working_dir(config_entry.path, "merge #{ref}", Runner::Verbosity::OUTPUT_ALWAYS)
+        Git.run_in_working_dir(config_entry.path, "merge #{revision}", Runner::Verbosity::OUTPUT_ALWAYS)
       end
     end
     

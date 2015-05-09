@@ -16,7 +16,7 @@ module MultiRepo
       end
     end
     
-    def self.ref_for_mode(mode, ref, lock_entry)
+    def self.revision_for_mode(mode, ref, lock_entry)
       case mode
       when RevisionSelectionMode::AS_LOCK; lock_entry.head
       when RevisionSelectionMode::LATEST; lock_entry.branch
