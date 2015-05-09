@@ -33,7 +33,7 @@ module MultiRepo
       ensure_multirepo_enabled
       
       Console.log_step("Branching...")
-
+      
       main_repo = Repo.new(".")
       config_file = ConfigFile.new(".")
       repos = config_file.load_entries.map{ |entry| entry.repo }.push(main_repo)
@@ -41,9 +41,13 @@ module MultiRepo
       if !Utils.ensure_working_copies_clean(repos) && !@force
         raise MultiRepoException, "Can't branch because not all repos are clean"
       end
-
+      
       repos.each do |repo|
-        Console.log_substep("Branching and checking out #{repo.path} #{@branch_name} ...")
+        if @remote_tracking
+          Console.log_substep("Branching, checking out and pushing '#{repo.path}' #{@branch_name} ...")
+        else
+          Console.log_substep("Branching and checking out '#{repo.path}' #{@branch_name} (not pushed) ...")
+        end
 
         branch = repo.branch(@branch_name)
         branch.create(@remote_tracking) unless branch.exists?
