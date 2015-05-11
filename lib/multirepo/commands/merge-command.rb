@@ -2,6 +2,7 @@ require "multirepo/utility/console"
 require "multirepo/logic/node"
 require "multirepo/logic/revision-selector"
 require "multirepo/logic/performer"
+require "multirepo/logic/merge-descriptor"
 
 module MultiRepo
   class MergeCommand < Command
@@ -34,7 +35,7 @@ module MultiRepo
       ensure_in_work_tree
       ensure_multirepo_enabled
       
-      Console.log_step("Merging #{@ref} ...")
+      Console.log_step("Merging #{@ref}...")
       
       main_repo = Repo.new(".")
       
@@ -83,16 +84,21 @@ module MultiRepo
       # Load config entries for the ref we're going to merge
       post_checkout_config_entries = config_file.load_entries
       
-      # Auto-merge would be too complex if the specified ref does not have the same dependencies
+      # Auto-merge would be too complex to implement (due to lots of edge cases)
+      # if the specified ref does not have the same dependencies
       ensure_dependencies_match(pre_checkout_config_entries, post_checkout_config_entries)
-            
-      Console.log_substep("Merging would do the following:")
       
+      # Create merge descriptor for each would-be merge operation
+      descriptors = []
       Performer.perform_on_dependencies do |config_entry, lock_entry|
         revision = RevisionSelector.revision_for_mode(mode, @ref, lock_entry)
-        Console.log_info("#{lock_entry.name}: Merge #{revision} into current branch")
+        descriptors.push(MergeDescriptor.new(config_entry.name, config_entry.path, revision))
       end
-      Console.log_info("[main repo]: Merge #{@ref} into current branch")
+      descriptors.push(MergeDescriptor.new("[main repo]", main_repo.path, @ref))
+            
+      # Log merge operations to the console before the fact
+      Console.log_substep("Merging would do the following:")
+      log_merges(descriptors)
       
       raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
       
@@ -101,16 +107,8 @@ module MultiRepo
       # Checkout the initial revision to perform the merge in it
       Performer.perform_main_repo_checkout(main_repo, initial_revision)
       
-      # Merge dependencies
-      Performer.perform_on_dependencies do |config_entry, lock_entry|
-        revision = RevisionSelector.revision_for_mode(mode, @ref, lock_entry)
-        Console.log_substep("#{lock_entry.name}: Merging #{revision} into current branch...")
-        Git.run_in_working_dir(config_entry.path, "merge #{revision}", Runner::Verbosity::OUTPUT_ALWAYS)
-      end
-      
-      # Merge the main repo
-      Console.log_substep("[main repo]: Merging #{@ref} into current branch...")
-      Git.run_in_current_dir("merge #{@ref}", Runner::Verbosity::OUTPUT_ALWAYS)
+      # Merge dependencies and the main repo
+      perform_merges(descriptors)
     end
     
     def ensure_dependencies_match(pre_checkout_config_entries, post_checkout_config_entries)
@@ -127,6 +125,19 @@ module MultiRepo
       
       if post_checkout_config_entries.count > pre_checkout_config_entries.count
         raise MultiRepoException, "There are more dependencies in the specified ref, please merge manually"
+      end
+    end
+    
+    def log_merges(descriptors)
+      descriptors.each do |descriptor|
+        Console.log_info("#{descriptor.name}: Merge #{descriptor.revision} into current branch")
+      end
+    end
+    
+    def perform_merges(descriptors)
+      descriptors.each do |descriptor|
+        Console.log_substep("#{descriptor.name}: Merging #{descriptor.revision} into current branch...")
+        Git.run_in_working_dir(descriptor.path, "merge #{descriptor.revision}", Runner::Verbosity::OUTPUT_ALWAYS)
       end
     end
   end

@@ -16,7 +16,7 @@ module MultiRepo
     end
     
     def initialize(config_entry)
-      @name = config_entry.repo.basename
+      @name = config_entry.name
       @id = config_entry.id
       @head = config_entry.repo.head_hash
       @branch = config_entry.repo.current_branch
