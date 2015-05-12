@@ -140,7 +140,7 @@ module MultiRepo
     def message_for_mode(mode, ref)
       case mode
       when RevisionSelectionMode::AS_LOCK
-        "merge exact revisions as stored in the lock file for main repo revision #{ref}"
+        "merge specific commits as stored in the lock file for main repo revision #{ref}"
       when RevisionSelectionMode::LATEST
         "merge each branch as stored in the lock file for main repo revision #{ref}"
       when RevisionSelectionMode::EXACT
