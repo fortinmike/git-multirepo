@@ -79,7 +79,7 @@ module MultiRepo
       # Fetch repos to make sure we have the latest history in each.
       # Fetching pre-checkout dependency repositories is sufficient because
       # we make sure that the same dependencies are configured post-checkout.
-      Console.log_substep("Fetching repositories before merge...")
+      Console.log_substep("Fetching repositories before proceeding with merge...")
       main_repo.fetch
       pre_checkout_config_entries.each { |e| e.repo.fetch }
       
