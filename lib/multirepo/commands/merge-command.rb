@@ -50,6 +50,7 @@ module MultiRepo
       rescue MultiRepoException => e
         # Revert to the initial revision only if necessary
         unless main_repo.current_branch == initial_revision || main_repo.head_hash == initial_revision
+          Console.log_substep("Restoring working copy to #{initial_revision}")
           main_repo.checkout(initial_revision)
         end
         raise e
@@ -142,7 +143,7 @@ module MultiRepo
       when RevisionSelectionMode::AS_LOCK
         "merge specific commits as stored in the lock file for main repo revision #{ref}"
       when RevisionSelectionMode::LATEST
-        "merge each branch as stored in the lock file for main repo revision #{ref}"
+        "merge each branch as stored in the lock file of main repo revision #{ref}"
       when RevisionSelectionMode::EXACT
         "merge #{ref} for each repository, ignoring the contents of the lock file"
       end
