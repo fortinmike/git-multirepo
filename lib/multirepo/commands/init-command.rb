@@ -77,7 +77,7 @@ module MultiRepo
     end
     
     def update_gitattributes_step
-      TrackingFiles::FILES.each do |f|
+      TrackingFiles.new(".").files.each do |f|
         filename = f.filename
         regex_escaped_filename = Regexp.quote(filename)
         Utils.append_if_missing("./.gitattributes", /^#{regex_escaped_filename} .*/, "#{filename} merge=ours")

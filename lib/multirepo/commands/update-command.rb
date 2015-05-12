@@ -41,7 +41,8 @@ module MultiRepo
     end
     
     def update_lock_file_step(log_message)
-      changed = TrackingFiles.update
+      tracking_files = TrackingFiles.new(".")
+      changed = tracking_files.update
       
       if changed
         Console.log_substep("Updated tracking files")
@@ -50,7 +51,7 @@ module MultiRepo
       end
       
       if @commit
-        committed = TrackingFiles.commit("[multirepo] Updated tracking files manually")
+        committed = tracking_files.commit("[multirepo] Updated tracking files manually")
         Console.log_substep("Committed tracking files") if committed
       elsif changed
         Console.log_substep(log_message)

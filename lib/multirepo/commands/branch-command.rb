@@ -66,10 +66,12 @@ module MultiRepo
       branch.create unless branch.exists?
       branch.checkout
       
-      # TODO: Update the appropriate tracking files!
-      Console.log_substep("Updating and committing tracking files")
-      TrackingFiles.update
-      TrackingFiles.commit("[multirepo] Post-branch tracking files update")
+      if Utils.is_multirepo_enabled(repo.path)
+        Console.log_substep("Updating and committing tracking files")
+        tracking_files = TrackingFiles.new(repo.path)
+        tracking_files.update
+        tracking_files.commit("[multirepo] Post-branch tracking files update")
+      end
       
       repo.branch(@branch_name).push if @remote_tracking
     end

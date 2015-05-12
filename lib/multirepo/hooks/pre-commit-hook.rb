@@ -17,8 +17,10 @@ module MultiRepo
         exit 1
       end
       
-      TrackingFiles.update
-      TrackingFiles.stage
+      tracking_files = TrackingFiles.new(".")
+      tracking_files.update
+      tracking_files.stage
+      
       Console.log_info("Updated and staged tracking files")
       
       exit 0 # Success!
