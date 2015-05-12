@@ -35,15 +35,16 @@ module MultiRepo
       ensure_in_work_tree
       ensure_multirepo_enabled
       
-      Console.log_step("Merging #{@ref}...")
+      # Find out the checkout mode based on command-line options
+      mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
+      
+      strategy_name = RevisionSelectionMode.name_for_mode(mode)
+      Console.log_step("Merging #{@ref} with '#{strategy_name}' strategy...")
       
       main_repo = Repo.new(".")
       
       # Keep the initial revision because we're going to need to come back to it later
       initial_revision = main_repo.current_branch || main_repo.head_hash
-      
-      # Find out the checkout mode based on command-line options
-      mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
       
       begin
         merge_core(main_repo, initial_revision, mode)

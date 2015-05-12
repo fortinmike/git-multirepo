@@ -32,10 +32,11 @@ module MultiRepo
       super
       ensure_in_work_tree
       
-      Console.log_step("Checking out #{@ref} and its dependencies...")
-      
       # Find out the checkout mode based on command-line options
       mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
+      
+      strategy_name = RevisionSelectionMode.name_for_mode(mode)
+      Console.log_step("Checking out #{@ref} and its dependencies using the '#{strategy_name}' strategy...")
       
       main_repo = Repo.new(".")
       

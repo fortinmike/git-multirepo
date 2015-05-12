@@ -3,6 +3,14 @@ module MultiRepo
     AS_LOCK = 0
     LATEST = 1
     EXACT = 2
+    
+    def self.name_for_mode(mode)
+      case mode
+      when AS_LOCK; "as-lock"
+      when LATEST; "latest"
+      when EXACT; "exact"
+      end
+    end
   end
   
   class RevisionSelector
