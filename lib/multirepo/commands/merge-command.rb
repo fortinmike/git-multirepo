@@ -74,7 +74,7 @@ module MultiRepo
       # Fetch repos to make sure we have the latest history in each.
       # Fetching pre-checkout dependency repositories is sufficient because
       # we make sure that the same dependencies are configured post-checkout.
-      Console.log_substep("Fetching repositories prior to merge...")
+      Console.log_substep("Fetching repositories before merge...")
       main_repo.fetch
       pre_checkout_config_entries.each { |e| e.repo.fetch }
       
@@ -97,7 +97,7 @@ module MultiRepo
       descriptors.push(MergeDescriptor.new("[main repo]", main_repo.path, @ref))
             
       # Log merge operations to the console before the fact
-      Console.log_substep("Merging would do the following:")
+      Console.log_warning("Merging would #{message_for_mode(mode, @ref)}:")
       log_merges(descriptors)
       
       raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
@@ -130,13 +130,24 @@ module MultiRepo
     
     def log_merges(descriptors)
       descriptors.each do |descriptor|
-        Console.log_info("#{descriptor.name}: Merge #{descriptor.revision} into current branch")
+        Console.log_info("#{descriptor.name} : Merge #{descriptor.revision} into current branch")
+      end
+    end
+    
+    def message_for_mode(mode, ref)
+      case mode
+      when RevisionSelectionMode::AS_LOCK
+        "merge **exact revisions** as stored in the lock file for main repo revision #{ref}"
+      when RevisionSelectionMode::LATEST
+        "merge each branch as stored in the lock file for main repo revision #{ref}"
+      when RevisionSelectionMode::EXACT
+        "merge #{ref} for each repository, ignoring the contents of the lock file"
       end
     end
     
     def perform_merges(descriptors)
       descriptors.each do |descriptor|
-        Console.log_substep("#{descriptor.name}: Merging #{descriptor.revision} into current branch...")
+        Console.log_substep("#{descriptor.name} : Merging #{descriptor.revision} into current branch...")
         GitRunner.run_in_working_dir(descriptor.path, "merge #{descriptor.revision}", Runner::Verbosity::OUTPUT_ALWAYS)
       end
     end
