@@ -2,7 +2,6 @@ require "pathname"
 require "psych"
 
 require "info"
-require "multirepo/git/git"
 require_relative "tracking-file"
 require_relative "lock-entry"
 require_relative "config-file"

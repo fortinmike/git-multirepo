@@ -88,7 +88,7 @@ module MultiRepo
       # if the specified ref does not have the same dependencies
       ensure_dependencies_match(pre_checkout_config_entries, post_checkout_config_entries)
       
-      # Create merge descriptor for each would-be merge operation
+      # Create a merge descriptor for each would-be merge
       descriptors = []
       Performer.perform_on_dependencies do |config_entry, lock_entry|
         revision = RevisionSelector.revision_for_mode(mode, @ref, lock_entry)
@@ -137,7 +137,7 @@ module MultiRepo
     def perform_merges(descriptors)
       descriptors.each do |descriptor|
         Console.log_substep("#{descriptor.name}: Merging #{descriptor.revision} into current branch...")
-        Git.run_in_working_dir(descriptor.path, "merge #{descriptor.revision}", Runner::Verbosity::OUTPUT_ALWAYS)
+        GitRunner.run_in_working_dir(descriptor.path, "merge #{descriptor.revision}", Runner::Verbosity::OUTPUT_ALWAYS)
       end
     end
   end

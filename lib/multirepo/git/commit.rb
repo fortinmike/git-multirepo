@@ -1,4 +1,4 @@
-require_relative "git"
+require_relative "git-runner"
 
 module MultiRepo
   class Commit
@@ -10,7 +10,7 @@ module MultiRepo
     end
 
     def is_merge?
-      lines = Git.run_in_working_dir(@repo.path, "cat-file -p #{@ref}", Runner::Verbosity::OUTPUT_NEVER).split("\n")
+      lines = GitRunner.run_in_working_dir(@repo.path, "cat-file -p #{@ref}", Runner::Verbosity::OUTPUT_NEVER).split("\n")
       parents = lines.grep(/^parent /)
       return parents.count > 1
     end
