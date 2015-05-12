@@ -1,3 +1,5 @@
+require "terminal-table"
+
 require "multirepo/utility/console" 
 require "multirepo/logic/node"
 require "multirepo/logic/revision-selector"
@@ -99,7 +101,7 @@ module MultiRepo
         revision = RevisionSelector.revision_for_mode(mode, @ref, lock_entry)
         descriptors.push(MergeDescriptor.new(config_entry.name, config_entry.path, revision))
       end
-      descriptors.push(MergeDescriptor.new("[main repo]", main_repo.path, @ref))
+      descriptors.push(MergeDescriptor.new("Main Repo", main_repo.path, @ref))
             
       # Log merge operations to the console before the fact
       Console.log_warning("Merging would #{message_for_mode(mode, @ref)}:")
@@ -134,9 +136,13 @@ module MultiRepo
     end
     
     def log_merges(descriptors)
-      descriptors.each do |descriptor|
-        Console.log_info("#{descriptor.name} : Merge #{descriptor.revision} into current branch")
+      table = Terminal::Table.new do |t|
+        descriptors.reverse.each_with_index do |descriptor, index|
+          t.add_row [descriptor.name, "Merge '#{descriptor.revision}'"]
+          t.add_separator unless index == descriptors.count - 1
+        end
       end
+      puts table
     end
     
     def message_for_mode(mode, ref)
