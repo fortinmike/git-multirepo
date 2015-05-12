@@ -1,9 +1,8 @@
 require "multirepo/utility/runner"
-require "multirepo/git/git"
 require "multirepo/config"
 
 module MultiRepo
-  class Git
+  class GitRunner
     class << self
       attr_accessor :last_command_succeeded
     end

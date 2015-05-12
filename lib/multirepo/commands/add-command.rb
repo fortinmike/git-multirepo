@@ -26,11 +26,13 @@ module MultiRepo
       ensure_multirepo_enabled
       ensure_repo_valid
       
+      config_file = ConfigFile.new(".")
       entry = ConfigEntry.new(Repo.new(@path))
-      if ConfigFile.entry_exists?(entry)
+      
+      if config_file.entry_exists?(entry)
         Console.log_info("There is already an entry for '#{@path}' in the .multirepo file")
       else
-        ConfigFile.add_entry(entry)
+        config_file.add_entry(entry)
         Console.log_step("Added '#{@path}' to the .multirepo file")
       end
     rescue MultiRepoException => e

@@ -1,4 +1,4 @@
-require_relative "git"
+require_relative "git-runner"
 
 module MultiRepo
   class Branch
@@ -10,19 +10,19 @@ module MultiRepo
     end
 
     def exists?
-      lines = Git.run_in_working_dir(@repo.path, "branch", Runner::Verbosity::NEVER_OUTPUT).split("\n")
+      lines = GitRunner.run_in_working_dir(@repo.path, "branch", Runner::Verbosity::OUTPUT_NEVER).split("\n")
       branch_names = lines.map { |line| line.tr("* ", "")}
       branch_names.include?(@name)
     end
 
     def create(remote_tracking = false)
-      Git.run_in_working_dir(@repo.path, "branch #{@name}", Runner::Verbosity::OUTPUT_ON_ERROR)
-      Git.run_in_working_dir(@repo.path, "push -u origin #{name}", Runner::Verbosity::OUTPUT_ON_ERROR) if remote_tracking
+      GitRunner.run_in_working_dir(@repo.path, "branch #{@name}", Runner::Verbosity::OUTPUT_ON_ERROR)
+      GitRunner.run_in_working_dir(@repo.path, "push -u origin #{name}", Runner::Verbosity::OUTPUT_ON_ERROR) if remote_tracking
     end
     
     def checkout
-      Git.run_in_working_dir(@repo.path, "checkout #{@name}", Runner::Verbosity::OUTPUT_ON_ERROR)
-      Git.last_command_succeeded
+      GitRunner.run_in_working_dir(@repo.path, "checkout #{@name}", Runner::Verbosity::OUTPUT_ON_ERROR)
+      GitRunner.last_command_succeeded
     end
   end
 end

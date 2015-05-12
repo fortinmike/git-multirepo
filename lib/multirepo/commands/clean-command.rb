@@ -15,7 +15,7 @@ module MultiRepo
       Console.log_substep("Cleaning main repo...")
       clean(".")
       
-      ConfigFile.load_entries.each do |entry|
+      ConfigFile.new(".").load_entries.each do |entry|
         Console.log_substep("Cleaning #{entry.repo.path} ...")
         clean(entry.repo.path)
       end
@@ -26,7 +26,7 @@ module MultiRepo
     end
     
     def clean(repo_path)
-      Git.run_in_working_dir(repo_path, "clean -df", Runner::Verbosity::ALWAYS_OUTPUT)
+      GitRunner.run_in_working_dir(repo_path, "clean -df", Runner::Verbosity::OUTPUT_ALWAYS)
     end
   end
 end

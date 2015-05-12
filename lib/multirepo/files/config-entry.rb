@@ -16,20 +16,24 @@ module MultiRepo
       coder["url"] = @url
     end
     
-    def ==(entry)
-      entry_path = Pathname.new(entry.path)
-      self_path = Pathname.new(self.path)
-      entry_path.exist? && self_path.exist? && entry_path.realpath == self_path.realpath
-    end
-    
     def initialize(repo)
       @id = SecureRandom.uuid
       @path = repo.path
       @url = repo.exists? ? repo.remote('origin').url : nil
     end
     
+    def ==(entry)
+      entry_path = Pathname.new(entry.path)
+      self_path = Pathname.new(self.path)
+      entry_path.exist? && self_path.exist? && entry_path.realpath == self_path.realpath
+    end
+    
     def repo
       Repo.new(path)
+    end
+    
+    def name
+      repo.basename
     end
   end
 end

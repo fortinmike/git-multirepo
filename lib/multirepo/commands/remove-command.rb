@@ -32,8 +32,9 @@ module MultiRepo
       repo = Repo.new(@path)
       entry = ConfigEntry.new(repo)
       
-      if ConfigFile.entry_exists?(entry)
-        ConfigFile.remove_entry(entry)
+      config_file = ConfigFile.new(".")
+      if config_file.entry_exists?(entry)
+        config_file.remove_entry(entry)
         Console.log_step("Removed '#{@path}' from the .multirepo file")
         
         if @delete
