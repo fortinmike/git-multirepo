@@ -48,7 +48,10 @@ module MultiRepo
       begin
         merge_core(main_repo, initial_revision, mode)
       rescue MultiRepoException => e
-        Performer.perform_main_repo_checkout(main_repo, initial_revision)
+        # Revert to the initial revision only if necessary
+        unless main_repo.current_branch == initial_revision || main_repo.head_hash == initial_revision
+          main_repo.checkout(initial_revision)
+        end
         raise e
       end
       
@@ -137,7 +140,7 @@ module MultiRepo
     def message_for_mode(mode, ref)
       case mode
       when RevisionSelectionMode::AS_LOCK
-        "merge **exact revisions** as stored in the lock file for main repo revision #{ref}"
+        "merge exact revisions as stored in the lock file for main repo revision #{ref}"
       when RevisionSelectionMode::LATEST
         "merge each branch as stored in the lock file for main repo revision #{ref}"
       when RevisionSelectionMode::EXACT
