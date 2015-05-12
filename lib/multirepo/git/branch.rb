@@ -15,9 +15,12 @@ module MultiRepo
       branch_names.include?(@name)
     end
 
-    def create(remote_tracking = false)
+    def create
       GitRunner.run_in_working_dir(@repo.path, "branch #{@name}", Runner::Verbosity::OUTPUT_ON_ERROR)
-      GitRunner.run_in_working_dir(@repo.path, "push -u origin #{name}", Runner::Verbosity::OUTPUT_ON_ERROR) if remote_tracking
+    end
+    
+    def push
+      GitRunner.run_in_working_dir(@repo.path, "push -u origin #{@name}", Runner::Verbosity::OUTPUT_ON_ERROR)
     end
     
     def checkout
