@@ -67,7 +67,7 @@ module MultiRepo
       branch.checkout
       
       if Utils.is_multirepo_enabled(repo.path)
-        Console.log_substep("Updating and committing tracking files")
+        Console.log_substep("Updating and committing tracking files in multirepo-enabled repo")
         tracking_files = TrackingFiles.new(repo.path)
         tracking_files.update
         tracking_files.commit("[multirepo] Post-branch tracking files update")
