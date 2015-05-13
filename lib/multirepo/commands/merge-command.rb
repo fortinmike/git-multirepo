@@ -99,6 +99,12 @@ module MultiRepo
       descriptors = []
       Performer.perform_on_dependencies do |config_entry, lock_entry|
         revision = RevisionSelector.revision_for_mode(mode, @ref, lock_entry)
+        
+        # TODO: Work-in-progress
+        temp_test = "master"
+        can_ff = config_entry.repo.current_commit.can_fast_forward_to?(temp_test)
+        puts "##### CAN FF? #{can_ff}"
+        
         descriptors.push(MergeDescriptor.new(config_entry.name, config_entry.path, revision))
       end
       descriptors.push(MergeDescriptor.new("Main Repo", main_repo.path, @ref))

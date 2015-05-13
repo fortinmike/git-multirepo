@@ -61,6 +61,12 @@ module MultiRepo
       Runner.last_command_succeeded
     end
     
+    # Current
+    
+    def current_commit
+      Commit.new(self, head_hash)
+    end
+    
     # Remotes and branches
     
     def branch(name)
