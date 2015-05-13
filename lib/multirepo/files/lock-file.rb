@@ -1,29 +1,39 @@
 require "pathname"
 require "psych"
 
-require "multirepo/git/git"
 require_relative "tracking-file"
 require_relative "lock-entry"
 require_relative "config-file"
 
 module MultiRepo
   class LockFile < TrackingFile
-    FILE = Pathname.new(".multirepo.lock")
-    FILENAME = FILE.to_s
+    FILENAME = ".multirepo.lock"
     
-    def self.exists?
-      FILE.exist?
+    def initialize(path)
+      @path = path
     end
     
-    def self.load_entries
-      Psych.load(FILE.read)
+    def file
+      File.join(@path, FILENAME)
     end
     
-    def self.update
-      config_entries = ConfigFile.load_entries
+    def filename
+      FILENAME
+    end
+    
+    def exists?
+      File.exists?(file)
+    end
+    
+    def load_entries
+      Psych.load(File.read(file))
+    end
+    
+    def update
+      config_entries = ConfigFile.new(@path).load_entries
       lock_entries = config_entries.map { |c| LockEntry.new(c) }
       content = Psych.dump(lock_entries)
-      return update_internal(FILENAME, content)
+      return update_internal(file, content)
     end
   end
 end

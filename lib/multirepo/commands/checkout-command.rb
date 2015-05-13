@@ -1,15 +1,11 @@
 require "multirepo/utility/console"
+require "multirepo/logic/revision-selector"
+require "multirepo/logic/performer"
 
 module MultiRepo
   class CheckoutCommand < Command
     self.command = "checkout"
     self.summary = "Checks out the specified commit or branch of the main repo and checks out matching versions of all dependencies."
-    
-    class CheckoutMode
-      AS_LOCK = 0
-      LATEST = 1
-      EXACT = 2
-    end
     
     def self.options
       [
@@ -35,76 +31,68 @@ module MultiRepo
     def run
       super
       ensure_in_work_tree
-      ensure_multirepo_enabled
-      
-      Console.log_step("Checking out #{@ref} and its dependencies...")
       
       # Find out the checkout mode based on command-line options
-      mode = if @checkout_latest then
-        CheckoutMode::LATEST
-      elsif @checkout_exact then
-        CheckoutMode::EXACT
-      else
-        CheckoutMode::AS_LOCK
-      end
+      mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
+      
+      strategy_name = RevisionSelectionMode.name_for_mode(mode)
+      Console.log_step("Checking out #{@ref} and its dependencies using the '#{strategy_name}' strategy...")
       
       main_repo = Repo.new(".")
-      initial_revision = main_repo.current_branch || main_repo.head_hash
       
       unless proceed_if_merge_commit?(main_repo, @ref, mode)
         raise MultiRepoException, "Aborting checkout"
       end
       
-      main_repo_checkout_step(main_repo, initial_revision, @ref)
-      ensure_dependencies_clean_step(main_repo, initial_revision)
-      dependencies_checkout_step(mode, @ref)
+      checkout_core(main_repo, mode)
             
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
     end
-            
-    def main_repo_checkout_step(main_repo, initial_revision, ref)
-      # Make sure the main repo is clean before attempting a checkout
-      unless main_repo.is_clean?
-        raise MultiRepoException, "Can't checkout #{ref} because the main repo contains uncommitted changes"
-      end
-      
-      # Checkout the specified ref
-      unless main_repo.checkout(ref)
-        raise MultiRepoException, "Couldn't perform checkout of main repo #{ref}!"
-      end
-      
-      Console.log_substep("Checked out main repo #{ref}")
-      
-      # After checkout, make sure we're working with a multirepo-enabled ref
-      unless Utils.is_multirepo_tracked(".")
+    
+    def checkout_core(main_repo, mode)
+      initial_revision = main_repo.current_branch || main_repo.head_hash
+      begin
+        # Checkout first because the current ref might not be multirepo-enabled
+        checkout_main_repo_step(main_repo)
+        # Only then can we check for dependencies and make sure they are clean
+        ensure_dependencies_clean_step(main_repo)
+      rescue MultiRepoException => e
+        Console.log_error("Reverting main repo checkout")
         main_repo.checkout(initial_revision)
-        raise MultiRepoException, "This revision is not tracked by multirepo. Checkout reverted."
+        raise e
       end
+      dependencies_checkout_step(mode, @ref)
     end
     
-    def ensure_dependencies_clean_step(main_repo, initial_revision)
-      unless Utils.ensure_dependencies_clean(ConfigFile.load_entries)
-        main_repo.checkout(initial_revision)
-        raise MultiRepoException, "Checkout reverted."
+    def checkout_main_repo_step(main_repo)
+      Performer.perform_main_repo_checkout(main_repo, @ref)
+    end
+    
+    def ensure_dependencies_clean_step(main_repo)
+      unless Utils.ensure_dependencies_clean(ConfigFile.new(".").load_entries)
+        raise MultiRepoException, "Dependencies are not clean!"
       end
     end
     
     def dependencies_checkout_step(mode, ref = nil)
-      config_entries = ConfigFile.load_entries # Post-main-repo checkout config entries might be different than pre-checkout
-      LockFile.load_entries.each { |lock_entry| perform_dependency_checkout(config_entries, lock_entry, ref, mode) }
+      Performer.perform_on_dependencies do |config_entry, lock_entry|
+        # Find out the required dependency revision based on the checkout mode
+        revision = RevisionSelector.revision_for_mode(mode, ref, lock_entry)
+        perform_dependency_checkout(config_entry, revision)
+      end
     end
     
     def proceed_if_merge_commit?(main_repo, ref, mode)
       return true unless main_repo.commit(ref).is_merge?
       
       case mode
-      when CheckoutMode::AS_LOCK
+      when RevisionSelectionMode::AS_LOCK
         Console.log_error("The specified ref is a merge commit and an \"as-lock\" checkout was requested.")
         Console.log_error("The resulting checkout would most probably not result in a valid project state.")
         return false
-      when CheckoutMode::LATEST
+      when RevisionSelectionMode::LATEST
         Console.log_warning("The specified ref is a merge commit and a \"latest\" checkout was requested.")
         Console.log_warning("The work branches recorded in the branch from which the merge was performed will be checked out.")
       end
@@ -112,9 +100,8 @@ module MultiRepo
       return true
     end
     
-    def perform_dependency_checkout(config_entries, lock_entry, ref, mode)
-      # Find the config entry that matches the given lock entry
-      config_entry = config_entries.select{ |config_entry| config_entry.id == lock_entry.id }.first
+    def perform_dependency_checkout(config_entry, revision)
+      dependency_name = config_entry.repo.basename
       
       # Make sure the repo exists on disk, and clone it if it doesn't
       # (in case the checked-out revision had an additional dependency)
@@ -123,18 +110,11 @@ module MultiRepo
         config_entry.repo.clone(config_entry.url)
       end
       
-      # Find out the proper revision to checkout based on the checkout mode
-      revision = case mode
-      when CheckoutMode::AS_LOCK; lock_entry.head
-      when CheckoutMode::LATEST; lock_entry.branch
-      when CheckoutMode::EXACT; ref
-      end
-      
       # Checkout!
       if config_entry.repo.checkout(revision)
-        Console.log_substep("Checked out #{lock_entry.name} #{revision}")
+        Console.log_substep("Checked out #{dependency_name} #{revision}")
       else
-        raise MultiRepoException, "Couldn't check out the appropriate version of dependency #{lock_entry.name}"
+        raise MultiRepoException, "Couldn't check out the appropriate version of dependency #{dependency_name}"
       end
     end
   end

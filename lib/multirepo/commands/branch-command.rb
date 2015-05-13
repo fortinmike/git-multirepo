@@ -1,6 +1,7 @@
 require "multirepo/utility/console"
 require "multirepo/files/config-file"
 require "multirepo/files/tracking-files"
+require "multirepo/logic/performer"
 
 module MultiRepo
   class BranchCommand < Command
@@ -33,29 +34,54 @@ module MultiRepo
       ensure_multirepo_enabled
       
       Console.log_step("Branching...")
-
-      main_repo = Repo.new(".")
-      repos = ConfigFile.load_entries.map{ |entry| entry.repo }.push(main_repo)
       
-      if !Utils.ensure_working_copies_clean(repos) && !@force
-        raise MultiRepoException, "Can't branch because not all repos are clean"
+      main_repo = Repo.new(".")
+      
+      # Ensure the main repo is clean
+      raise MultiRepoException, "Main repo is not clean; multi branch aborted" unless main_repo.clean?
+      
+      # Ensure dependencies are clean
+      config_entries = ConfigFile.new(".").load_entries
+      unless Utils.ensure_dependencies_clean(config_entries)
+        raise MultiRepoException, "Dependencies are not clean; multi branch aborted"
       end
-
-      repos.each do |repo|
-        Console.log_substep("Branching and checking out #{repo.path} #{@branch_name} ...")
-
-        branch = repo.branch(@branch_name)
-        branch.create(@remote_tracking) unless branch.exists?
-        branch.checkout
+      
+      # Branch dependencies
+      Performer.perform_on_dependencies do |config_entry, lock_entry|
+        perform_branch(config_entry.repo)
       end
-
-      Console.log_substep("Updating and committing tracking files")
-      TrackingFiles.update
-      TrackingFiles.commit("[multirepo] Post-branch tracking files update")
-
+      
+      # Branch the main repo
+      perform_branch(main_repo)
+      
       Console.log_step("Done!")
     rescue MultiRepoException => e
       Console.log_error(e.message)
+    end
+    
+    def perform_branch(repo)
+      log_operation(repo.path, @branch_name, @remote_tracking)
+      
+      branch = repo.branch(@branch_name)
+      branch.create unless branch.exists?
+      branch.checkout
+      
+      if Utils.is_multirepo_enabled(repo.path)
+        Console.log_substep("Updating and committing tracking files in multirepo-enabled repo")
+        tracking_files = TrackingFiles.new(repo.path)
+        tracking_files.update
+        tracking_files.commit("[multirepo] Post-branch tracking files update")
+      end
+      
+      repo.branch(@branch_name).push if @remote_tracking
+    end
+    
+    def log_operation(path, branch_name, remote_tracking)
+      if remote_tracking
+        Console.log_substep("Branching, checking out and pushing '#{path}' #{branch_name} ...")
+      else
+        Console.log_substep("Branching and checking out '#{path}' #{branch_name} (not pushed) ...")
+      end
     end
   end
 end

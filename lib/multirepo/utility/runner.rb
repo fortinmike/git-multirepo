@@ -4,8 +4,8 @@ require "multirepo/utility/console"
 module MultiRepo
   class Runner
     class Verbosity
-      NEVER_OUTPUT = 0
-      ALWAYS_OUTPUT = 1
+      OUTPUT_NEVER = 0
+      OUTPUT_ALWAYS = 1
       OUTPUT_ON_ERROR = 2
     end
     
@@ -19,7 +19,7 @@ module MultiRepo
       lines = []
       Open3.popen2e(cmd) do |stdin, stdout_and_stderr, thread|
         stdout_and_stderr.each do |line|
-          Console.log_info("-------> #{line.rstrip}") if verbosity == Verbosity::ALWAYS_OUTPUT || Config.instance.verbose
+          Console.log_info("#{line.rstrip}") if verbosity == Verbosity::OUTPUT_ALWAYS || Config.instance.verbose
           lines << line
         end
         @last_command_succeeded = thread.value.success?

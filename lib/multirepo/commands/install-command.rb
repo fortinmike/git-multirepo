@@ -43,7 +43,7 @@ module MultiRepo
     
     def install_dependencies_step
       # Read config entries as-is on disk, without prior checkout
-      config_entries = ConfigFile.load_entries
+      config_entries = ConfigFile.new(".").load_entries
       Console.log_substep("Installing #{config_entries.count} dependencies...");
       
       # Clone or fetch all configured dependencies to make sure nothing is missing locally
@@ -51,7 +51,7 @@ module MultiRepo
       
       # Checkout the appropriate branches as specified in the lock file
       checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
-      checkout_command.dependencies_checkout_step(CheckoutCommand::CheckoutMode::LATEST)
+      checkout_command.dependencies_checkout_step(RevisionSelectionMode::LATEST)
     end
     
     def install_hooks_step

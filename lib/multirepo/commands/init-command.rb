@@ -38,7 +38,7 @@ module MultiRepo
     end
     
     def full_initialize_step
-      if ConfigFile.exists?
+      if ConfigFile.new(".").exists?
         reinitialize = Console.ask_yes_no(".multirepo file already exists. Reinitialize?")
         raise MultiRepoException, "Initialization aborted" unless reinitialize
       end
@@ -61,7 +61,7 @@ module MultiRepo
       
       raise MultiRepoException, "No sibling repositories were added as dependencies; aborting." unless entries.any?
       
-      ConfigFile.save_entries(entries)
+      ConfigFile.new(".").save_entries(entries)
       return true
     end
     
@@ -77,8 +77,8 @@ module MultiRepo
     end
     
     def update_gitattributes_step
-      TrackingFiles::FILE_CLASSES.each do |c|
-        filename = c::FILENAME
+      TrackingFiles.new(".").files.each do |f|
+        filename = f.filename
         regex_escaped_filename = Regexp.quote(filename)
         Utils.append_if_missing("./.gitattributes", /^#{regex_escaped_filename} .*/, "#{filename} merge=ours")
       end

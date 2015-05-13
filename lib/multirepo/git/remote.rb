@@ -1,4 +1,4 @@
-require_relative "git"
+require_relative "git-runner"
 
 module MultiRepo
   class Remote
@@ -10,7 +10,7 @@ module MultiRepo
     end
     
     def url
-      output = Git.run_in_working_dir(@repo.path, "config --get remote.#{@name}.url", Runner::Verbosity::NEVER_OUTPUT).strip
+      output = GitRunner.run_in_working_dir(@repo.path, "config --get remote.#{@name}.url", Runner::Verbosity::OUTPUT_NEVER).strip
       return output == "" ? nil : output
     end
   end

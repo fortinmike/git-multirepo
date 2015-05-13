@@ -11,7 +11,7 @@ module MultiRepo
       Console.log_step("Performing post-commit operations...")
       
       # Works around bug #91565510 (https://www.pivotaltracker.com/story/show/91565510)
-      TrackingFiles.stage
+      TrackingFiles.new(".").stage
       Console.log_info("Cleaned-up staging area")
       
       exit 0 # Success!
