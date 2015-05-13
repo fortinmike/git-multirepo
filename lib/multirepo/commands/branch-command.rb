@@ -60,27 +60,23 @@ module MultiRepo
     end
     
     def perform_branch(repo)
-      log_operation(repo.path, @branch_name, @remote_tracking)
+      Console.log_substep("Branching '#{repo.path}' ...")
+      Console.log_info("Creating and checking out branch #{@branch_name} ...")
       
       branch = repo.branch(@branch_name)
       branch.create unless branch.exists?
       branch.checkout
       
       if Utils.is_multirepo_enabled(repo.path)
-        Console.log_substep("Updating and committing tracking files in multirepo-enabled repo")
+        Console.log_info("Updating and committing tracking files")
         tracking_files = TrackingFiles.new(repo.path)
         tracking_files.update
         tracking_files.commit("[multirepo] Post-branch tracking files update")
       end
       
-      repo.branch(@branch_name).push if @remote_tracking
-    end
-    
-    def log_operation(path, branch_name, remote_tracking)
-      if remote_tracking
-        Console.log_substep("Branching, checking out and pushing '#{path}' #{branch_name} ...")
-      else
-        Console.log_substep("Branching and checking out '#{path}' #{branch_name} (not pushed) ...")
+      if @remote_tracking
+        Console.log_info("Pushing #{@branch_name} to origin/#{@branch_name}")
+        repo.branch(@branch_name).push
       end
     end
   end
