@@ -31,8 +31,8 @@ module MultiRepo
       files_are_staged = output.strip != ""
       
       must_commit = files_are_untracked_or_modified || files_are_staged
-      GitRunner.run_in_working_dir(@path, "commit -m \"#{message}\" --only -- #{files_pathspec}", Runner::Verbosity::OUTPUT_ON_ERROR) if must_commit
-            
+      GitRunner.run_in_working_dir(@path, "commit --no-verify -m \"#{message}\" --only -- #{files_pathspec}", Runner::Verbosity::OUTPUT_ON_ERROR) if must_commit
+      
       return must_commit
     end
     
