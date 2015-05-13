@@ -54,6 +54,10 @@ module MultiRepo
     def multirepo_enabled_dependencies
       ConfigFile.new(".").load_entries.select { |e| Utils.is_multirepo_enabled(e.repo.path) }
     end
+
+    def validate_only_one_flag(*flags)
+      flags.reduce(0) { |count, flag| count += 1 if flag; count } <= 1
+    end
     
     def ensure_in_work_tree
       repo = Repo.new(".")

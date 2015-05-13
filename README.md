@@ -125,7 +125,7 @@ Here is a quick rundown of commands available to you in git-multirepo:
 | fetch | Performs a git fetch on all dependencies. |
 | install | Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local git hooks. |
 | merge | Performs a git merge on all dependencies and the main repo, in the proper order. |
-| open | Opens all dependencies in the current OS's file explorer. |
+| open | Opens repositories in the OS's file explorer. |
 | remove | Removes the specified dependency from multirepo. |
 | update | Force-updates the multirepo tracking files. |
 | uninit | Removes all traces of multirepo in the current multirepo repository. |
