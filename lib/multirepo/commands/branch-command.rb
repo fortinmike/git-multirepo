@@ -19,7 +19,7 @@ module MultiRepo
     def initialize(argv)
       @branch_name = argv.shift_argument
       @force = argv.flag?("force")
-      @remote_tracking = argv.flag?("track", true)
+      @remote_tracking = argv.flag?("push", true)
       super
     end
     
