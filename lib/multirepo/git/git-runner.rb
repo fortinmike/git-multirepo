@@ -13,7 +13,16 @@ module MultiRepo
     end
     
     def self.run_in_working_dir(path, git_command, verbosity)
-      full_command = "#{git_executable} -C \"#{path}\" #{git_command}";
+      if path == "."
+        # It is always better to skip -C when running git commands in the
+        # current directory (especially in hooks). Doing this prevents
+        # any future issues because we automatically fallback to non-"-C" for ".".
+        # Fixes bug: https://www.pivotaltracker.com/story/show/94505654
+        run_in_current_dir(git_command, verbosity)
+        return
+      else
+        full_command = "#{git_executable} -C \"#{path}\" #{git_command}";
+      end
       
       # True fix for the -C flag issue in pre-commit hook where the status command would
       # fail to provide correct results if a pathspec was provided when performing a commit.
