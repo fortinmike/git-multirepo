@@ -101,9 +101,9 @@ module MultiRepo
       entries = []
       repos.each do |repo|
         origin_url = repo.remote('origin').url
-        current_branch = repo.current_branch
+        current_branch_name = repo.current_branch_name
         
-        if Console.ask_yes_no("Do you want to add '#{repo.path}' as a dependency?\n  [origin: #{origin_url || "NONE"}, branch: #{current_branch}]")
+        if Console.ask_yes_no("Do you want to add '#{repo.path}' as a dependency?\n  [origin: #{origin_url || "NONE"}, branch: #{current_branch_name}]")
           raise MultiRepoException, "Repo 'origin' remote url is not set; aborting." unless origin_url
           entries.push(ConfigEntry.new(repo))
           Console.log_substep("Added the repository '#{repo.path}' to the .multirepo file")

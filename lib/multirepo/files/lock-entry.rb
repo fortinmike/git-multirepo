@@ -19,7 +19,7 @@ module MultiRepo
       @name = config_entry.name
       @id = config_entry.id
       @head = config_entry.repo.head_hash
-      @branch = config_entry.repo.current_branch
+      @branch = config_entry.repo.current_branch_name
     end
   end
 end

@@ -7,7 +7,7 @@ module MultiRepo
   class Performer
     def self.perform_main_repo_checkout(main_repo, ref)
       # Make sure the main repo is clean before attempting a checkout
-      unless main_repo.clean?
+      unless main_repo.is_clean?
         raise MultiRepoException, "Can't checkout #{ref} because the main repo contains uncommitted changes"
       end
       

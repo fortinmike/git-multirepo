@@ -52,7 +52,7 @@ module MultiRepo
     end
     
     def checkout_core(main_repo, mode)
-      initial_revision = main_repo.current_branch || main_repo.head_hash
+      initial_revision = main_repo.current_branch_name || main_repo.head_hash
       begin
         # Checkout first because the current ref might not be multirepo-enabled
         checkout_main_repo_step(main_repo)

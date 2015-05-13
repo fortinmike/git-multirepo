@@ -46,13 +46,13 @@ module MultiRepo
       main_repo = Repo.new(".")
       
       # Keep the initial revision because we're going to need to come back to it later
-      initial_revision = main_repo.current_branch || main_repo.head_hash
+      initial_revision = main_repo.current_branch_name || main_repo.head_hash
       
       begin
         merge_core(main_repo, initial_revision, mode)
       rescue MultiRepoException => e
         # Revert to the initial revision only if necessary
-        unless main_repo.current_branch == initial_revision || main_repo.head_hash == initial_revision
+        unless main_repo.current_branch_name == initial_revision || main_repo.head_hash == initial_revision
           Console.log_substep("Restoring working copy to #{initial_revision}")
           main_repo.checkout(initial_revision)
         end
@@ -71,7 +71,7 @@ module MultiRepo
       pre_checkout_config_entries = config_file.load_entries
       
       # Ensure the main repo is clean
-      raise MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.clean?
+      raise MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.is_clean?
       
       # Ensure dependencies are clean
       unless Utils.ensure_dependencies_clean(pre_checkout_config_entries)

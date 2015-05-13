@@ -25,7 +25,7 @@ module MultiRepo
       return !result.start_with?("fatal: bad revision")
     end
     
-    def current_branch
+    def current_branch_name
       branch = GitRunner.run_in_working_dir(@path, "rev-parse --abbrev-ref HEAD", Runner::Verbosity::OUTPUT_NEVER).strip
       branch != "HEAD" ? branch : nil
     end
@@ -40,7 +40,7 @@ module MultiRepo
       lines.map { |l| Change.new(l) }
     end
     
-    def clean?
+    def is_clean?
       return changes.count == 0
     end
     
