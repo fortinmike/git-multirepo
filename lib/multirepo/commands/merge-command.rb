@@ -29,7 +29,9 @@ module MultiRepo
     def validate!
       super
       help! "You must specify a ref to merge" unless @ref
-      help! "You can't provide more than one operation modifier (--latest, --exact, etc.)" if @checkout_latest && @checkout_exact
+      unless validate_only_one_flag(@checkout_latest, @checkout_exact)
+        help! "You can't provide more than one operation modifier (--latest, --exact, etc.)"
+      end
     end
     
     def run
