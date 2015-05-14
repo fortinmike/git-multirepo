@@ -18,8 +18,7 @@ module MultiRepo
         # current directory (especially in hooks). Doing this prevents
         # any future issues because we automatically fallback to non-"-C" for ".".
         # Fixes bug: https://www.pivotaltracker.com/story/show/94505654
-        run_in_current_dir(git_command, verbosity)
-        return
+        return run_in_current_dir(git_command, verbosity)
       else
         full_command = "#{git_executable} -C \"#{path}\" #{git_command}";
       end
