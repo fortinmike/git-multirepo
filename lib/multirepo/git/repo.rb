@@ -67,6 +67,10 @@ module MultiRepo
       Commit.new(self, head_hash)
     end
     
+    def current_branch
+      Branch.new(self, current_branch_name)
+    end
+    
     # Remotes and branches
     
     def branch(name)

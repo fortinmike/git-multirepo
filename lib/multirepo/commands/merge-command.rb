@@ -99,15 +99,10 @@ module MultiRepo
       descriptors = []
       Performer.perform_on_dependencies do |config_entry, lock_entry|
         revision = RevisionSelector.revision_for_mode(mode, @ref, lock_entry)
-        
-        # TODO: Work-in-progress
-        temp_test = "master"
-        can_ff = config_entry.repo.current_commit.can_fast_forward_to?(temp_test)
-        puts "##### CAN FF? #{can_ff}"
-        
-        descriptors.push(MergeDescriptor.new(config_entry.name, config_entry.path, revision))
+        descriptor = create_merge_descriptor(config_entry.name, config_entry.repo, revision)
+        descriptors.push(descriptor)
       end
-      descriptors.push(MergeDescriptor.new("Main Repo", main_repo.path, @ref))
+      descriptors.push(create_merge_descriptor("Main Repo", main_repo, @ref))
             
       # Log merge operations to the console before the fact
       Console.log_warning("Merging would #{message_for_mode(mode, @ref)}:")
@@ -141,10 +136,19 @@ module MultiRepo
       end
     end
     
+    def create_merge_descriptor(name, repo, revision)
+      local_branch_name = repo.current_branch.name
+      remote_branch_name = repo.current_branch.remote_branch_name
+      can_ff = repo.current_commit.can_fast_forward_to?(remote_branch_name)
+      
+      MergeDescriptor.new(name, repo.path, revision, local_branch_name, remote_branch_name, can_ff)
+    end
+    
     def log_merges(descriptors)
       table = Terminal::Table.new do |t|
         descriptors.reverse.each_with_index do |descriptor, index|
-          t.add_row [descriptor.name, "Merge '#{descriptor.revision}'"]
+          merge_description = "Merge '#{descriptor.revision}' into '#{descriptor.local_branch_name}'"
+          t.add_row [descriptor.name, merge_description]
           t.add_separator unless index == descriptors.count - 1
         end
       end

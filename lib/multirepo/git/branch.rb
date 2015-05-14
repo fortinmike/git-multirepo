@@ -9,6 +9,11 @@ module MultiRepo
       branch_names.include?(@name)
     end
     
+    def remote_branch_name
+      output = GitRunner.run_in_working_dir(@repo.path, "config --get branch.#{@name}.merge", Runner::Verbosity::OUTPUT_ON_ERROR)
+      output.sub("refs/heads/", "")
+    end
+    
     def create
       GitRunner.run_in_working_dir(@repo.path, "branch #{@name}", Runner::Verbosity::OUTPUT_ON_ERROR)
     end
