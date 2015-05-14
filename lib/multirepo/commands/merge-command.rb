@@ -91,8 +91,11 @@ module MultiRepo
       # Load config entries for the ref we're going to merge
       post_checkout_config_entries = config_file.load_entries
       
+      # Checkout the initial revision *ASAP* after reading the config file
+      Performer.perform_main_repo_checkout(main_repo, initial_revision)
+      
       # Auto-merge would be too complex to implement (due to lots of edge cases)
-      # if the specified ref does not have the same dependencies
+      # if the specified ref does not have the same dependencies. Better perform a manual merge.
       ensure_dependencies_match(pre_checkout_config_entries, post_checkout_config_entries)
       
       # Create a merge descriptor for each would-be merge
@@ -111,9 +114,6 @@ module MultiRepo
       raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
       
       Console.log_step("Performing merge...")
-      
-      # Checkout the initial revision to perform the merge in it
-      Performer.perform_main_repo_checkout(main_repo, initial_revision)
       
       # Merge dependencies and the main repo
       perform_merges(descriptors)
