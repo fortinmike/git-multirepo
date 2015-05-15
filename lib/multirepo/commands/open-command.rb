@@ -46,18 +46,12 @@ module MultiRepo
     end
 
     def open_main
-      open(".")
+      Utils.reveal_in_default_file_browser(".")
     end
 
     def open_dependencies
-      ConfigFile.new(".").load_entries.each { |e| open(e.repo.path) }
-    end
-
-    def open(path)
-      if OS.osx?
-        `open "#{path}"`
-      elsif OS.windows?
-        `explorer "#{Utils.convert_to_windows_path(path)}"`
+      ConfigFile.new(".").load_entries.each do |entry|
+        Utils.reveal_in_default_file_browser(entry.repo.path)
       end
     end
   end

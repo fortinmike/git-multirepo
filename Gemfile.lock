@@ -1,10 +1,12 @@
 PATH
   remote: .
   specs:
-    git-multirepo (1.0.0.beta25)
+    git-multirepo (1.0.0.beta38)
       claide (~> 0.8, >= 0.8.0)
       colored (~> 1.2)
       os (~> 0.9.6)
+      ruby-graphviz (~> 1.2.1)
+      terminal-table (~> 1.4.5)
 
 GEM
   remote: https://rubygems.org/
@@ -26,6 +28,8 @@ GEM
     rspec-mocks (3.1.3)
       rspec-support (~> 3.1.0)
     rspec-support (3.1.2)
+    ruby-graphviz (1.2.2)
+    terminal-table (1.4.5)
 
 PLATFORMS
   ruby

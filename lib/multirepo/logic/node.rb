@@ -10,6 +10,10 @@ module MultiRepo
       @depth = depth
     end
     
+    def name
+      Pathname.new(File.expand_path(@path)).basename.to_s
+    end
+    
     def children
       return [] unless Utils.is_multirepo_enabled(@path)
       config_entries = ConfigFile.new(@path).load_entries
