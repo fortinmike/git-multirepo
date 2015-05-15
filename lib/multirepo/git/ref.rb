@@ -10,7 +10,7 @@ module MultiRepo
     end
     
     def hash
-      GitRunner.run_in_working_dir(@path, "rev-parse #{@name}", Runner::Verbosity::OUTPUT_NEVER).strip
+      GitRunner.run_in_working_dir(@repo.path, "rev-parse #{@name}", Runner::Verbosity::OUTPUT_NEVER).strip
     end
     
     def is_merge?
