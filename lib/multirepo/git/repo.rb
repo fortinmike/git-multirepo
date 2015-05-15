@@ -25,13 +25,8 @@ module MultiRepo
       return !result.start_with?("fatal: bad revision")
     end
     
-    def current_branch_name
-      branch = GitRunner.run_in_working_dir(@path, "rev-parse --abbrev-ref HEAD", Runner::Verbosity::OUTPUT_NEVER).strip
-      branch != "HEAD" ? branch : nil
-    end
-    
-    def head_hash
-      GitRunner.run_in_working_dir(@path, "rev-parse HEAD", Runner::Verbosity::OUTPUT_NEVER).strip
+    def current_revision
+      (current_branch || current_commit).name
     end
     
     def changes
@@ -56,22 +51,34 @@ module MultiRepo
       Runner.last_command_succeeded
     end
     
-    def checkout(ref)
-      GitRunner.run_in_working_dir(@path, "checkout #{ref}", Runner::Verbosity::OUTPUT_ON_ERROR)
+    def checkout(ref_name)
+      GitRunner.run_in_working_dir(@path, "checkout #{ref_name}", Runner::Verbosity::OUTPUT_ON_ERROR)
       Runner.last_command_succeeded
     end
     
     # Current
     
+    def head
+      return nil unless head_born?
+      Ref.new(self, "HEAD")
+    end
+    
     def current_commit
-      Commit.new(self, head_hash)
+      return nil unless head
+      Commit.new(self, head.hash)
     end
     
     def current_branch
-      Branch.new(self, current_branch_name)
+      return nil unless head
+      name = GitRunner.run_in_working_dir(@path, "rev-parse --abbrev-ref HEAD", Runner::Verbosity::OUTPUT_NEVER).strip
+      Branch.new(self, name)
     end
     
-    # Remotes and branches
+    # Factory methods
+    
+    def ref(name)
+      Ref.new(self, name)
+    end
     
     def branch(name)
       Branch.new(self, name)
@@ -81,8 +88,8 @@ module MultiRepo
       Remote.new(self, name)
     end
     
-    def commit(ref)
-      Commit.new(self, ref)
+    def commit(id)
+      Commit.new(self, id)
     end
   end
 end

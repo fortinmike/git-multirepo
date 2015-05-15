@@ -9,14 +9,14 @@ module MultiRepo
     
     def self.options
       [
-        ['<ref>', 'The main repo tag, branch or commit id to checkout.'],
+        ['<refname>', 'The main repo tag, branch or commit id to checkout.'],
         ['[--latest]', 'Checkout the HEAD of each dependency branch (as recorded in the lock file) instead of the exact required commits.'],
         ['[--exact]', 'Checkout the exact specified ref for each repo, regardless of what\'s stored in the lock file.']
       ].concat(super)
     end
     
     def initialize(argv)
-      @ref = argv.shift_argument
+      @ref_name = argv.shift_argument
       @checkout_latest = argv.flag?("latest")
       @checkout_exact = argv.flag?("exact")
       super
@@ -24,7 +24,7 @@ module MultiRepo
     
     def validate!
       super
-      help! "You must specify a branch or commit id to checkout" unless @ref
+      help! "You must specify a branch or commit id to checkout" unless @ref_name
       unless validate_only_one_flag(@checkout_latest, @checkout_exact)
         help! "You can't provide more than one operation modifier (--latest, --exact, etc.)"
       end
@@ -38,11 +38,11 @@ module MultiRepo
       mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
       
       strategy_name = RevisionSelectionMode.name_for_mode(mode)
-      Console.log_step("Checking out #{@ref} and its dependencies using the '#{strategy_name}' strategy...")
+      Console.log_step("Checking out #{@ref_name} and its dependencies using the '#{strategy_name}' strategy...")
       
       main_repo = Repo.new(".")
       
-      unless proceed_if_merge_commit?(main_repo, @ref, mode)
+      unless proceed_if_merge_commit?(main_repo, @ref_name, mode)
         raise MultiRepoException, "Aborting checkout"
       end
       
@@ -54,22 +54,22 @@ module MultiRepo
     end
     
     def checkout_core(main_repo, mode)
-      initial_revision = main_repo.current_branch_name || main_repo.head_hash
+      initial_revision = main_repo.current_revision
       begin
         # Checkout first because the current ref might not be multirepo-enabled
         checkout_main_repo_step(main_repo)
         # Only then can we check for dependencies and make sure they are clean
         ensure_dependencies_clean_step(main_repo)
       rescue MultiRepoException => e
-        Console.log_error("Reverting main repo checkout")
+        Console.log_warning("Restoring working copy to #{initial_revision}")
         main_repo.checkout(initial_revision)
         raise e
       end
-      dependencies_checkout_step(mode, @ref)
+      dependencies_checkout_step(mode, @ref_name)
     end
     
     def checkout_main_repo_step(main_repo)
-      Performer.perform_main_repo_checkout(main_repo, @ref)
+      Performer.perform_main_repo_checkout(main_repo, @ref_name)
     end
     
     def ensure_dependencies_clean_step(main_repo)
@@ -78,16 +78,16 @@ module MultiRepo
       end
     end
     
-    def dependencies_checkout_step(mode, ref = nil)
+    def dependencies_checkout_step(mode, ref_name = nil)
       Performer.perform_on_dependencies do |config_entry, lock_entry|
         # Find out the required dependency revision based on the checkout mode
-        revision = RevisionSelector.revision_for_mode(mode, ref, lock_entry)
+        revision = RevisionSelector.revision_for_mode(mode, ref_name, lock_entry)
         perform_dependency_checkout(config_entry, revision)
       end
     end
     
-    def proceed_if_merge_commit?(main_repo, ref, mode)
-      return true unless main_repo.commit(ref).is_merge?
+    def proceed_if_merge_commit?(main_repo, ref_name, mode)
+      return true unless main_repo.ref(ref_name).is_merge?
       
       case mode
       when RevisionSelectionMode::AS_LOCK

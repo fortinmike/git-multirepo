@@ -13,14 +13,14 @@ module MultiRepo
     
     def self.options
       [
-        ['<ref>', 'The main repo tag, branch or commit id to merge.'],
+        ['<refname>', 'The main repo tag, branch or commit id to merge.'],
         ['[--latest]', 'Merge the HEAD of each stored dependency branch instead of the commits recorded in the lock file.'],
         ['[--exact]', 'Merge the exact specified ref for each repo, regardless of what\'s stored in the lock file.']
       ].concat(super)
     end
     
     def initialize(argv)
-      @ref = argv.shift_argument
+      @ref_name = argv.shift_argument
       @checkout_latest = argv.flag?("latest")
       @checkout_exact = argv.flag?("exact")
       super
@@ -28,7 +28,7 @@ module MultiRepo
     
     def validate!
       super
-      help! "You must specify a ref to merge" unless @ref
+      help! "You must specify a ref to merge" unless @ref_name
       unless validate_only_one_flag(@checkout_latest, @checkout_exact)
         help! "You can't provide more than one operation modifier (--latest, --exact, etc.)"
       end
@@ -43,19 +43,19 @@ module MultiRepo
       mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
       
       strategy_name = RevisionSelectionMode.name_for_mode(mode)
-      Console.log_step("Merging #{@ref} with '#{strategy_name}' strategy...")
+      Console.log_step("Merging #{@ref_name} with '#{strategy_name}' strategy...")
       
       main_repo = Repo.new(".")
       
       # Keep the initial revision because we're going to need to come back to it later
-      initial_revision = main_repo.current_branch_name || main_repo.head_hash
+      initial_revision = main_repo.current_revision
       
       begin
         merge_core(main_repo, initial_revision, mode)
       rescue MultiRepoException => e
         # Revert to the initial revision only if necessary
-        unless main_repo.current_branch_name == initial_revision || main_repo.head_hash == initial_revision
-          Console.log_substep("Restoring working copy to #{initial_revision}")
+        unless main_repo.current_revision == initial_revision
+          Console.log_warning("Restoring working copy to #{initial_revision}")
           main_repo.checkout(initial_revision)
         end
         raise e
@@ -88,7 +88,7 @@ module MultiRepo
       pre_checkout_config_entries.each { |e| e.repo.fetch }
       
       # Checkout the specified main repo ref to find out which dependency refs to merge
-      Performer.perform_main_repo_checkout(main_repo, @ref)
+      Performer.perform_main_repo_checkout(main_repo, @ref_name)
       
       # Load config entries for the ref we're going to merge
       post_checkout_config_entries = config_file.load_entries
@@ -103,14 +103,14 @@ module MultiRepo
       # Create a merge descriptor for each would-be merge
       descriptors = []
       Performer.perform_on_dependencies do |config_entry, lock_entry|
-        revision = RevisionSelector.revision_for_mode(mode, @ref, lock_entry)
+        revision = RevisionSelector.revision_for_mode(mode, @ref_name, lock_entry)
         descriptor = MergeDescriptor.new(config_entry.name, config_entry.repo, revision)
         descriptors.push(descriptor)
       end
-      descriptors.push(MergeDescriptor.new("Main Repo", main_repo, @ref))
+      descriptors.push(MergeDescriptor.new("Main Repo", main_repo, @ref_name))
             
       # Log merge operations to the console before the fact
-      Console.log_warning("Merging would #{message_for_mode(mode, @ref)}:")
+      Console.log_warning("Merging would #{message_for_mode(mode, @ref_name)}:")
       log_merges(descriptors)
       
       raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")

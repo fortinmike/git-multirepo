@@ -12,14 +12,14 @@ module MultiRepo
       [
         ['<url>', 'The repository to clone.'],
         ['<name>', 'The name of the containing folder that will be created.'],
-        ['[<ref>]', 'The branch, tag or commit id to checkout. Checkout will use "master" if unspecified.']
+        ['[<refname>]', 'The branch, tag or commit id to checkout. Checkout will use "master" if unspecified.']
       ].concat(super)
     end
     
     def initialize(argv)
       @url = argv.shift_argument
       @name = argv.shift_argument
-      @ref = argv.shift_argument || "master"
+      @ref_name = argv.shift_argument || "master"
       super
     end
 
@@ -45,15 +45,15 @@ module MultiRepo
       raise MultiRepoException, "Could not clone repo from #{@url}" unless main_repo.clone(@url)
       
       # Checkout the specified main repo ref so that install reads the proper config file
-      unless main_repo.checkout(@ref)
-        raise MultiRepoException, "Couldn't perform checkout of main repo #{@ref}!"
+      unless main_repo.checkout(@ref_name)
+        raise MultiRepoException, "Couldn't perform checkout of main repo #{@ref_name}!"
       end
       
-      Console.log_substep("Checked out main repo #{@ref}")
+      Console.log_substep("Checked out main repo #{@ref_name}")
       
       # Make sure the ref we just checked out is tracked by multirepo
       unless Utils.is_multirepo_tracked(main_repo_path)
-        raise MultiRepoException, "Ref #{@ref} is not tracked by multirepo"
+        raise MultiRepoException, "Ref #{@ref_name} is not tracked by multirepo"
       end
       
       # Install
