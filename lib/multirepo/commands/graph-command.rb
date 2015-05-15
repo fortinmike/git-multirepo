@@ -7,7 +7,7 @@ require "multirepo/logic/node"
 module MultiRepo
   class GraphCommand < Command
     self.command = "graph"
-    self.summary = "Graphs the dependency tree from the current multirepo-enabled repo."
+    self.summary = "Graphs the dependency tree from the current repository."
     
     def run
       super
