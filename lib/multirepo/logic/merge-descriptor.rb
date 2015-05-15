@@ -17,19 +17,20 @@ module MultiRepo
       @name = name
       @revision = revision
       
-      local_branch = repo.current_branch
-      @local_branch_name = local_branch.name
+      local_branch = repo.branch(revision)
+      local = local_branch.exists? ? local_branch : repo.ref(revision)
+      @local_name = local.name
       
-      remote_branch = local_branch.remote_branch
-      unless remote_branch
+      upstream = local.instance_of?(Branch) ? local.remote_branch : nil
+      unless upstream
         @upstream_state = LocalUpstreamState::LOCAL_NO_UPSTREAM
         return
       end
       
-      @upstream_branch_name = remote_branch.name
+      @upstream_name = upstream.name
       
-      local_as_upstream = repo.current_commit.hash == repo.current_branch.remote_branch.hash
-      can_fast_forward = repo.current_commit.can_fast_forward_to?(@upstream_branch_name)
+      local_as_upstream = local.hash == upstream.hash
+      can_fast_forward = local.can_fast_forward_to?(upstream.name)
       
       @upstream_state = if local_as_upstream
         LocalUpstreamState::LOCAL_UP_TO_DATE
@@ -41,7 +42,7 @@ module MultiRepo
     end
 
     def merge_description
-      "Merge '#{@revision}' into '#{@local_branch_name}'"
+      "Merge '#{@revision}' into '#{@local_name}'"
     end
 
     def upstream_description
