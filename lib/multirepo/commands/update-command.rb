@@ -53,8 +53,6 @@ module MultiRepo
       if @commit
         committed = tracking_files.commit("[multirepo] Updated tracking files manually")
         Console.log_substep("Committed tracking files") if committed
-      elsif changed
-        Console.log_substep(log_message)
       end
     end
   end
