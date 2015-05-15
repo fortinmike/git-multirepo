@@ -1,6 +1,7 @@
 require "os"
 require "graphviz"
 
+require "multirepo/utility/utils"
 require "multirepo/utility/console"
 require "multirepo/logic/node"
 
@@ -22,6 +23,7 @@ module MultiRepo
       
       begin
         graph.output(:png => path)
+        Utils.open_in_default_app(path)
       rescue StandardError => e
         Console.log_error(e.message)
       end

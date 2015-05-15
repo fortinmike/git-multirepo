@@ -54,6 +54,22 @@ module MultiRepo
       components.join(File::ALT_SEPARATOR)
     end
     
+    def self.reveal_in_default_file_browser(unix_path)
+      if OS.osx?
+        `open "#{unix_path}"`
+      elsif OS.windows?
+        `explorer "#{Utils.convert_to_windows_path(unix_path)}"`
+      end
+    end
+    
+    def self.open_in_default_app(unix_path)
+      if OS.osx?
+        `open "#{unix_path}"`
+      elsif OS.windows?
+        `start "#{Utils.convert_to_windows_path(unix_path)}"`
+      end
+    end
+    
     def self.append_if_missing(path, pattern, string_to_append)
       unless File.exists?(path)
         File.open(path, 'w') { |f| f.puts(string_to_append) }
