@@ -26,6 +26,7 @@ module MultiRepo
         Utils.open_in_default_app(path)
       rescue StandardError => e
         Console.log_error(e.message)
+        raise MultiRepoException, "Could not generate graph image because an error occurred during graph generation"
       end
       
       Console.log_step("Generated graph image #{path}")
