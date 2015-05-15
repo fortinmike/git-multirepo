@@ -110,8 +110,9 @@ module MultiRepo
       descriptors.push(MergeDescriptor.new("Main Repo", main_repo, @ref_name))
             
       # Log merge operations to the console before the fact
-      Console.log_warning("Merging would #{message_for_mode(mode, @ref_name)}:")
+      Console.log_info("Merging would #{message_for_mode(mode, @ref_name)}:")
       log_merges(descriptors)
+      ensure_merges_valid(descriptors)
       
       raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
       
@@ -147,7 +148,15 @@ module MultiRepo
       end
       puts table
     end
-
+    
+    def ensure_merges_valid(descriptors)
+      if descriptors.any? { |d| d.upstream_state == LocalUpstreamState::LOCAL_NO_UPSTREAM }
+        Console.log_warning("Some branches are not remote-tracking! Please review the merge operations above.")
+      elsif descriptors.any? { |d| d.upstream_state == LocalUpstreamState::LOCAL_UPSTREAM_DIVERGED }
+        raise MultiRepoException, "Some upstream branches have diverged. This warrants a manual merge!"
+      end
+    end
+    
     def message_for_mode(mode, ref_name)
       case mode
       when RevisionSelectionMode::AS_LOCK

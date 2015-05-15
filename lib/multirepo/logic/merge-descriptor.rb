@@ -10,6 +10,7 @@ module MultiRepo
   
   class MergeDescriptor
     attr_accessor :name
+    attr_accessor :upstream_state
 
     def initialize(name, repo, revision)
       @name = name
