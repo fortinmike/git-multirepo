@@ -18,7 +18,7 @@ module MultiRepo
       graph = GraphViz.new(:G, :type => :digraph)
       build_graph_recursive(graph, root)
       
-      path = File.expand_path("~/Desktop/graph.png")
+      path = File.expand_path("~/Desktop/#{root.name}-graph.png")
       
       begin
         graph.output(:png => path)
