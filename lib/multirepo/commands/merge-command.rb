@@ -70,13 +70,13 @@ module MultiRepo
       config_file = ConfigFile.new(".")
       
       # Load entries prior to checkout so that we can compare them later
-      pre_checkout_config_entries = config_file.load_entries
+      our_config_entries = config_file.load_entries
       
       # Ensure the main repo is clean
       raise MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.is_clean?
       
       # Ensure dependencies are clean
-      unless Utils.ensure_dependencies_clean(pre_checkout_config_entries)
+      unless Utils.ensure_dependencies_clean(our_config_entries)
         raise MultiRepoException, "Dependencies are not clean; merge aborted"
       end
       
@@ -85,20 +85,17 @@ module MultiRepo
       # we make sure that the same dependencies are configured post-checkout.
       Console.log_substep("Fetching repositories before proceeding with merge...")
       main_repo.fetch
-      pre_checkout_config_entries.each { |e| e.repo.fetch }
+      our_config_entries.each { |e| e.repo.fetch }
       
       # Checkout the specified main repo ref to find out which dependency refs to merge
       Performer.perform_main_repo_checkout(main_repo, @ref_name)
       
-      # Load config entries for the ref we're going to merge
-      post_checkout_config_entries = config_file.load_entries
-      
-      # Checkout the initial revision *ASAP* after reading the config file
-      Performer.perform_main_repo_checkout(main_repo, initial_revision)
+      # Load entries for the ref we're going to merge
+      their_config_entries = config_file.load_entries
       
       # Auto-merge would be too complex to implement (due to lots of edge cases)
       # if the specified ref does not have the same dependencies. Better perform a manual merge.
-      ensure_dependencies_match(pre_checkout_config_entries, post_checkout_config_entries)
+      ensure_dependencies_match(our_config_entries, their_config_entries)
       
       # Create a merge descriptor for each would-be merge
       descriptors = []
@@ -108,6 +105,10 @@ module MultiRepo
         descriptors.push(descriptor)
       end
       descriptors.push(MergeDescriptor.new("Main Repo", main_repo, @ref_name))
+      
+      # Checkout the initial revision *after* creating merge descriptors to ensure
+      # we're creating those against "their" dependencies instead of ours
+      Performer.perform_main_repo_checkout(main_repo, initial_revision)
             
       # Log merge operations to the console before the fact
       Console.log_info("Merging would #{message_for_mode(mode, @ref_name)}:")
@@ -122,19 +123,19 @@ module MultiRepo
       perform_merges(descriptors)
     end
     
-    def ensure_dependencies_match(pre_checkout_config_entries, post_checkout_config_entries)
+    def ensure_dependencies_match(our_config_entries, their_config_entries)
       perfect_match = true
-      pre_checkout_config_entries.each do |pre_entry|
-        found = post_checkout_config_entries.find { |post_entry| post_entry.id = pre_entry.id }
+      our_config_entries.each do |our_entry|
+        found = their_config_entries.find { |their_entry| their_entry.id = our_entry.id }
         perfect_match &= found
-        Console.log_warning("Dependency '#{pre_entry.repo.path}' was not found in the target ref") unless found
+        Console.log_warning("Dependency '#{our_entry.repo.path}' was not found in the target ref") unless found
       end
       
       unless perfect_match
         raise MultiRepoException, "Dependencies differ, please merge manually"
       end
       
-      if post_checkout_config_entries.count > pre_checkout_config_entries.count
+      if their_config_entries.count > our_config_entries.count
         raise MultiRepoException, "There are more dependencies in the specified ref, please merge manually"
       end
     end

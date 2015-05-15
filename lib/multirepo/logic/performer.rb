@@ -38,10 +38,6 @@ module MultiRepo
       ordered_pairs.each { |pair| operation.call(pair.config_entry, pair.lock_entry) }
     end
     
-    def self.dependencies
-      
-    end
-    
     private
     
     def self.build_config_lock_pairs(config_entries, lock_entries)
