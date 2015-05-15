@@ -5,22 +5,22 @@ require "multirepo/files/lock-file"
 
 module MultiRepo
   class Performer
-    def self.perform_main_repo_checkout(main_repo, ref)
+    def self.perform_main_repo_checkout(main_repo, ref_name)
       # Make sure the main repo is clean before attempting a checkout
       unless main_repo.is_clean?
-        raise MultiRepoException, "Can't checkout #{ref} because the main repo contains uncommitted changes"
+        raise MultiRepoException, "Can't checkout #{ref_name} because the main repo contains uncommitted changes"
       end
       
       # Checkout the specified ref
-      unless main_repo.checkout(ref)
-        raise MultiRepoException, "Couldn't perform checkout of main repo #{ref}!"
+      unless main_repo.checkout(ref_name)
+        raise MultiRepoException, "Couldn't perform checkout of main repo #{ref_name}!"
       end
       
-      Console.log_substep("Checked out main repo #{ref}")
+      Console.log_substep("Checked out main repo #{ref_name}")
       
       # After checkout, make sure we're working with a multirepo-enabled ref
       unless Utils.is_multirepo_tracked(".")
-        raise MultiRepoException, "Revision #{ref} is not tracked by multirepo!"
+        raise MultiRepoException, "Revision #{ref_name} is not tracked by multirepo!"
       end
     end
     
