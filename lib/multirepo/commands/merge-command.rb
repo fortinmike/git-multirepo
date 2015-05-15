@@ -142,7 +142,7 @@ module MultiRepo
     def log_merges(descriptors)
       table = Terminal::Table.new do |t|
         descriptors.reverse.each_with_index do |descriptor, index|
-          t.add_row [descriptor.name, descriptor.merge_description, descriptor.upstream_description]
+          t.add_row [descriptor.name.bold, descriptor.merge_description, descriptor.upstream_description]
           t.add_separator unless index == descriptors.count - 1
         end
       end

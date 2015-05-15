@@ -1,3 +1,4 @@
+require "colored"
 require "multirepo/git/repo"
 
 module MultiRepo
@@ -45,10 +46,10 @@ module MultiRepo
 
     def upstream_description
       case @upstream_state
-      when LocalUpstreamState::LOCAL_UP_TO_DATE; "Local branch is up-to-date"
-      when LocalUpstreamState::LOCAL_OUTDATED; "Local branch is outdated"
-      when LocalUpstreamState::LOCAL_UPSTREAM_DIVERGED; "Local and upstream have diverged!"
-      when LocalUpstreamState::LOCAL_NO_UPSTREAM; "Local branch is not remote-tracking"
+      when LocalUpstreamState::LOCAL_UP_TO_DATE; "Local up-to-date with upstream".green
+      when LocalUpstreamState::LOCAL_OUTDATED; "Local outdated compared to upstream".yellow
+      when LocalUpstreamState::LOCAL_UPSTREAM_DIVERGED; "Local and upstream have diverged!".red
+      when LocalUpstreamState::LOCAL_NO_UPSTREAM; "Not remote-tracking".yellow
       end
     end
   end
