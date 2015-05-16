@@ -19,10 +19,10 @@ module MultiRepo
       return parents.count > 1
     end
     
-    def can_fast_forward_to?(ref_name)
+    def can_fast_forward_to?(ref)
       # http://stackoverflow.com/a/2934062/167983
       rev_parse_output = GitRunner.run_in_working_dir(@repo.path, "rev-parse #{@name}", Runner::Verbosity::OUTPUT_NEVER)
-      merge_base_output = GitRunner.run_in_working_dir(@repo.path, "merge-base \"#{rev_parse_output}\" \"#{ref_name}\"", Runner::Verbosity::OUTPUT_NEVER)
+      merge_base_output = GitRunner.run_in_working_dir(@repo.path, "merge-base \"#{rev_parse_output}\" \"#{ref.name}\"", Runner::Verbosity::OUTPUT_NEVER)
       return merge_base_output == rev_parse_output
     end
   end

@@ -28,7 +28,7 @@ module MultiRepo
       
       their_ref = repo.ref(their_revision)
       
-      @state = determine_merge_state(their_ref)
+      @state = determine_merge_state(repo, their_ref)
     end
     
     def merge_description
@@ -52,7 +52,7 @@ module MultiRepo
     
     private
     
-    def determine_merge_state(their_ref)
+    def determine_merge_state(repo, their_ref)
       # TODO: Implement Ref#exists? (does not check for a branch specifically like Branch#exists? does)
       return TheirState::NON_EXISTENT unless their_ref.exists?
       
@@ -67,13 +67,16 @@ module MultiRepo
       
       # TODO: Else check local vs remote state like we previously did:
       
-      # TODO: Find upstream branch for current local branch
-      local_as_upstream = their_ref.hash == upstream.hash
-      can_fast_forward = local.can_fast_forward_to?(upstream.name)
+      # We can assume we're working with a branch at this point
+      their_branch = repo.branch(their_ref.name)
+      
+      their_upstream_branch = their_branch.upstream_branch
+      local_as_upstream = their_branch.hash == their_upstream_branch.hash
+      can_fast_forward_local_to_upstream = their_branch.can_fast_forward_to?(their_upstream_branch)
       
       return if local_as_upstream
         TheirState::LOCAL_UP_TO_DATE
-      elsif !local_as_upstream && can_fast_forward
+      elsif !local_as_upstream && can_fast_forward_local_to_upstream
         TheirState::LOCAL_OUTDATED
       else
         TheirState::LOCAL_UPSTREAM_DIVERGED

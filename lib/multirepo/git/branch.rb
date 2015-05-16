@@ -9,7 +9,7 @@ module MultiRepo
       branch_names.include?(@name)
     end
     
-    def remote_branch
+    def upstream_branch
       output = GitRunner.run_in_working_dir(@repo.path, "config --get branch.#{@name}.merge", Runner::Verbosity::OUTPUT_ON_ERROR)
       output.sub!("refs/heads/", "")
       return nil if output == ""
