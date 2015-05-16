@@ -158,6 +158,13 @@ module MultiRepo
       end
     end
     
+    def perform_merges(descriptors)
+      descriptors.each do |descriptor|
+        Console.log_substep("#{descriptor.name} : Merging #{descriptor.revision} into current branch...")
+        GitRunner.run_in_working_dir(descriptor.path, "merge #{descriptor.revision}", Runner::Verbosity::OUTPUT_ALWAYS)
+      end
+    end
+    
     def message_for_mode(mode, ref_name)
       case mode
       when RevisionSelectionMode::AS_LOCK
@@ -166,13 +173,6 @@ module MultiRepo
         "merge each branch as stored in the lock file of main repo revision #{ref_name}"
       when RevisionSelectionMode::EXACT
         "merge #{ref_name} for each repository, ignoring the contents of the lock file"
-      end
-    end
-    
-    def perform_merges(descriptors)
-      descriptors.each do |descriptor|
-        Console.log_substep("#{descriptor.name} : Merging #{descriptor.revision} into current branch...")
-        GitRunner.run_in_working_dir(descriptor.path, "merge #{descriptor.revision}", Runner::Verbosity::OUTPUT_ALWAYS)
       end
     end
   end
