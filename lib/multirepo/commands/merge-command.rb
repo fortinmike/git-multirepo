@@ -151,9 +151,9 @@ module MultiRepo
     end
     
     def ensure_merges_valid(descriptors)
-      if descriptors.any? { |d| d.upstream_state == LocalUpstreamState::LOCAL_NO_UPSTREAM }
+      if descriptors.any? { |d| d.upstream_state == TheirState::LOCAL_NO_UPSTREAM }
         Console.log_warning("Some branches are not remote-tracking! Please review the merge operations above.")
-      elsif descriptors.any? { |d| d.upstream_state == LocalUpstreamState::LOCAL_UPSTREAM_DIVERGED }
+      elsif descriptors.any? { |d| d.upstream_state == TheirState::LOCAL_UPSTREAM_DIVERGED }
         raise MultiRepoException, "Some upstream branches have diverged. This warrants a manual merge!"
       end
     end
