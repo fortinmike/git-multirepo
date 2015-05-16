@@ -26,10 +26,9 @@ module MultiRepo
       # their_revision = "origin/feature1"
       # their_revision = "b51f3c0"
       
-      our_ref = repo.ref(our_revision)
       their_ref = repo.ref(their_revision)
       
-      @state = determine_merge_state(our_ref, their_ref)
+      @state = determine_merge_state(their_ref)
     end
     
     def merge_description
@@ -53,16 +52,18 @@ module MultiRepo
     
     private
     
-    def determine_merge_state(our_ref, their_ref)
+    def determine_merge_state(their_ref)
       # TODO: Implement Ref#exists? (does not check for a branch specifically like Branch#exists? does)
       return TheirState::NON_EXISTENT unless their_ref.exists?
       
       # TODO: Check if local branch exists for their_ref (specified ref is a local branch)
       # TODO: Check if remote branch exists for their_ref (specified ref is a remote branch)
+      #   (Should be mutually exclusive! (Or find type of ref; local or remote))
       
-      # TODO: If no local branch nor remote branch exist, return EXACT_COMMIT
-      # TODO: If local exists but remote does not, return LOCAL_NO_UPSTREAM
+      # TODO: If no local branch nor remote branch exist for their_ref, return EXACT_COMMIT
       # TODO: If remote exists but local does not, return UPSTREAM_NO_LOCAL
+      # TODO: If local exists, find the local branch's upstream
+      # TODO: If there is no upstream, return LOCAL_NO_UPSTREAM
       
       # TODO: Else check local vs remote state like we previously did:
       
@@ -70,7 +71,7 @@ module MultiRepo
       local_as_upstream = their_ref.hash == upstream.hash
       can_fast_forward = local.can_fast_forward_to?(upstream.name)
       
-      @state = if local_as_upstream
+      return if local_as_upstream
         TheirState::LOCAL_UP_TO_DATE
       elsif !local_as_upstream && can_fast_forward
         TheirState::LOCAL_OUTDATED
