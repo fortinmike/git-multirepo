@@ -57,8 +57,8 @@ module MultiRepo
       # TODO: Implement Ref#exists? (does not check for a branch specifically like Branch#exists? does)
       return TheirState::NON_EXISTENT unless their_ref.exists?
       
-      # TODO: Check if local branch exists for their_ref
-      # TODO: Check if remote branch exists for their_ref
+      # TODO: Check if local branch exists for their_ref (specified ref is a local branch)
+      # TODO: Check if remote branch exists for their_ref (specified ref is a remote branch)
       
       # TODO: If no local branch nor remote branch exist, return EXACT_COMMIT
       # TODO: If local exists but remote does not, return LOCAL_NO_UPSTREAM
@@ -66,6 +66,7 @@ module MultiRepo
       
       # TODO: Else check local vs remote state like we previously did:
       
+      # TODO: Find upstream branch for current local branch
       local_as_upstream = their_ref.hash == upstream.hash
       can_fast_forward = local.can_fast_forward_to?(upstream.name)
       
