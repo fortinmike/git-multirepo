@@ -21,11 +21,7 @@ module MultiRepo
       @our_revision = our_revision
       @their_revision = their_revision
       
-      # Reminder: Revisions can be anything:
-      # their_revision = "feature1"
-      # their_revision = "origin/feature1"
-      # their_revision = "b51f3c0"
-      
+      # Revisions can be anything: "feature1", "origin/feature1", "b51f3c0", ...
       their_ref = repo.ref(their_revision)
       
       @state = determine_merge_state(repo, their_ref)
@@ -53,7 +49,6 @@ module MultiRepo
     private
     
     def determine_merge_state(repo, their_ref)
-      # TODO: Implement Ref#exists? (does not check for a branch specifically like Branch#exists? does)
       return TheirState::NON_EXISTENT unless their_ref.exists?
       
       # TODO: Check if local branch exists for their_ref (specified ref is a local branch)
