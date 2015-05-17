@@ -10,8 +10,8 @@ module MultiRepo
     end
     
     def exists?
-      output = GitRunner.run_in_working_dir(@repo.path, "rev-parse --verify --quiet #{@name}", Runner::Verbosity::OUTPUT_NEVER)
-      return output != nil
+      output = GitRunner.run_in_working_dir(@repo.path, "rev-parse --verify --quiet #{@name}", Runner::Verbosity::OUTPUT_NEVER).strip
+      return output != ""
     end
     
     def hash
