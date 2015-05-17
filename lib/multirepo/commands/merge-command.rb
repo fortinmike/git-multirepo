@@ -102,11 +102,14 @@ module MultiRepo
       # if the specified ref does not have the same dependencies. Better perform a manual merge.
       ensure_dependencies_match(our_config_entries, their_config_entries)
       
+      # Build dependency info for subsequent iteration
+      dependencies = Performer.dependencies_with_entries(their_config_entries, their_lock_entries)
+      
       # Create a merge descriptor for each would-be merge
       descriptors = []
-      Performer.perform_on_dependencies_with_entries(their_config_entries, their_lock_entries) do |their_config_entry, their_lock_entry|
-        their_revision = RevisionSelector.revision_for_mode(mode, @ref_name, their_lock_entry)
-        descriptor = MergeDescriptor.new(their_config_entry.name, their_config_entry.repo, our_revision, their_revision)
+      dependencies.each do |dependency|
+        their_revision = RevisionSelector.revision_for_mode(mode, @ref_name, dependency.lock_entry)
+        descriptor = MergeDescriptor.new(dependency.config_entry.name, dependency.config_entry.repo, our_revision, their_revision)
         descriptors.push(descriptor)
       end
       descriptors.push(MergeDescriptor.new("Main Repo", main_repo, @ref_name))
