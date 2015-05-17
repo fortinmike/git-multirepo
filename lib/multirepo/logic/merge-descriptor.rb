@@ -69,13 +69,15 @@ module MultiRepo
       local_as_upstream = their_branch.hash == their_upstream_branch.hash
       can_fast_forward_local_to_upstream = their_branch.can_fast_forward_to?(their_upstream_branch)
       
-      return if local_as_upstream
+      state = if local_as_upstream
         TheirState::LOCAL_UP_TO_DATE
       elsif !local_as_upstream && can_fast_forward_local_to_upstream
         TheirState::LOCAL_OUTDATED
       else
         TheirState::LOCAL_UPSTREAM_DIVERGED
       end
+      
+      return state
     end
   end
 end

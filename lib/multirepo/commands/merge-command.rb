@@ -72,6 +72,7 @@ module MultiRepo
       
       # Load entries prior to checkout so that we can compare them later
       our_config_entries = config_file.load_entries
+      our_lock_entries = lock_file.load_entries
       
       # Ensure the main repo is clean
       raise MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.is_clean?
@@ -98,21 +99,29 @@ module MultiRepo
       # Checkout the initial revision ASAP
       Performer.perform_main_repo_checkout(main_repo, initial_revision)
       
+      # Build dependencies for subsequent validation and iteration
+      our_dependencies = Performer.dependencies_with_entries(our_config_entries, our_lock_entries)
+      their_dependencies = Performer.dependencies_with_entries(their_config_entries, their_lock_entries)
+      
       # Auto-merge would be too complex to implement (due to lots of edge cases)
       # if the specified ref does not have the same dependencies. Better perform a manual merge.
-      ensure_dependencies_match(our_config_entries, their_config_entries)
-      
-      # Build dependency info for subsequent iteration
-      dependencies = Performer.dependencies_with_entries(their_config_entries, their_lock_entries)
+      ensure_dependencies_match(our_dependencies, their_dependencies)
       
       # Create a merge descriptor for each would-be merge
+      # while we're in *our* working copy
       descriptors = []
-      dependencies.each do |dependency|
-        their_revision = RevisionSelector.revision_for_mode(mode, @ref_name, dependency.lock_entry)
-        descriptor = MergeDescriptor.new(dependency.config_entry.name, dependency.config_entry.repo, our_revision, their_revision)
+      our_dependencies.zip(their_dependencies).each do |our_dependency, their_dependency|
+        our_revision = our_dependency.config_entry.repo.current_revision
+        
+        their_revision = RevisionSelector.revision_for_mode(mode, @ref_name, their_dependency.lock_entry)
+        their_name = their_dependency.config_entry.name
+        their_repo = their_dependency.config_entry.repo
+        
+        descriptor = MergeDescriptor.new(their_name, their_repo, our_revision, their_revision)
+        
         descriptors.push(descriptor)
       end
-      descriptors.push(MergeDescriptor.new("Main Repo", main_repo, @ref_name))
+      descriptors.push(MergeDescriptor.new("Main Repo", main_repo, main_repo.current_revision, @ref_name))
             
       # Log merge operations to the console before the fact
       Console.log_info("Merging would #{message_for_mode(mode, @ref_name)}:")
@@ -127,19 +136,14 @@ module MultiRepo
       perform_merges(descriptors)
     end
     
-    def ensure_dependencies_match(our_config_entries, their_config_entries)
-      perfect_match = true
-      our_config_entries.each do |our_entry|
-        found = their_config_entries.find { |their_entry| their_entry.id = our_entry.id }
-        perfect_match &= found
-        Console.log_warning("Dependency '#{our_entry.repo.path}' was not found in the target ref") unless found
+    def ensure_dependencies_match(our_dependencies, their_dependencies)
+      our_dependencies.zip(their_dependencies).each do |our_dependency, their_dependency|
+        if their_dependency == nil || their_dependency.config_entry.id != our_dependency.config_entry.id
+          raise MultiRepoException, "Dependencies differ, please merge manually"
+        end
       end
       
-      unless perfect_match
-        raise MultiRepoException, "Dependencies differ, please merge manually"
-      end
-      
-      if their_config_entries.count > our_config_entries.count
+      if their_dependencies.count > our_dependencies.count
         raise MultiRepoException, "There are more dependencies in the specified ref, please merge manually"
       end
     end
@@ -155,9 +159,9 @@ module MultiRepo
     end
     
     def ensure_merges_valid(descriptors)
-      if descriptors.any? { |d| d.upstream_state == TheirState::LOCAL_NO_UPSTREAM }
+      if descriptors.any? { |d| d.state == TheirState::LOCAL_NO_UPSTREAM }
         Console.log_warning("Some branches are not remote-tracking! Please review the merge operations above.")
-      elsif descriptors.any? { |d| d.upstream_state == TheirState::LOCAL_UPSTREAM_DIVERGED }
+      elsif descriptors.any? { |d| d.state == TheirState::LOCAL_UPSTREAM_DIVERGED }
         raise MultiRepoException, "Some upstream branches have diverged. This warrants a manual merge!"
       end
     end
