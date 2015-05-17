@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>git-multirepo by fortinmike</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">git-multirepo</h1>
+      <h2 class="project-tagline">Track multiple Git repositories side-by-side</h2>
+      <a href="https://github.com/fortinmike/git-multirepo" class="btn">View on GitHub</a>
+      <a href="https://github.com/fortinmike/git-multirepo/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/fortinmike/git-multirepo/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="git-multirepo" class="anchor" href="#git-multirepo" aria-hidden="true"><span class="octicon octicon-link"></span></a>git-multirepo</h1>
+
+<p><a href="http://badge.fury.io/rb/git-multirepo"><img src="https://badge.fury.io/rb/git-multirepo.svg" alt="Gem Version"></a>
+<a href="https://codeclimate.com/github/fortinmike/git-multirepo"><img src="https://codeclimate.com/github/fortinmike/git-multirepo/badges/gpa.svg" alt="Code Climate"></a>
+<a href="https://github.com/fortinmike/git-multirepo/blob/master/LICENSE"><img src="http://img.shields.io/:license-mit-blue.svg" alt="License"></a></p>
+
+<p>Track multiple Git repositories side-by-side.</p>
+
+<p>An alternative approach to manage constantly evolving dependencies.</p>
+
+<p>Check out <a href="https://www.pivotaltracker.com/n/projects/1256156">the project's to-do list</a> to get an idea of upcoming enhancements.</p>
+
+<p>You can download a handy cheat sheet <a href="https://github.com/fortinmike/git-multirepo/raw/master/docs/git-multirepo-cheatsheet.docx">here</a>.</p>
+
+<h2>
+<a id="motivation" class="anchor" href="#motivation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Motivation</h2>
+
+<p>By now the
+<a href="http://somethingsinistral.net/blog/git-submodules-are-probably-not-the-answer/">pitfalls</a>
+of git submodules are
+<a href="https://codingkilledthecat.wordpress.com/2012/04/28/why-your-company-shouldnt-use-git-submodules/">pretty</a>
+<a href="http://slopjong.de/2013/06/04/git-why-submodules-are-evil/">well</a>
+<a href="http://stackoverflow.com/questions/12075809/git-submodules-workflow-issues">known</a>.
+They work when your dependencies are linearly-evolving third-party libraries that you seldom update but they fall apart when it comes to managing your own, constantly evolving dependencies.</p>
+
+<p>Git subtrees are the recommended alternative but have pitfalls of their own:</p>
+
+<ul>
+<li>They require verbose and error-prone command-line operations. This can become quite tedious when managing more than one or two dependencies.</li>
+<li>They change the rules of the game when it comes to merges.</li>
+<li>Each developer has to configure the appropriate remotes and subtrees on his machine if he or she wants to contribute back.</li>
+<li>Developers must not forget to push changes to dependencies back to the appropriate remotes.</li>
+<li>Few git GUIs have any kind of subtree integration, so you're stuck with the command-line.</li>
+</ul>
+
+<p>Etc.</p>
+
+<h2>
+<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
+
+<p>Using git-multirepo, you can manage your main project and its dependencies as completely independent repositories while still maintaining the ability to checkout a previous revision in a single step and have the project build properly.</p>
+
+<p>A git-multirepo setup looks like this:</p>
+
+<pre><code>MyAwesomeProject
+  |-- AwesomeApp
+  |-- Dependency1
+  |-- Dependency2
+</code></pre>
+
+<p>In essence:</p>
+
+<ol>
+<li>You tell git-multirepo what your dependencies are.</li>
+<li>Each time you commit the main repo, git-multirepo tracks what revision of each dependency is required by the project (don't worry, it ensures that you don't forget to commit changes to dependencies beforehand; more on that later).</li>
+<li>If you ever want to go back to a previous version of your project, git-multirepo handles checking out the main repo and appropriate revisions of all of its dependencies in a single, seamless operation.</li>
+<li>Setting up the project on a new machine is only a single <code>multi clone</code> away.</li>
+</ol>
+
+<h2>
+<a id="example" class="anchor" href="#example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h2>
+
+<p>Say you want to track an existing project with git-multirepo:</p>
+
+<ol>
+<li>
+<p>Organize repos on disk in the following manner:</p>
+
+<pre><code>MyAwesomeProject
+  |-- AwesomeApp
+  |-- Dependency1
+  |-- Dependency2
+</code></pre>
+</li>
+<li><p><code>cd</code> into the <em>AwesomeApp</em> directory (aka the "main repo").</p></li>
+<li>Run <code>multi init</code>.</li>
+<li>You will get prompted to add <em>Dependency1</em> and <em>Dependency2</em> to multirepo; do so.</li>
+<li>git-multirepo reads all required information from dependency repos and initializes itself, storing its metadata in the main repo, under version control.</li>
+</ol>
+
+<p>From now on, each time you commit the main repo git-multirepo tracks — using local git hooks — which revision of each dependency is required for that main repo revision, and where to get them. The hooks also ensure that you won't commit the main repo before its dependencies so that you always get a valid state stored under version control.</p>
+
+<p>If you want to add another dependency later on, you can run <code>multi add ../NewDependency</code> and you can do the opposite with <code>multi remove ../SomeOtherDependency</code>.</p>
+
+<p>If you want to checkout a previous revision (say <code>e690d</code>), you use the checkout command: <code>multi checkout e690d</code>. This will checkout the main repo's <code>e690d</code> revision and all of its dependencies with the proper revisions in detached HEAD state.</p>
+
+<p>If you want to setup your project on another machine, simply run <code>multi clone</code> with the appropriate parameters. This will clone the project and each of its dependencies, then checkout the appropriate work branches.</p>
+
+<p>If you want to stop using git-multirepo, run <code>multi uninit</code>. This will remove all traces of git-multirepo from your repository and working copy, including local git hooks.</p>
+
+<h2>
+<a id="advantages" class="anchor" href="#advantages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Advantages</h2>
+
+<ul>
+<li>Makes setting up a project on a new machine a breeze.</li>
+<li>Really effective when working on multiple projects that share a common set of constantly evolving dependencies.</li>
+<li>Each dependency's repository is totally independent from the main repository, which simplifies a lot of things (merges, contributing upstream, etc.) and works well with git GUIs.</li>
+<li>While the repositories are independent, git-multirepo makes sure to track everything that's required to bring back a previous version of your project in a valid state.</li>
+<li>It supports sub-dependencies (e.g. dependencies that have dependencies of their own) so that you can bring back any subset of your project in a valid state at will.</li>
+<li>Much more approachable to novice developers than submodules or subtrees.</li>
+<li>Once setup, there is little need for git-multirepo commands, so you are free to use whatever tools you like to work with your git repos.</li>
+<li>Low possibility of human error (such as forgetting to contribute changes to dependencies back to the appropriate remotes, forgetting to commit dependencies in the proper order, etc.)</li>
+<li>You're not stuck with git-multirepo. It stores its metadata as <a href="http://www.yaml.org">YAML</a> in the main repo. You can clone and checkout appropriate revisions of your dependencies by hand without git-multirepo if you need to. The information is there, in human-readable form.</li>
+</ul>
+
+<table>
+<thead>
+<tr>
+<th>How It Handles...</th>
+<th align="center">git-multirepo</th>
+<th align="center">git submodules</th>
+<th align="center">git subtrees</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Working Copy</td>
+<td align="center">beside main repo</td>
+<td align="center">in main repo</td>
+<td align="center">in main repo</td>
+</tr>
+<tr>
+<td>Constantly Evolving Dependencies</td>
+<td align="center">easy</td>
+<td align="center">hard</td>
+<td align="center">passable</td>
+</tr>
+<tr>
+<td>Merging Changes to Dependencies</td>
+<td align="center">easy</td>
+<td align="center">hard</td>
+<td align="center">passable</td>
+</tr>
+<tr>
+<td>Contributing Upstream</td>
+<td align="center">easy</td>
+<td align="center">easy</td>
+<td align="center">passable</td>
+</tr>
+<tr>
+<td>Continuous Integration</td>
+<td align="center">medium</td>
+<td align="center">medium</td>
+<td align="center">easy</td>
+</tr>
+<tr>
+<td>Complex Branch-Based Workflows</td>
+<td align="center">medium*</td>
+<td align="center">hard</td>
+<td align="center">easy</td>
+</tr>
+</tbody>
+</table>
+
+<p>(*) Ongoing work should make this easier in future versions of git-multirepo.</p>
+
+<h2>
+<a id="limitations" class="anchor" href="#limitations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Limitations</h2>
+
+<ul>
+<li>git-multirepo should be considered beta at the moment. Suggestions and contributions are welcome.</li>
+<li>The project and its dependencies must live beside each other on disk.</li>
+<li>Some more commands need to be implemented to facilitate branch-heavy workflows.</li>
+<li>You must (ideally) install the tool on your CI server: <code>gem install git-multirepo</code>
+</li>
+</ul>
+
+<h2>
+<a id="summary-of-commands" class="anchor" href="#summary-of-commands" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary of Commands</h2>
+
+<p>Here is a quick rundown of commands available to you in git-multirepo:</p>
+
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>init</td>
+<td>Initialize the current repository as a multirepo project.</td>
+</tr>
+<tr>
+<td>add</td>
+<td>Track an additional dependency with multirepo.</td>
+</tr>
+<tr>
+<td>branch</td>
+<td>Create and/or checkout a new branch for all repos.</td>
+</tr>
+<tr>
+<td>checkout</td>
+<td>Checks out the specified commit or branch of the main repo and checks out matching versions of all dependencies.</td>
+</tr>
+<tr>
+<td>clean</td>
+<td>Performs a 'git clean -df' on the main repo and all dependencies.</td>
+</tr>
+<tr>
+<td>clone</td>
+<td>Clones the specified repository in a subfolder, then installs it.</td>
+</tr>
+<tr>
+<td>fetch</td>
+<td>Performs a git fetch on all dependencies.</td>
+</tr>
+<tr>
+<td>graph</td>
+<td>Graphs the dependency tree from the current repository.</td>
+</tr>
+<tr>
+<td>install</td>
+<td>Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local git hooks.</td>
+</tr>
+<tr>
+<td>merge</td>
+<td>Performs a git merge on all dependencies and the main repo, in the proper order.</td>
+</tr>
+<tr>
+<td>open</td>
+<td>Opens repositories in the OS's file explorer.</td>
+</tr>
+<tr>
+<td>remove</td>
+<td>Removes the specified dependency from multirepo.</td>
+</tr>
+<tr>
+<td>update</td>
+<td>Force-updates the multirepo tracking files.</td>
+</tr>
+<tr>
+<td>uninit</td>
+<td>Removes all traces of multirepo in the current multirepo repository.</td>
+</tr>
+</tbody>
+</table>
+
+<p>To read more about each command, use the <code>--help</code> flag (e.g. <code>$ multi clone --help</code>).</p>
+
+<h2>
+<a id="metadata" class="anchor" href="#metadata" aria-hidden="true"><span class="octicon octicon-link"></span></a>Metadata</h2>
+
+<p>git-multirepo stores all of its metadata in three files:</p>
+
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Format</th>
+<th>Updated</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>.multirepo</td>
+<td>YAML</td>
+<td>at initialization</td>
+<td>A collection of your project's dependencies. For each dependency, stores its <strong>local path</strong> relative to the main repo and the <strong>remote URL</strong> your project depends upon.</td>
+</tr>
+<tr>
+<td>.multirepo.lock</td>
+<td>YAML</td>
+<td>before each commit</td>
+<td>For each dependency, stores the <strong>commit hash</strong> and <strong>branch</strong> on which the dependency was when the main repo was committed. The dependency's <strong>name</strong> is also included but only serves as a reference to make inspecting the lock file easier.</td>
+</tr>
+<tr>
+<td>.multirepo.meta</td>
+<td>YAML</td>
+<td>before each commit</td>
+<td>Various git-multirepo metadata, such as the <strong>git-multirepo version</strong> that the last commit was performed with.</td>
+</tr>
+</tbody>
+</table>
+
+<p>The information contained in .multirepo and .multirepo.lock allow one-step cloning of a project and all its dependencies, and checking out any prior revision of the main project with appropriate revisions of all of its dependencies, respectively.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/fortinmike/git-multirepo">git-multirepo</a> is maintained by <a href="https://github.com/fortinmike">fortinmike</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
+
