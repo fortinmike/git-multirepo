@@ -27,7 +27,10 @@ module MultiRepo
     def self.perform_on_dependencies(&operation)
       config_entries = ConfigFile.new(".").load_entries
       lock_entries = LockFile.new(".").load_entries
-      
+      perform_on_dependencies_with_entries(config_entries, lock_entries, operation)
+    end
+    
+    def self.perform_on_dependencies_with_entries(config_entries, lock_entries, &operation)
       config_lock_pairs = build_config_lock_pairs(config_entries, lock_entries)
       dependency_ordered_nodes = Node.new(".").ordered_descendants
       

@@ -68,6 +68,7 @@ module MultiRepo
     
     def merge_core(main_repo, initial_revision, mode)
       config_file = ConfigFile.new(".")
+      lock_file = LockFile.new(".")
       
       # Load entries prior to checkout so that we can compare them later
       our_config_entries = config_file.load_entries
@@ -92,6 +93,10 @@ module MultiRepo
       
       # Load entries for the ref we're going to merge
       their_config_entries = config_file.load_entries
+      their_lock_entries = lock_file.load_entries
+      
+      # Checkout the initial revision ASAP
+      Performer.perform_main_repo_checkout(main_repo, initial_revision)
       
       # Auto-merge would be too complex to implement (due to lots of edge cases)
       # if the specified ref does not have the same dependencies. Better perform a manual merge.
@@ -99,16 +104,12 @@ module MultiRepo
       
       # Create a merge descriptor for each would-be merge
       descriptors = []
-      Performer.perform_on_dependencies do |config_entry, lock_entry|
-        revision = RevisionSelector.revision_for_mode(mode, @ref_name, lock_entry)
-        descriptor = MergeDescriptor.new(config_entry.name, config_entry.repo, revision)
+      Performer.perform_on_dependencies_with_entries(their_config_entries, their_lock_entries) do |their_config_entry, their_lock_entry|
+        their_revision = RevisionSelector.revision_for_mode(mode, @ref_name, their_lock_entry)
+        descriptor = MergeDescriptor.new(their_config_entry.name, their_config_entry.repo, our_revision, their_revision)
         descriptors.push(descriptor)
       end
       descriptors.push(MergeDescriptor.new("Main Repo", main_repo, @ref_name))
-      
-      # Checkout the initial revision *after* creating merge descriptors to ensure
-      # we're creating those against "their" dependencies instead of ours
-      Performer.perform_main_repo_checkout(main_repo, initial_revision)
             
       # Log merge operations to the console before the fact
       Console.log_info("Merging would #{message_for_mode(mode, @ref_name)}:")
