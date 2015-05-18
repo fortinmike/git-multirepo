@@ -15,3 +15,7 @@
   id: ad6472a5-7238-447f-a54e-50f50197e21e
   path: ../git-multirepo-migrations/
   url: git@github.com:fortinmike/git-multirepo-migrations.git
+- !ruby/object:MultiRepo::ConfigEntry
+  id: 6575a4fd-fe53-4c7b-bb79-bc6412df18e3
+  path: ../git-multirepo.gh-pages
+  url: git@github.com:fortinmike/git-multirepo.git
