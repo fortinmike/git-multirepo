@@ -1,4 +1,5 @@
 require "multirepo/utility/console"
+require "multirepo/git/git-runner"
 require "multirepo/logic/performer"
 
 module MultiRepo
@@ -35,14 +36,30 @@ module MultiRepo
       ensure_multirepo_enabled
       
       if @main_only
-        
+        perform_operation_on_main(@operation)
       elsif @deps_only
-        
+        perform_operation_on_dependencies(@operation)
       else
-        
+        perform_operation_on_dependencies(@operation) # Ordered dependencies first
+        perform_operation_on_main(@operation) # Main last
       end
     rescue MultiRepoException => e
       Console.log_error(e.message)
+    end
+
+    def perform_operation_on_main(operation)
+      perform_operation(".", operation)
+    end
+
+    def perform_operation_on_dependencies(operation)
+      Performer.perform_on_dependencies do |config_entry, lock_entry|
+        perform_operation(config_entry.repo.path, operation)
+      end
+    end
+
+    def perform_operation(path, operation)
+      Console.log_step("Performing \"#{operation}\" on '#{path}'")
+      GitRunner.run_in_working_dir(path, @operation, Runner::Verbosity::OUTPUT_ALWAYS)
     end
   end
 end
