@@ -35,5 +35,22 @@ module MultiRepo
       content = Psych.dump(lock_entries)
       return update_internal(file, content)
     end
+    
+    def validate!
+      load_entries.all? { |e| validate_entry! e }
+    end
+    
+    def validate_entry!(entry)
+      valid = true
+      
+      # Check @head format
+      valid &= /\b([a-f0-9]{40})\b/ =~ entry.head
+      
+      # Validated @branch name format to ensure
+      GitRunner.run_in_working_dir(@path, "check-ref-format --branch #{entry.branch}", Runner::Verbosity::OUTPUT_NEVER)
+      valid &= (entry.branch == "" || GitRunner.last_command_succeeded)
+      
+      return valid
+    end
   end
 end
