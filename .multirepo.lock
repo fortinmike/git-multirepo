@@ -22,5 +22,5 @@
 - !ruby/object:MultiRepo::LockEntry
   name: git-multirepo.gh-pages
   id: 6575a4fd-fe53-4c7b-bb79-bc6412df18e3
-  head: 3a97b1443c3e904059035466cb03f6aa5afad65b
-  branch: master
+  head: e73bbaa0b3de97b1a2aea223d6f69f5e31ceb285
+  branch: gh-pages
