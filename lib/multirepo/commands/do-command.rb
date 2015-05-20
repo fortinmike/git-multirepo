@@ -9,6 +9,7 @@ module MultiRepo
 
     def self.options
       [
+        ['"<operation>"', 'The git command to perform, between quotes, omitting the executable name (ex: "reset --hard HEAD")'],
         ['[--main]', 'Perform the operation in the main repository only.'],
         ['[--deps]', 'Perform the operation in dependencies only.'],
         ['[--all]', 'Perform the operation in the main repository and all dependencies.']
