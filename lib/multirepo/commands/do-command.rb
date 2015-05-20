@@ -62,8 +62,8 @@ module MultiRepo
     end
 
     def perform_operation_on_dependencies(operation)
-      Performer.perform_on_dependencies do |config_entry, lock_entry|
-        perform_operation(config_entry.repo.path, operation)
+      Performer.dependencies.each do |dependency|
+        perform_operation(dependency.config_entry.repo.path, operation)
       end
     end
 
