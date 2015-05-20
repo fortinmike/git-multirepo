@@ -37,8 +37,8 @@ module MultiRepo
     def build_graph_recursive(graph, node)
       parent_graph_node = graph.add_nodes(node.name)
       node.children.each do |child_node|
-        child_graph_node = graph.add_nodes(child_node.name)
-        graph.add_edges(parent_graph_node, child_graph_node)
+        child_graph_node = graph.add_node(child_node.name)
+        graph.add_edge(parent_graph_node, child_graph_node)
         build_graph_recursive(graph, child_node)
       end
     end
