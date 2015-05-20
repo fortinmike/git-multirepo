@@ -43,10 +43,10 @@ module MultiRepo
     def validate_entry!(entry)
       valid = true
       
-      # Check @head format
+      # head
       valid &= /\b([a-f0-9]{40})\b/ =~ entry.head
       
-      # Validated @branch name format to ensure
+      # branch
       GitRunner.run_in_working_dir(@path, "check-ref-format --branch #{entry.branch}", Runner::Verbosity::OUTPUT_NEVER)
       valid &= (entry.branch == "" || GitRunner.last_command_succeeded)
       
