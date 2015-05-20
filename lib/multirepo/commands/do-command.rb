@@ -36,13 +36,22 @@ module MultiRepo
       ensure_multirepo_enabled
       
       if @main_only
-        perform_operation_on_main(@operation)
+        message = "Perform operation on the #{'main repo'.bold}:\n  git #{@operation}"
+        op = lambda { perform_operation_on_main(@operation) }
       elsif @deps_only
-        perform_operation_on_dependencies(@operation)
+        message = "Perform operation on #{'dependencies'.bold}:\n  git #{@operation}"
+        op = lambda { perform_operation_on_dependencies(@operation) }
       else
-        perform_operation_on_dependencies(@operation) # Ordered dependencies first
-        perform_operation_on_main(@operation) # Main last
+        message = "Perform operation on #{'dependencies'.bold} and the #{'main repo'.bold}:\n  git #{@operation}"
+        op = lambda {
+          perform_operation_on_dependencies(@operation) # Ordered dependencies first
+          perform_operation_on_main(@operation) # Main last
+        }
       end
+      
+      raise MultiRepoException, "Operation cancelled" unless Console.ask_yes_no(message)
+      
+      op.call
     rescue MultiRepoException => e
       Console.log_error(e.message)
     end
@@ -58,8 +67,9 @@ module MultiRepo
     end
 
     def perform_operation(path, operation)
-      Console.log_step("Performing \"#{operation}\" on '#{path}'")
-      GitRunner.run_in_working_dir(path, @operation, Runner::Verbosity::OUTPUT_ALWAYS)
+      Console.log_step("Performing operation on '#{path}'")
+      Console.log_info("git #{operation}")
+      GitRunner.run_in_working_dir(path, operation, Runner::Verbosity::OUTPUT_ALWAYS)
     end
   end
 end
