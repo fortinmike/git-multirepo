@@ -18,15 +18,15 @@ module MultiRepo
     
     def initialize(argv)
       @operation = argv.shift_argument
+      @all = argv.flag?("all")
       @main_only = argv.flag?("main")
       @deps_only = argv.flag?("deps")
-      argv.flag?("all") # Eat the default flag!
       super
     end
 
     def validate!
       super
-      unless validate_only_one_flag(@main_only, @deps_only, @all)
+      unless validate_only_one_flag(@all, @main_only, @deps_only)
         help! "You can't provide more than one operation modifier (--deps, --main, etc.)"
       end
     end

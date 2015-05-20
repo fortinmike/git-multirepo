@@ -16,14 +16,15 @@ module MultiRepo
     end
     
     def initialize(argv)
-      @main_only = argv.flag?("main")
       @all = argv.flag?("all")
+      @main_only = argv.flag?("main")
+      @deps_only = argv.flag?("deps")
       super
     end
 
     def validate!
       super
-      unless validate_only_one_flag(@main_only, @all)
+      unless validate_only_one_flag(@all, @main_only, @deps_only)
         help! "You can't provide more than one operation modifier (--deps, --main, etc.)"
       end
     end
@@ -33,10 +34,10 @@ module MultiRepo
       ensure_in_work_tree
       ensure_multirepo_enabled
       
-      if @main_only
-        open_main
-      elsif @all
+      if @all
         open_dependencies
+        open_main
+      elsif @main_only
         open_main
       else
         open_dependencies
