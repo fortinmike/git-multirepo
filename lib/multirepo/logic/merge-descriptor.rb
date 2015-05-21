@@ -66,7 +66,7 @@ module MultiRepo
       their_branch = repo.branch(their_ref.name)
       
       their_upstream_branch = their_branch.upstream_branch
-      local_as_upstream = their_branch.hash == their_upstream_branch.hash
+      local_as_upstream = their_branch.commit_id == their_upstream_branch.commit_id
       can_fast_forward_local_to_upstream = their_branch.can_fast_forward_to?(their_upstream_branch)
       
       state = if local_as_upstream

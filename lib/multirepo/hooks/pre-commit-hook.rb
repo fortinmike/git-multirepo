@@ -24,6 +24,8 @@ module MultiRepo
       Console.log_info("Updated and staged tracking files")
       
       exit 0 # Success!
+    rescue MultiRepoException => e
+      Console.log_error("Can't perform commit. Please review the following:\n#{e.message}")
     rescue StandardError => e
       Console.log_error("Pre-commit hook failed to execute! #{e.message}")
       exit 1 # Something went wrong!

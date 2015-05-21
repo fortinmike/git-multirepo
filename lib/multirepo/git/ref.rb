@@ -14,7 +14,7 @@ module MultiRepo
       return output != ""
     end
     
-    def hash
+    def commit_id
       GitRunner.run_in_working_dir(@repo.path, "rev-parse #{@name}", Runner::Verbosity::OUTPUT_NEVER).strip
     end
     

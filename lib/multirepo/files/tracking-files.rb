@@ -12,7 +12,6 @@ module MultiRepo
     end
     
     def update
-      updated = false
       files.each { |f| updated |= f.update }
       return updated
     end

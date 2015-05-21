@@ -59,17 +59,17 @@ module MultiRepo
     # Current
     
     def head
-      return nil unless head_born?
+      return nil unless exists? && head_born?
       Ref.new(self, "HEAD")
     end
     
     def current_commit
-      return nil unless head
-      Commit.new(self, head.hash)
+      return nil unless exists? && head_born?
+      Commit.new(self, head.commit_id)
     end
     
     def current_branch
-      return nil unless head
+      return nil unless exists? && head_born?
       name = GitRunner.run_in_working_dir(@path, "rev-parse --abbrev-ref HEAD", Runner::Verbosity::OUTPUT_NEVER).strip
       Branch.new(self, name)
     end

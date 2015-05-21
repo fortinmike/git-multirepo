@@ -44,7 +44,7 @@ module MultiRepo
       valid = true
       
       # head
-      valid &= /\b([a-f0-9]{40})\b/ =~ entry.head
+      valid &= /\b([a-f0-9]{40})\b/ =~ entry.head.to_s
       
       # branch
       GitRunner.run_in_working_dir(@path, "check-ref-format --branch #{entry.branch}", Runner::Verbosity::OUTPUT_NEVER)
