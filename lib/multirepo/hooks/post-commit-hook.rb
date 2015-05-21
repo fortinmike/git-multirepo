@@ -14,10 +14,10 @@ module MultiRepo
       TrackingFiles.new(".").stage
       Console.log_info("Cleaned-up staging area")
       
-      exit 0 # Success!
+      exit 0
     rescue StandardError => e
       Console.log_error("Post-commit hook failed to execute! #{e.message}")
-      exit 1 # Something went wrong!
+      exit 1
     end
   end
 end
