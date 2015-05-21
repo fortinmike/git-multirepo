@@ -46,8 +46,12 @@ module MultiRepo
       Runner.last_command_succeeded
     end
     
-    def clone(url)
-      GitRunner.run_in_current_dir("clone #{url} #{@path} --progress", Runner::Verbosity::OUTPUT_ALWAYS)
+    def clone(url, branch = nil)
+      if branch != nil
+        GitRunner.run_in_current_dir("clone #{url} -b #{branch} #{@path} --progress", Runner::Verbosity::OUTPUT_ALWAYS)
+      else
+        GitRunner.run_in_current_dir("clone #{url} #{@path} --progress", Runner::Verbosity::OUTPUT_ALWAYS)
+      end
       Runner.last_command_succeeded
     end
     
