@@ -12,7 +12,7 @@ module MultiRepo
       
       dependencies_clean = Utils.ensure_dependencies_clean(ConfigFile.new(".").load_entries)
       
-      if !dependencies_clean
+      unless dependencies_clean
         Console.log_error("You must commit changes to your dependencies before you can commit this repo")
         exit 1
       end
