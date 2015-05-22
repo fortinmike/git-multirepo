@@ -26,6 +26,7 @@ module MultiRepo
 
     def validate!
       super
+      help! "You must provide a git operation to perform" unless @operation
       unless validate_only_one_flag(@all, @main_only, @deps_only)
         help! "You can't provide more than one operation modifier (--deps, --main, etc.)"
       end
@@ -56,7 +57,7 @@ module MultiRepo
     rescue MultiRepoException => e
       Console.log_error(e.message)
     end
-
+    
     def perform_operation_on_main(operation)
       perform_operation(".", operation)
     end
