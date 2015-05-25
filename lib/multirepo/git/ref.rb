@@ -18,6 +18,10 @@ module MultiRepo
       GitRunner.run_in_working_dir(@repo.path, "rev-parse #{@name}", Runner::Verbosity::OUTPUT_NEVER).strip
     end
     
+    def short_commit_id
+      GitRunner.run_in_working_dir(@repo.path, "rev-parse --short #{@name}", Runner::Verbosity::OUTPUT_NEVER).strip
+    end
+    
     def is_merge?
       lines = GitRunner.run_in_working_dir(@repo.path, "cat-file -p #{@name}", Runner::Verbosity::OUTPUT_NEVER).split("\n")
       parents = lines.grep(/^parent /)

@@ -24,13 +24,15 @@ module MultiRepo
       # Revisions can be anything: "feature1", "origin/feature1", "b51f3c0", ...
       their_ref = repo.ref(their_revision)
       
+      @short_commit_id = their_ref.short_commit_id
+      
       @state = determine_merge_state(repo, their_ref)
     end
     
     def merge_description
       case @state
       when TheirState::NON_EXISTENT; "No revision named #{@their_revision}".red
-      else; "Merge '#{@their_revision}' into '#{@our_revision}'"
+      else; "Merge '#{@state == TheirState::EXACT_REF ? @short_commit_id : @their_revision}' into '#{@our_revision}'"
       end
     end
 
