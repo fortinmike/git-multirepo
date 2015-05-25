@@ -4,7 +4,7 @@ require "multirepo/git/repo"
 module MultiRepo
   class TheirState
     NON_EXISTENT = 0
-    EXACT_COMMIT = 1
+    EXACT_REF = 1
     LOCAL_NO_UPSTREAM = 2
     UPSTREAM_NO_LOCAL = 3
     LOCAL_UP_TO_DATE = 4
@@ -37,7 +37,7 @@ module MultiRepo
     def upstream_description
       case @state
       when TheirState::NON_EXISTENT; "--"
-      when TheirState::EXACT_COMMIT; "Exact commit"
+      when TheirState::EXACT_REF; "Exact ref"
       when TheirState::LOCAL_NO_UPSTREAM; "Not remote-tracking".yellow
       when TheirState::UPSTREAM_NO_LOCAL; "Branch is upstream".green
       when TheirState::LOCAL_UP_TO_DATE; "Local up-to-date with upstream".green
@@ -53,15 +53,18 @@ module MultiRepo
       
       # TODO: Check if local branch exists for their_ref (specified ref is a local branch)
       # TODO: Check if remote branch exists for their_ref (specified ref is a remote branch)
-      #   (Should be mutually exclusive! (Or find type of ref; local or remote))
+      #       (Should be mutually exclusive! (Or find type of ref; local or remote))
       
-      # TODO: If no local branch nor remote branch exist for their_ref, return EXACT_COMMIT
+      # TODO: If no local branch nor remote branch exist for their_ref, return EXACT_REF
       # TODO: If remote exists but local does not, return UPSTREAM_NO_LOCAL
       # TODO: If local exists, find the local branch's upstream
       # TODO: If there is no upstream, return LOCAL_NO_UPSTREAM
       
-      # TODO: Else check local vs remote state like we previously did:
-      
+      # Else check local vs remote state like we previously did
+      return determine_local_upstream_merge_state(repo, their_ref)
+    end
+    
+    def determine_local_upstream_merge_state(repo, their_ref)
       # We can assume we're working with a branch at this point
       their_branch = repo.branch(their_ref.name)
       
