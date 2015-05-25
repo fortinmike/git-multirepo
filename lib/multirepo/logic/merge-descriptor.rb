@@ -39,7 +39,7 @@ module MultiRepo
     def upstream_description
       case @state
       when TheirState::NON_EXISTENT; "--"
-      when TheirState::EXACT_REF; "Exact ref"
+      when TheirState::EXACT_REF; "Exact ref".yellow
       when TheirState::LOCAL_NO_UPSTREAM; "Not remote-tracking".yellow
       when TheirState::UPSTREAM_NO_LOCAL; "Branch is upstream".green
       when TheirState::LOCAL_UP_TO_DATE; "Local up-to-date with upstream".green
