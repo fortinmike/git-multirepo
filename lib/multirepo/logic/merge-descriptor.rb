@@ -53,16 +53,19 @@ module MultiRepo
     def determine_merge_state(repo, their_ref)
       return TheirState::NON_EXISTENT unless their_ref.exists?
       
-      # TODO: Check if local branch exists for their_ref (specified ref is a local branch)
-      # TODO: Check if remote branch exists for their_ref (specified ref is a remote branch)
-      #       (Should be mutually exclusive! (Or find type of ref; local or remote))
+      remote_branch = repo.remote_branches.select{ |b| b.name == their_ref.name }.first
+      local_branch = repo.local_branches.select{ |b| b.name == their_ref.name }.first
       
-      # TODO: If no local branch nor remote branch exist for their_ref, return EXACT_REF
-      # TODO: If remote exists but local does not, return UPSTREAM_NO_LOCAL
-      # TODO: If local exists, find the local branch's upstream
-      # TODO: If there is no upstream, return LOCAL_NO_UPSTREAM
+      # If no local branch nor remote branch exist for their_ref, this is an exact ref
+      return TheirState::EXACT_REF unless remote_branch || local_branch
       
-      # Else check local vs remote state like we previously did
+      # If remote exists but local does not, return UPSTREAM_NO_LOCAL
+      return TheirState::UPSTREAM_NO_LOCAL if remote_branch && !local_branch
+      
+      # If there is no upstream, no need to check for differences between local and remote
+      return TheirState::LOCAL_NO_UPSTREAM unless local_branch.upstream_branch
+      
+      # Else check local vs upstream state
       return determine_local_upstream_merge_state(repo, their_ref)
     end
     

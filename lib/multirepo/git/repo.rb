@@ -29,14 +29,22 @@ module MultiRepo
       (current_branch || current_commit).name
     end
     
+    def is_clean?
+      changes.count == 0
+    end
+    
+    def local_branches
+      branches_by_removing_prefix(/^refs\/heads\//)
+    end
+    
+    def remote_branches
+      branches_by_removing_prefix(/^refs\/remotes\//)
+    end
+    
     def changes
       output = GitRunner.run_in_working_dir(@path, "status --porcelain", Runner::Verbosity::OUTPUT_NEVER)
       lines = output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
       lines.map { |l| Change.new(l) }
-    end
-    
-    def is_clean?
-      return changes.count == 0
     end
     
     # Operations
@@ -94,6 +102,19 @@ module MultiRepo
     
     def commit(id)
       Commit.new(self, id)
+    end
+    
+    # Private helper methods
+    
+    private
+    
+    def branches_by_removing_prefix(prefix_regex)
+      output = GitRunner.run_in_working_dir(@path, "for-each-ref --format='%(refname)'", Runner::Verbosity::OUTPUT_NEVER)
+      all_refs = output.strip.split("\n")
+      
+      full_names = all_refs.select { |r| r =~ prefix_regex }
+      names = full_names.map{ |f| f.sub(prefix_regex, "") }.delete_if{ |n| n =~ /HEAD$/}
+      names.map { |b| Branch.new(self, b) }
     end
   end
 end
