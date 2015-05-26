@@ -14,10 +14,14 @@ module MultiRepo
   
   class MergeDescriptor
     attr_accessor :name
+    attr_accessor :repo
+    attr_accessor :our_revision
+    attr_accessor :their_revision
     attr_accessor :state
 
     def initialize(name, repo, our_revision, their_revision)
       @name = name
+      @repo = repo
       @our_revision = our_revision
       @their_revision = their_revision
       

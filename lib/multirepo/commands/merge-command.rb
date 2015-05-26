@@ -166,10 +166,13 @@ module MultiRepo
     end
     
     def perform_merges(descriptors)
+      success = true
       descriptors.each do |descriptor|
-        Console.log_substep("#{descriptor.name} : Merging #{descriptor.revision} into current branch...")
-        GitRunner.run_in_working_dir(descriptor.path, "merge #{descriptor.revision}", Runner::Verbosity::OUTPUT_ALWAYS)
+        Console.log_substep("#{descriptor.name} : Merging #{descriptor.their_revision} into #{descriptor.our_revision}...")
+        GitRunner.run_in_working_dir(descriptor.repo.path, "merge #{descriptor.their_revision}", Runner::Verbosity::OUTPUT_ALWAYS)
+        success &= GitRunner.last_command_succeeded
       end
+      Console.log_warning("Some merge operations failed. Please review the above results.") unless success
     end
     
     def message_for_mode(mode, ref_name)
