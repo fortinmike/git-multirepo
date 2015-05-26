@@ -99,20 +99,26 @@ module MultiRepo
       our_dependencies = Performer.dependencies
       
       # Checkout the specified main repo ref to find out which dependency refs to merge
-      Performer.perform_main_repo_checkout(main_repo, ref_name, "Checked out main repo #{ref_name} to inspect to-merge dependencies")
+      Performer.perform_main_repo_checkout(main_repo, ref_name, "Checked out main repo '#{ref_name}' to inspect to-merge dependencies")
       
       # List dependencies for the ref we're trying to merge
       their_dependencies = Performer.dependencies
       
       # Checkout the initial revision ASAP
-      Performer.perform_main_repo_checkout(main_repo, initial_revision, "Checked out initial main repo revision #{initial_revision}")
+      Performer.perform_main_repo_checkout(main_repo, initial_revision, "Checked out initial main repo revision '#{initial_revision}'")
       
       # Auto-merge would be too complex to implement (due to lots of edge cases)
       # if the specified ref does not have the same dependencies. Better perform a manual merge.
       ensure_dependencies_match(our_dependencies, their_dependencies)
       
-      # Create a merge descriptor for each would-be merge
-      # while we're in *our* working copy
+      # Create a merge descriptor for each would-be merge as well as the main repo
+      descriptors = build_dependency_merge_descriptors(our_dependencies, their_dependencies, ref_name, mode)
+      descriptors.push(MergeDescriptor.new("Main Repo", main_repo, initial_revision, ref_name))
+      
+      return descriptors
+    end
+    
+    def build_dependency_merge_descriptors(our_dependencies, their_dependencies, ref_name, mode)
       descriptors = []
       our_dependencies.zip(their_dependencies).each do |our_dependency, their_dependency|
         our_revision = our_dependency.config_entry.repo.current_revision
@@ -125,7 +131,7 @@ module MultiRepo
         
         descriptors.push(descriptor)
       end
-      descriptors.push(MergeDescriptor.new("Main Repo", main_repo, main_repo.current_revision, ref_name))
+      return descriptors
     end
     
     def ensure_dependencies_match(our_dependencies, their_dependencies)
