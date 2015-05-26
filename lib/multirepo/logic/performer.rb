@@ -5,7 +5,7 @@ require_relative "dependency"
 
 module MultiRepo
   class Performer
-    def self.perform_main_repo_checkout(main_repo, ref_name)
+    def self.perform_main_repo_checkout(main_repo, ref_name, message = nil)
       # Make sure the main repo is clean before attempting a checkout
       unless main_repo.is_clean?
         raise MultiRepoException, "Can't checkout #{ref_name} because the main repo contains uncommitted changes"
@@ -16,7 +16,7 @@ module MultiRepo
         raise MultiRepoException, "Couldn't perform checkout of main repo #{ref_name}!"
       end
       
-      Console.log_substep("Checked out main repo #{ref_name}")
+      Console.log_substep(message || "Checked out main repo #{ref_name}")
       
       # After checkout, make sure we're working with a multirepo-enabled ref
       unless Utils.is_multirepo_tracked(".")
@@ -27,10 +27,7 @@ module MultiRepo
     def self.dependencies
       config_entries = ConfigFile.new(".").load_entries
       lock_entries = LockFile.new(".").load_entries
-      dependencies_with_entries(config_entries, lock_entries)
-    end
-    
-    def self.dependencies_with_entries(config_entries, lock_entries)
+      
       dependencies = build_dependencies(config_entries, lock_entries)
       dependency_ordered_nodes = Node.new(".").ordered_descendants
       

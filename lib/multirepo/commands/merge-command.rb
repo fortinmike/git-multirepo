@@ -70,52 +70,17 @@ module MultiRepo
       config_file = ConfigFile.new(".")
       lock_file = LockFile.new(".")
       
-      # Load entries prior to checkout so that we can compare them later
-      our_config_entries = config_file.load_entries
-      our_lock_entries = lock_file.load_entries
-      
       # Ensure the main repo is clean
       raise MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.is_clean?
       
       # Ensure dependencies are clean
-      unless Utils.ensure_dependencies_clean(our_config_entries)
+      unless Utils.ensure_dependencies_clean(config_file.load_entries)
         raise MultiRepoException, "Dependencies are not clean; merge aborted"
       end
-            
-      # Checkout the specified main repo ref to find out which dependency refs to merge
-      Performer.perform_main_repo_checkout(main_repo, @ref_name)
       
-      # Load entries for the ref we're going to merge
-      their_config_entries = config_file.load_entries
-      their_lock_entries = lock_file.load_entries
+      # Gather merge information with current settings
+      descriptors = build_merge(main_repo, initial_revision, @ref_name, mode)
       
-      # Checkout the initial revision ASAP
-      Performer.perform_main_repo_checkout(main_repo, initial_revision)
-      
-      # Build dependencies for subsequent validation and iteration
-      our_dependencies = Performer.dependencies_with_entries(our_config_entries, our_lock_entries)
-      their_dependencies = Performer.dependencies_with_entries(their_config_entries, their_lock_entries)
-      
-      # Auto-merge would be too complex to implement (due to lots of edge cases)
-      # if the specified ref does not have the same dependencies. Better perform a manual merge.
-      ensure_dependencies_match(our_dependencies, their_dependencies)
-      
-      # Create a merge descriptor for each would-be merge
-      # while we're in *our* working copy
-      descriptors = []
-      our_dependencies.zip(their_dependencies).each do |our_dependency, their_dependency|
-        our_revision = our_dependency.config_entry.repo.current_revision
-        
-        their_revision = RevisionSelector.revision_for_mode(mode, @ref_name, their_dependency.lock_entry)
-        their_name = their_dependency.config_entry.name
-        their_repo = their_dependency.config_entry.repo
-        
-        descriptor = MergeDescriptor.new(their_name, their_repo, our_revision, their_revision)
-        
-        descriptors.push(descriptor)
-      end
-      descriptors.push(MergeDescriptor.new("Main Repo", main_repo, main_repo.current_revision, @ref_name))
-            
       # Log merge operations to the console before the fact
       Console.log_info("Merging would #{message_for_mode(mode, @ref_name)}:")
       log_merges(descriptors)
@@ -127,6 +92,40 @@ module MultiRepo
       
       # Merge dependencies and the main repo
       perform_merges(descriptors)
+    end
+    
+    def build_merge(main_repo, initial_revision, ref_name, mode)
+      # List dependencies prior to checkout so that we can compare them later
+      our_dependencies = Performer.dependencies
+      
+      # Checkout the specified main repo ref to find out which dependency refs to merge
+      Performer.perform_main_repo_checkout(main_repo, ref_name, "Checked out main repo #{ref_name} to inspect to-merge dependencies")
+      
+      # List dependencies for the ref we're trying to merge
+      their_dependencies = Performer.dependencies
+      
+      # Checkout the initial revision ASAP
+      Performer.perform_main_repo_checkout(main_repo, initial_revision, "Checked out initial main repo revision #{initial_revision}")
+      
+      # Auto-merge would be too complex to implement (due to lots of edge cases)
+      # if the specified ref does not have the same dependencies. Better perform a manual merge.
+      ensure_dependencies_match(our_dependencies, their_dependencies)
+      
+      # Create a merge descriptor for each would-be merge
+      # while we're in *our* working copy
+      descriptors = []
+      our_dependencies.zip(their_dependencies).each do |our_dependency, their_dependency|
+        our_revision = our_dependency.config_entry.repo.current_revision
+        
+        their_revision = RevisionSelector.revision_for_mode(mode, ref_name, their_dependency.lock_entry)
+        their_name = their_dependency.config_entry.name
+        their_repo = their_dependency.config_entry.repo
+        
+        descriptor = MergeDescriptor.new(their_name, their_repo, our_revision, their_revision)
+        
+        descriptors.push(descriptor)
+      end
+      descriptors.push(MergeDescriptor.new("Main Repo", main_repo, main_repo.current_revision, ref_name))
     end
     
     def ensure_dependencies_match(our_dependencies, their_dependencies)
