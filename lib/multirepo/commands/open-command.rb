@@ -42,8 +42,6 @@ module MultiRepo
       else
         open_dependencies
       end
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
 
     def open_main

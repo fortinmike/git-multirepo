@@ -30,8 +30,6 @@ module MultiRepo
       end
       
       Console.log_step("Generated graph image #{path}")
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
     
     def build_graph_recursive(graph, node)

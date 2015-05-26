@@ -55,8 +55,6 @@ module MultiRepo
       perform_branch(main_repo)
       
       Console.log_step("Done!")
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
     
     def perform_branch(repo)

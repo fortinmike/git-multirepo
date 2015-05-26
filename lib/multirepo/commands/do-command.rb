@@ -37,25 +37,16 @@ module MultiRepo
       ensure_in_work_tree
       ensure_multirepo_enabled
       
+      @operation = @operation.sub(/^git /, "")
+      
       if @main_only
-        message = "Perform operation on the #{'main repo'.bold}:\n  git #{@operation}"
-        op = lambda { perform_operation_on_main(@operation) }
+        perform_operation_on_main(@operation)
       elsif @deps_only
-        message = "Perform operation on #{'dependencies'.bold}:\n  git #{@operation}"
-        op = lambda { perform_operation_on_dependencies(@operation) }
+        perform_operation_on_dependencies(@operation)
       else
-        message = "Perform operation on #{'dependencies'.bold} and the #{'main repo'.bold}:\n  git #{@operation}"
-        op = lambda {
-          perform_operation_on_dependencies(@operation) # Ordered dependencies first
-          perform_operation_on_main(@operation) # Main last
-        }
+        perform_operation_on_dependencies(@operation) # Ordered dependencies first
+        perform_operation_on_main(@operation) # Main last
       end
-      
-      raise MultiRepoException, "Operation cancelled" unless Console.ask_yes_no(message)
-      
-      op.call
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
     
     def perform_operation_on_main(operation)

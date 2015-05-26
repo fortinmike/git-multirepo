@@ -13,6 +13,14 @@ module MultiRepo
     self.version = VERSION
     self.description = DESCRIPTION
     
+    def self.report_error(exception)
+      if exception.instance_of?(MultiRepoException)
+        Console.log_error(exception.message)
+        return
+      end
+      raise exception
+    end
+    
     def initialize(argv)
       @argv = argv
       Config.instance.verbose = argv.flag?("verbose") ? true : false
