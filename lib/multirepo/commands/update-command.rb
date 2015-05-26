@@ -36,8 +36,6 @@ module MultiRepo
       end
       
       Console.log_step("Done!")
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
     
     def update_lock_file_step(log_message)

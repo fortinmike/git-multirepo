@@ -35,8 +35,6 @@ module MultiRepo
         config_file.add_entry(entry)
         Console.log_step("Added '#{@path}' to the .multirepo file")
       end
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
     
     def ensure_repo_valid

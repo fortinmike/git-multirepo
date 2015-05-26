@@ -64,8 +64,6 @@ module MultiRepo
       Dir.chdir(original_path)
       
       Console.log_step("Done!")
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
   end
 end

@@ -14,8 +14,6 @@ module MultiRepo
       uninstall_hooks
       
       Console.log_step("All traces of multirepo have been removed from this repository")
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
   end
 end

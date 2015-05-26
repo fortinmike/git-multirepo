@@ -44,8 +44,6 @@ module MultiRepo
       else
         raise MultiRepoException, "'#{@path}' isn't tracked by multirepo"
       end
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
   end
 end

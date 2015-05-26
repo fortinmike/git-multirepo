@@ -62,8 +62,6 @@ module MultiRepo
       end
       
       Console.log_step("Done!")
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
     
     def merge_core(main_repo, initial_revision, mode)

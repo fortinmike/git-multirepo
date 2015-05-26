@@ -47,8 +47,6 @@ module MultiRepo
         perform_operation_on_dependencies(@operation) # Ordered dependencies first
         perform_operation_on_main(@operation) # Main last
       end
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
     
     def perform_operation_on_main(operation)

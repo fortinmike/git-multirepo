@@ -31,8 +31,6 @@ module MultiRepo
       end
       
       Console.log_step("Done!")
-    rescue MultiRepoException => e
-      Console.log_error(e.message)
     end
     
     def full_install
