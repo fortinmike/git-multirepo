@@ -81,14 +81,7 @@ module MultiRepo
       unless Utils.ensure_dependencies_clean(our_config_entries)
         raise MultiRepoException, "Dependencies are not clean; merge aborted"
       end
-      
-      # Fetch repos to make sure we have the latest history in each.
-      # Fetching pre-checkout dependency repositories is sufficient because
-      # we make sure that the same dependencies are configured post-checkout.
-      Console.log_substep("Fetching repositories before proceeding with merge...")
-      main_repo.fetch
-      our_config_entries.each { |e| e.repo.fetch }
-      
+            
       # Checkout the specified main repo ref to find out which dependency refs to merge
       Performer.perform_main_repo_checkout(main_repo, @ref_name)
       
