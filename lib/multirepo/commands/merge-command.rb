@@ -111,7 +111,8 @@ module MultiRepo
       # if the specified ref does not have the same dependencies. Better perform a manual merge.
       ensure_dependencies_match(our_dependencies, their_dependencies)
       
-      # Create a merge descriptor for each would-be merge as well as the main repo
+      # Create a merge descriptor for each would-be merge as well as the main repo.
+      # This step MUST be performed in OUR revision for the merge descriptors to be correct!
       descriptors = build_dependency_merge_descriptors(our_dependencies, their_dependencies, ref_name, mode)
       descriptors.push(MergeDescriptor.new("Main Repo", main_repo, initial_revision, ref_name))
       
