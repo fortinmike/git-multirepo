@@ -81,10 +81,10 @@ module MultiRepo
       # Gather merge information with current settings
       descriptors = build_merge(main_repo, initial_revision, @ref_name, mode)
       
-      # Log merge operations to the console before the fact
-      Console.log_info("Merging would #{message_for_mode(mode, @ref_name)}:")
-      log_merges(descriptors)
-      ensure_merges_valid(descriptors)
+      # Preview merge operations in the console
+      preview_merge(descriptors, mode, @ref_name)
+      
+      ensure_merge_valid(descriptors)
       
       raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
       
@@ -146,7 +146,9 @@ module MultiRepo
       end
     end
     
-    def log_merges(descriptors)
+    def preview_merge(descriptors, mode, ref_name)
+      Console.log_info("Merging would #{message_for_mode(mode, ref_name)}:")
+      
       table = Terminal::Table.new do |t|
         descriptors.reverse.each_with_index do |descriptor, index|
           t.add_row [descriptor.name.bold, descriptor.merge_description, descriptor.upstream_description]
@@ -156,7 +158,7 @@ module MultiRepo
       puts table
     end
     
-    def ensure_merges_valid(descriptors)
+    def ensure_merge_valid(descriptors)
       if descriptors.any? { |d| d.state == TheirState::LOCAL_NO_UPSTREAM }
         Console.log_warning("Some branches are not remote-tracking! Please review the merge operations above.")
       elsif descriptors.any? { |d| d.state == TheirState::LOCAL_UPSTREAM_DIVERGED }
