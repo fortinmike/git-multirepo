@@ -66,7 +66,6 @@ module MultiRepo
 
     def perform_operation(path, operation)
       Console.log_step("Performing operation on '#{path}'")
-      Console.log_info("git #{operation}")
       GitRunner.run_in_working_dir(path, operation, Runner::Verbosity::OUTPUT_ALWAYS)
       GitRunner.last_command_succeeded
     end
