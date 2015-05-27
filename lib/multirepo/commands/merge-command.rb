@@ -7,6 +7,15 @@ require "multirepo/logic/performer"
 require "multirepo/logic/merge-descriptor"
 
 module MultiRepo
+  class MergeValidationResult
+    ABORT = 0
+    PROCEED = 1
+    MERGE_UPSTREAM = 2
+    
+    attr_accessor :outcome
+    attr_accessor :message
+  end
+  
   class MergeCommand < Command
     self.command = "merge"
     self.summary = "Performs a git merge on all dependencies and the main repo, in the proper order."
@@ -76,15 +85,28 @@ module MultiRepo
         raise MultiRepoException, "Dependencies are not clean; merge aborted"
       end
       
-      # Gather merge information with current settings
-      descriptors = build_merge(main_repo, initial_revision, @ref_name, mode)
+      ref_name = @ref_name
+      loop do
+        # Gather information about the merges that would occur
+        descriptors = build_merge(main_repo, initial_revision, ref_name, mode)
       
-      # Preview merge operations in the console
-      preview_merge(descriptors, mode, @ref_name)
-      
-      ensure_merge_valid(descriptors)
-      
-      raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
+        # Preview merge operations in the console
+        preview_merge(descriptors, mode, ref_name)
+        
+        # Validate merge operations
+        result = ensure_merge_valid(descriptors)
+        
+        case result.outcome
+        when MergeValidationResult::ABORT
+          raise MultiRepoException, result.message
+        when MergeValidationResult::PROCEED
+          Console.log_warning(result.message) if result.message
+        when MergeValidationResult::MERGE_UPSTREAM
+          ref_name = Ref.new(ref_name).upstream_branch.name; next
+        end
+        
+        raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
+      end
       
       Console.log_step("Performing merge...")
       
@@ -158,11 +180,17 @@ module MultiRepo
     end
     
     def ensure_merge_valid(descriptors)
+      outcome = MergeValidationResult.new
+      outcome.outcome = MergeValidationResult::PROCEED
+      
       if descriptors.any? { |d| d.state == TheirState::LOCAL_NO_UPSTREAM }
-        Console.log_warning("Some branches are not remote-tracking! Please review the merge operations above.")
+        outcome.message = "Some branches are not remote-tracking! Please review the merge operations above."
       elsif descriptors.any? { |d| d.state == TheirState::LOCAL_UPSTREAM_DIVERGED }
-        raise MultiRepoException, "Some upstream branches have diverged. This warrants a manual merge!"
+        outcome.outcome = MergeValidationResult::ABORT
+        outcome.message = "Some upstream branches have diverged. This warrants a manual merge!"
       end
+      
+      return outcome
     end
     
     def perform_merges(descriptors)
