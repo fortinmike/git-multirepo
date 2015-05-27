@@ -10,7 +10,7 @@ module MultiRepo
     end
     
     def upstream_branch
-      output = GitRunner.run_in_working_dir(@repo.path, "config --get branch.#{@name}.merge", Runner::Verbosity::OUTPUT_ON_ERROR)
+      output = GitRunner.run_in_working_dir(@repo.path, "config --get branch.#{@name}.merge", Runner::Verbosity::OUTPUT_NEVER)
       output.sub!("refs/heads/", "")
       return nil if output == ""
       Branch.new(@repo, "origin/#{output}")
