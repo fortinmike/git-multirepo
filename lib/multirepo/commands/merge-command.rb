@@ -102,7 +102,10 @@ module MultiRepo
         when MergeValidationResult::PROCEED
           Console.log_warning(result.message) if result.message
         when MergeValidationResult::MERGE_UPSTREAM
-          ref_name = Ref.new(ref_name).upstream_branch.name; next
+          Console.log_warning(result.message)
+          raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Merge upstream instead of local branches?")
+          # TODO: Modify operations!
+          next
         end
         
         raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
@@ -188,6 +191,9 @@ module MultiRepo
       elsif descriptors.any? { |d| d.state == TheirState::LOCAL_UPSTREAM_DIVERGED }
         outcome.outcome = MergeValidationResult::ABORT
         outcome.message = "Some upstream branches have diverged. This warrants a manual merge!"
+      elsif descriptors.any? { |d| d.state == TheirState::LOCAL_OUTDATED }
+        outcome.outcome = MergeValidationResult::MERGE_UPSTREAM
+        outcome.message = "Some local branches are outdated."
       end
       
       return outcome
