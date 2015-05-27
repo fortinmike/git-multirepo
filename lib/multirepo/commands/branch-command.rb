@@ -1,4 +1,5 @@
 require "multirepo/utility/console"
+require "multirepo/git/git"
 require "multirepo/files/config-file"
 require "multirepo/files/tracking-files"
 require "multirepo/logic/performer"
@@ -26,6 +27,7 @@ module MultiRepo
     def validate!
       super
       help! "You must specify a branch name" unless @branch_name
+      help! "Please provide a valid branch name" unless Git.valid_branch_name?(@branch_name)
     end
     
     def run
