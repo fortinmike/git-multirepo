@@ -39,14 +39,17 @@ module MultiRepo
       
       @operation = @operation.sub(/^git /, "")
       
+      success = true
       if @main_only
-        perform_operation_on_main(@operation)
+        success &= perform_operation_on_main(@operation)
       elsif @deps_only
-        perform_operation_on_dependencies(@operation)
+        success &= perform_operation_on_dependencies(@operation)
       else
-        perform_operation_on_dependencies(@operation) # Ordered dependencies first
-        perform_operation_on_main(@operation) # Main last
+        success &= perform_operation_on_dependencies(@operation) # Ordered dependencies first
+        success &= perform_operation_on_main(@operation) # Main last
       end
+      
+      Console.log_warning("Some operations finished with non-zero exit status. Please review the above.") unless success
     end
     
     def perform_operation_on_main(operation)
@@ -54,15 +57,18 @@ module MultiRepo
     end
 
     def perform_operation_on_dependencies(operation)
+      success = true
       Performer.dependencies.each do |dependency|
-        perform_operation(dependency.config_entry.repo.path, operation)
+        success &= perform_operation(dependency.config_entry.repo.path, operation)
       end
+      return success
     end
 
     def perform_operation(path, operation)
       Console.log_step("Performing operation on '#{path}'")
       Console.log_info("git #{operation}")
       GitRunner.run_in_working_dir(path, operation, Runner::Verbosity::OUTPUT_ALWAYS)
+      GitRunner.last_command_succeeded
     end
   end
 end
