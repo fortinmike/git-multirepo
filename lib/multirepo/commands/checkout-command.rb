@@ -31,7 +31,6 @@ module MultiRepo
     end
     
     def run
-      super
       ensure_in_work_tree
       
       # Find out the checkout mode based on command-line options

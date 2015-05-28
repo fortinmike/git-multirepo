@@ -6,7 +6,6 @@ module MultiRepo
     self.summary = "Removes all traces of multirepo in the current multirepo repository."
     
     def run
-      super
       ensure_in_work_tree
       
       FileUtils.rm_f(".multirepo")

@@ -29,10 +29,11 @@ module MultiRepo
     end
     
     def run
-      help! "Unknown argument(s): #{@argv.remainder.join(', ')}" unless @argv.empty?
+      help!
     end
 
     def validate!
+      super
       path = Config.instance.git_executable
       is_git_exe = path =~ /.*(git)|(git.exe)$/
       file_exists = path == "git" || File.exists?(path)
