@@ -44,7 +44,7 @@ module MultiRepo
       
       # Ensure dependencies are clean
       config_entries = ConfigFile.new(".").load_entries
-      unless Utils.ensure_dependencies_clean(config_entries)
+      unless Utils.dependencies_clean?(config_entries)
         raise MultiRepoException, "Dependencies are not clean; multi branch aborted"
       end
       

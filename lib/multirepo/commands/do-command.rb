@@ -1,4 +1,8 @@
+require_relative "command"
+require "multirepo/utility/utils"
 require "multirepo/utility/console"
+require "multirepo/files/config-file"
+require "multirepo/git/repo"
 require "multirepo/git/git-runner"
 require "multirepo/logic/performer"
 
@@ -17,7 +21,7 @@ module MultiRepo
     end
     
     def initialize(argv)
-      @operation = argv.shift_argument
+      @operation = argv.shift_argument.sub(/^git /, "")
       @all = argv.flag?("all")
       @main_only = argv.flag?("main")
       @deps_only = argv.flag?("deps")
@@ -37,14 +41,16 @@ module MultiRepo
       ensure_in_work_tree
       ensure_multirepo_enabled
       
-      @operation = @operation.sub(/^git /, "")
-      
       success = true
       if @main_only
+        confirm_main_repo_operation
         success &= perform_operation_on_main(@operation)
       elsif @deps_only
+        confirm_dependencies_operation
         success &= perform_operation_on_dependencies(@operation)
       else
+        confirm_main_repo_operation
+        confirm_dependencies_operation
         success &= perform_operation_on_dependencies(@operation) # Ordered dependencies first
         success &= perform_operation_on_main(@operation) # Main last
       end
@@ -68,6 +74,29 @@ module MultiRepo
       Console.log_step("Performing operation on '#{path}'")
       GitRunner.run_in_working_dir(path, operation, Runner::Verbosity::OUTPUT_ALWAYS)
       GitRunner.last_command_succeeded
+    end
+    
+    def confirm_main_repo_operation
+      unless main_repo_clean?
+        Console.log_warning("Main repo contains uncommitted changes")
+        raise MultiRepoException, "Aborted" unless Console.ask_yes_no("Proceed anyway?")
+      end
+    end
+    
+    def confirm_dependencies_operation
+      unless dependencies_clean?
+        Console.log_warning("Some dependencies contain uncommitted changes")
+        raise MultiRepoException, "Aborted" unless Console.ask_yes_no("Proceed anyway?")
+      end
+    end
+    
+    def main_repo_clean?
+      Repo.new(".").clean?
+    end
+    
+    def dependencies_clean?
+      config_entries = ConfigFile.new(".").load_entries
+      return Utils.dependencies_clean?(config_entries)
     end
   end
 end

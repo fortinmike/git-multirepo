@@ -74,7 +74,7 @@ module MultiRepo
       raise MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.clean?
       
       # Ensure dependencies are clean
-      unless Utils.ensure_dependencies_clean(pre_checkout_config_entries)
+      unless Utils.dependencies_clean?(pre_checkout_config_entries)
         raise MultiRepoException, "Dependencies are not clean; merge aborted"
       end
       

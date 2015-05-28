@@ -28,10 +28,9 @@ module MultiRepo
       sibling_repos.delete_if{ |r| Pathname.new(r.path).realpath == Pathname.new(".").realpath }
     end
     
-    def self.ensure_dependencies_clean(config_entries)
+    def self.dependencies_clean?(config_entries)
       clean = true
       config_entries.each do |e|
-        next unless e.repo.exists?
         dependency_clean = e.repo.clean?
         clean &= dependency_clean
         Console.log_warning("Dependency '#{e.repo.path}' contains uncommitted changes") unless dependency_clean
@@ -39,16 +38,6 @@ module MultiRepo
       return clean
     end
     
-    def self.ensure_working_copies_clean(repos)
-      clean = true
-      repos.each do |repo|
-        dependency_clean = repo.clean?
-        clean &= dependency_clean
-        Console.log_warning("Repo '#{repo.path}' contains uncommitted changes") unless dependency_clean
-      end
-      return clean
-    end
-
     def self.convert_to_windows_path(unix_path)
       components = Pathname.new(unix_path).each_filename.to_a
       components.join(File::ALT_SEPARATOR)
