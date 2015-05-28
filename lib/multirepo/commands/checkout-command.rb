@@ -71,7 +71,7 @@ module MultiRepo
     end
     
     def ensure_dependencies_clean_step(main_repo)
-      unless Utils.ensure_dependencies_clean(ConfigFile.new(".").load_entries)
+      unless Utils.dependencies_clean?(ConfigFile.new(".").load_entries)
         raise MultiRepoException, "Dependencies are not clean!"
       end
     end

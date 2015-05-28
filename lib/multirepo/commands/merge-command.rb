@@ -81,7 +81,7 @@ module MultiRepo
       raise MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.is_clean?
       
       # Ensure dependencies are clean
-      unless Utils.ensure_dependencies_clean(config_file.load_entries)
+      unless Utils.dependencies_clean?(config_file.load_entries)
         raise MultiRepoException, "Dependencies are not clean; merge aborted"
       end
       

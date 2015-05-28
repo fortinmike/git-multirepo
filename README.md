@@ -105,10 +105,9 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 
 ## Limitations
 
-- git-multirepo should be considered beta at the moment. Suggestions and contributions are welcome.
-- The project and its dependencies must live beside each other on disk.
-- Some more commands need to be implemented to facilitate branch-heavy workflows.
-- You must (ideally) install the tool on your CI server: `gem install git-multirepo`
+- This tool should be considered beta at the moment.
+- The tracked project and its dependencies must live beside each other on disk.
+- You must install the tool on your CI server (`gem install git-multirepo`) and perform a `multi install` prior to checkout dependencies prior to building.
 
 ## Summary of Commands
 
