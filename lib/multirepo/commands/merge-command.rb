@@ -78,7 +78,7 @@ module MultiRepo
       lock_file = LockFile.new(".")
       
       # Ensure the main repo is clean
-      raise MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.is_clean?
+      raise MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.clean?
       
       # Ensure dependencies are clean
       unless Utils.dependencies_clean?(config_file.load_entries)

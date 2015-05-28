@@ -29,7 +29,7 @@ module MultiRepo
       (current_branch || current_commit).name
     end
     
-    def is_clean?
+    def clean?
       changes.count == 0
     end
     
