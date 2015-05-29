@@ -125,7 +125,8 @@ module MultiRepo
       our_dependencies = Performer.dependencies
       
       # Checkout the specified main repo ref to find out which dependency refs to merge
-      Performer.perform_main_repo_checkout(main_repo, ref_name, "Checked out main repo '#{ref_name}' to inspect to-merge dependencies")
+      commit_id = Ref.new(main_repo, ref_name).commit_id # Checkout in floating HEAD
+      Performer.perform_main_repo_checkout(main_repo, commit_id, "Checked out main repo '#{ref_name}' to inspect to-merge dependencies")
       
       # List dependencies for the ref we're trying to merge
       their_dependencies = Performer.dependencies
