@@ -99,9 +99,9 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 | Merging Changes to Dependencies | easy | hard | passable |
 | Contributing Upstream | easy | easy | passable |
 | Continuous Integration | medium | medium | easy |
-| Complex Branch-Based Workflows | medium* | hard | easy |
+| Branch-Based Workflows | easy* | hard | easy |
 
-(*) Ongoing work should make this easier in future versions of git-multirepo.
+(*) The `multi branch` and `multi merge` commands faciliate branching and merging the main repo and its dependencies as a whole.
 
 ## Limitations
 
