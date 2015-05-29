@@ -32,7 +32,7 @@ module MultiRepo
     def run
       Console.log_step("Cloning #{@url} ...")
 
-      raise MultiRepoException, "A directory named #{@name} already exists" if Dir.exists?(@name)
+      raise MultiRepoException, "A directory named #{@name} already exists" if Dir.exist?(@name)
 
       main_repo_path = "#{@name}/#{@name}"
       main_repo = Repo.new(main_repo_path)

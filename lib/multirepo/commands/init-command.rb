@@ -113,7 +113,7 @@ module MultiRepo
     end
     
     def check_repo_exists
-      raise MultiRepoException, "There is no folder at path '#{@repo.path}'" unless Dir.exists?(@repo.path)
+      raise MultiRepoException, "There is no folder at path '#{@repo.path}'" unless Dir.exist?(@repo.path)
       raise MultiRepoException, "'#{@repo.path}' is not a repository" unless @repo.exists?
     end
   end

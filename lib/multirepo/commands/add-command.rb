@@ -38,7 +38,7 @@ module MultiRepo
     
     def ensure_repo_valid
       raise MultiRepoException, "The provided path is not a direct sibling of the main repository" unless validate_is_sibling_repo(@path)
-      raise MultiRepoException, "There is no folder at path '#{@path}'" unless Dir.exists?(@path)
+      raise MultiRepoException, "There is no folder at path '#{@path}'" unless Dir.exist?(@path)
       raise MultiRepoException, "'#{@path}' is not a repository" unless Repo.new(@path).exists?
     end
     

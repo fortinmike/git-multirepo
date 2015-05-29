@@ -9,11 +9,11 @@ module MultiRepo
     end
     
     def self.is_multirepo_enabled(path)
-      File.exists?(File.join(path, ".multirepo"))
+      File.exist?(File.join(path, ".multirepo"))
     end
 
     def self.is_multirepo_tracked(path)
-      is_multirepo_enabled(path) && File.exists?(File.join(path, ".multirepo.lock"))
+      is_multirepo_enabled(path) && File.exist?(File.join(path, ".multirepo.lock"))
     end
     
     def self.install_hook(name, path)
@@ -84,7 +84,7 @@ module MultiRepo
     end
     
     def self.append_if_missing(path, pattern, string_to_append)
-      unless File.exists?(path)
+      unless File.exist?(path)
         File.open(path, 'w') { |f| f.puts(string_to_append) }
       else
         string_located = File.readlines(path).grep(pattern).any?
