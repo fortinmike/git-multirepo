@@ -11,7 +11,6 @@ module MultiRepo
     self.summary = "Graphs the dependency tree from the current repository."
     
     def run
-      super
       ensure_in_work_tree
       ensure_multirepo_enabled
       

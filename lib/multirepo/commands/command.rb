@@ -3,6 +3,8 @@ require "claide"
 require "info"
 require "multirepo/multirepo-exception"
 require "multirepo/config"
+require "multirepo/files/config-file"
+require "multirepo/files/lock-file"
 
 module MultiRepo
   class Command < CLAide::Command
@@ -27,10 +29,11 @@ module MultiRepo
     end
     
     def run
-      help! "Unknown argument(s): #{@argv.remainder.join(', ')}" unless @argv.empty?
+      help!
     end
 
     def validate!
+      super
       path = Config.instance.git_executable
       is_git_exe = path =~ /.*(git)|(git.exe)$/
       file_exists = path == "git" || File.exists?(path)
@@ -78,7 +81,10 @@ module MultiRepo
     end
 
     def ensure_multirepo_tracked
-      raise MultiRepoException, "This revision is not tracked by multirepo." unless Utils.is_multirepo_tracked(".")
+      raise MultiRepoException, "Revision is not tracked by multirepo." unless Utils.is_multirepo_tracked(".")
+      
+      lock_file_valid = LockFile.new(".").validate!
+      raise MultiRepoException, "Revision is multirepo-enabled but contains a corrupted lock file!" unless lock_file_valid
     end
   end
 end

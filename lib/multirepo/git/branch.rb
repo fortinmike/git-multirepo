@@ -1,20 +1,21 @@
+require_relative "ref"
 require_relative "git-runner"
 
 module MultiRepo
-  class Branch
-    attr_accessor :name
-    
-    def initialize(repo, name)
-      @repo = repo
-      @name = name
-    end
-
+  class Branch < Ref
     def exists?
       lines = GitRunner.run_in_working_dir(@repo.path, "branch", Runner::Verbosity::OUTPUT_NEVER).split("\n")
       branch_names = lines.map { |line| line.tr("* ", "")}
       branch_names.include?(@name)
     end
-
+    
+    def upstream_branch
+      output = GitRunner.run_in_working_dir(@repo.path, "config --get branch.#{@name}.merge", Runner::Verbosity::OUTPUT_NEVER)
+      output.sub!("refs/heads/", "")
+      return nil if output == ""
+      Branch.new(@repo, "origin/#{output}")
+    end
+    
     def create
       GitRunner.run_in_working_dir(@repo.path, "branch #{@name}", Runner::Verbosity::OUTPUT_ON_ERROR)
     end

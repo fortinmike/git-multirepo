@@ -7,20 +7,29 @@ require "multirepo/logic/performer"
 require "multirepo/logic/merge-descriptor"
 
 module MultiRepo
+  class MergeValidationResult
+    ABORT = 0
+    PROCEED = 1
+    MERGE_UPSTREAM = 2
+    
+    attr_accessor :outcome
+    attr_accessor :message
+  end
+  
   class MergeCommand < Command
     self.command = "merge"
     self.summary = "Performs a git merge on all dependencies and the main repo, in the proper order."
     
     def self.options
       [
-        ['<ref>', 'The main repo tag, branch or commit id to merge.'],
+        ['<refname>', 'The main repo tag, branch or commit id to merge.'],
         ['[--latest]', 'Merge the HEAD of each stored dependency branch instead of the commits recorded in the lock file.'],
         ['[--exact]', 'Merge the exact specified ref for each repo, regardless of what\'s stored in the lock file.']
       ].concat(super)
     end
     
     def initialize(argv)
-      @ref = argv.shift_argument
+      @ref_name = argv.shift_argument
       @checkout_latest = argv.flag?("latest")
       @checkout_exact = argv.flag?("exact")
       super
@@ -28,14 +37,13 @@ module MultiRepo
     
     def validate!
       super
-      help! "You must specify a ref to merge" unless @ref
+      help! "You must specify a ref to merge" unless @ref_name
       unless validate_only_one_flag(@checkout_latest, @checkout_exact)
         help! "You can't provide more than one operation modifier (--latest, --exact, etc.)"
       end
     end
     
     def run
-      super
       ensure_in_work_tree
       ensure_multirepo_enabled
       
@@ -43,19 +51,19 @@ module MultiRepo
       mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
       
       strategy_name = RevisionSelectionMode.name_for_mode(mode)
-      Console.log_step("Merging #{@ref} with '#{strategy_name}' strategy...")
+      Console.log_step("Merging #{@ref_name} with '#{strategy_name}' strategy...")
       
       main_repo = Repo.new(".")
       
       # Keep the initial revision because we're going to need to come back to it later
-      initial_revision = main_repo.current_branch || main_repo.head_hash
+      initial_revision = main_repo.current_revision
       
       begin
         merge_core(main_repo, initial_revision, mode)
       rescue MultiRepoException => e
         # Revert to the initial revision only if necessary
-        unless main_repo.current_branch == initial_revision || main_repo.head_hash == initial_revision
-          Console.log_substep("Restoring working copy to #{initial_revision}")
+        unless main_repo.current_revision == initial_revision
+          Console.log_warning("Restoring working copy to #{initial_revision}")
           main_repo.checkout(initial_revision)
         end
         raise e
@@ -66,100 +74,152 @@ module MultiRepo
     
     def merge_core(main_repo, initial_revision, mode)
       config_file = ConfigFile.new(".")
-      
-      # Load entries prior to checkout so that we can compare them later
-      pre_checkout_config_entries = config_file.load_entries
+      lock_file = LockFile.new(".")
       
       # Ensure the main repo is clean
       raise MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.clean?
       
       # Ensure dependencies are clean
-      unless Utils.dependencies_clean?(pre_checkout_config_entries)
+      unless Utils.dependencies_clean?(config_file.load_entries)
         raise MultiRepoException, "Dependencies are not clean; merge aborted"
       end
       
-      # Fetch repos to make sure we have the latest history in each.
-      # Fetching pre-checkout dependency repositories is sufficient because
-      # we make sure that the same dependencies are configured post-checkout.
-      Console.log_substep("Fetching repositories before proceeding with merge...")
-      main_repo.fetch
-      pre_checkout_config_entries.each { |e| e.repo.fetch }
+      ref_name = @ref_name
+      descriptors = nil
+      loop do
+        # Gather information about the merges that would occur
+        descriptors = build_merge(main_repo, initial_revision, ref_name, mode)
       
-      # Checkout the specified main repo ref to find out which dependency refs to merge
-      Performer.perform_main_repo_checkout(main_repo, @ref)
-      
-      # Load config entries for the ref we're going to merge
-      post_checkout_config_entries = config_file.load_entries
-      
-      # Auto-merge would be too complex to implement (due to lots of edge cases)
-      # if the specified ref does not have the same dependencies
-      ensure_dependencies_match(pre_checkout_config_entries, post_checkout_config_entries)
-      
-      # Create a merge descriptor for each would-be merge
-      descriptors = []
-      Performer.perform_on_dependencies do |config_entry, lock_entry|
-        revision = RevisionSelector.revision_for_mode(mode, @ref, lock_entry)
-        descriptors.push(MergeDescriptor.new(config_entry.name, config_entry.path, revision))
+        # Preview merge operations in the console
+        preview_merge(descriptors, mode, ref_name)
+        
+        # Validate merge operations
+        result = ensure_merge_valid(descriptors)
+        
+        case result.outcome
+        when MergeValidationResult::ABORT
+          raise MultiRepoException, result.message
+        when MergeValidationResult::PROCEED
+          raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
+          Console.log_warning(result.message) if result.message
+          break
+        when MergeValidationResult::MERGE_UPSTREAM
+          Console.log_warning(result.message)
+          raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Merge upstream instead of local branches?")
+          # TODO: Modify operations!
+          raise MultiRepoException, "Fallback behavior not implemented. Please merge manually."
+          next
+        end
+        
+        raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
       end
-      descriptors.push(MergeDescriptor.new("Main Repo", main_repo.path, @ref))
-            
-      # Log merge operations to the console before the fact
-      Console.log_warning("Merging would #{message_for_mode(mode, @ref)}:")
-      log_merges(descriptors)
-      
-      raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
       
       Console.log_step("Performing merge...")
-      
-      # Checkout the initial revision to perform the merge in it
-      Performer.perform_main_repo_checkout(main_repo, initial_revision)
       
       # Merge dependencies and the main repo
       perform_merges(descriptors)
     end
     
-    def ensure_dependencies_match(pre_checkout_config_entries, post_checkout_config_entries)
-      perfect_match = true
-      pre_checkout_config_entries.each do |pre_entry|
-        found = post_checkout_config_entries.find { |post_entry| post_entry.id = pre_entry.id }
-        perfect_match &= found
-        Console.log_warning("Dependency '#{pre_entry.repo.path}' was not found in the target ref") unless found
+    def build_merge(main_repo, initial_revision, ref_name, mode)
+      # List dependencies prior to checkout so that we can compare them later
+      our_dependencies = Performer.dependencies
+      
+      # Checkout the specified main repo ref to find out which dependency refs to merge
+      Performer.perform_main_repo_checkout(main_repo, ref_name, "Checked out main repo '#{ref_name}' to inspect to-merge dependencies")
+      
+      # List dependencies for the ref we're trying to merge
+      their_dependencies = Performer.dependencies
+      
+      # Checkout the initial revision ASAP
+      Performer.perform_main_repo_checkout(main_repo, initial_revision, "Checked out initial main repo revision '#{initial_revision}'")
+      
+      # Auto-merge would be too complex to implement (due to lots of edge cases)
+      # if the specified ref does not have the same dependencies. Better perform a manual merge.
+      ensure_dependencies_match(our_dependencies, their_dependencies)
+      
+      # Create a merge descriptor for each would-be merge as well as the main repo.
+      # This step MUST be performed in OUR revision for the merge descriptors to be correct!
+      descriptors = build_dependency_merge_descriptors(our_dependencies, their_dependencies, ref_name, mode)
+      descriptors.push(MergeDescriptor.new("Main Repo", main_repo, initial_revision, ref_name))
+      
+      return descriptors
+    end
+    
+    def build_dependency_merge_descriptors(our_dependencies, their_dependencies, ref_name, mode)
+      descriptors = []
+      our_dependencies.zip(their_dependencies).each do |our_dependency, their_dependency|
+        our_revision = our_dependency.config_entry.repo.current_revision
+        
+        their_revision = RevisionSelector.revision_for_mode(mode, ref_name, their_dependency.lock_entry)
+        their_name = their_dependency.config_entry.name
+        their_repo = their_dependency.config_entry.repo
+        
+        descriptor = MergeDescriptor.new(their_name, their_repo, our_revision, their_revision)
+        
+        descriptors.push(descriptor)
+      end
+      return descriptors
+    end
+    
+    def ensure_dependencies_match(our_dependencies, their_dependencies)
+      our_dependencies.zip(their_dependencies).each do |our_dependency, their_dependency|
+        if their_dependency == nil || their_dependency.config_entry.id != our_dependency.config_entry.id
+          raise MultiRepoException, "Dependencies differ, please merge manually"
+        end
       end
       
-      unless perfect_match
-        raise MultiRepoException, "Dependencies differ, please merge manually"
-      end
-      
-      if post_checkout_config_entries.count > pre_checkout_config_entries.count
+      if their_dependencies.count > our_dependencies.count
         raise MultiRepoException, "There are more dependencies in the specified ref, please merge manually"
       end
     end
     
-    def log_merges(descriptors)
+    def preview_merge(descriptors, mode, ref_name)
+      Console.log_info("Merging would #{message_for_mode(mode, ref_name)}:")
+      
       table = Terminal::Table.new do |t|
         descriptors.reverse.each_with_index do |descriptor, index|
-          t.add_row [descriptor.name, "Merge '#{descriptor.revision}'"]
+          t.add_row [descriptor.name.bold, descriptor.merge_description, descriptor.upstream_description]
           t.add_separator unless index == descriptors.count - 1
         end
       end
       puts table
     end
     
-    def message_for_mode(mode, ref)
-      case mode
-      when RevisionSelectionMode::AS_LOCK
-        "merge specific commits as stored in the lock file for main repo revision #{ref}"
-      when RevisionSelectionMode::LATEST
-        "merge each branch as stored in the lock file of main repo revision #{ref}"
-      when RevisionSelectionMode::EXACT
-        "merge #{ref} for each repository, ignoring the contents of the lock file"
+    def ensure_merge_valid(descriptors)
+      outcome = MergeValidationResult.new
+      outcome.outcome = MergeValidationResult::PROCEED
+      
+      if descriptors.any? { |d| d.state == TheirState::LOCAL_NO_UPSTREAM }
+        outcome.message = "Some branches are not remote-tracking! Please review the merge operations above."
+      elsif descriptors.any? { |d| d.state == TheirState::LOCAL_UPSTREAM_DIVERGED }
+        outcome.outcome = MergeValidationResult::ABORT
+        outcome.message = "Some upstream branches have diverged. This warrants a manual merge!"
+      elsif descriptors.any? { |d| d.state == TheirState::LOCAL_OUTDATED }
+        outcome.outcome = MergeValidationResult::MERGE_UPSTREAM
+        outcome.message = "Some local branches are outdated."
       end
+      
+      return outcome
     end
     
     def perform_merges(descriptors)
+      success = true
       descriptors.each do |descriptor|
-        Console.log_substep("#{descriptor.name} : Merging #{descriptor.revision} into current branch...")
-        GitRunner.run_in_working_dir(descriptor.path, "merge #{descriptor.revision}", Runner::Verbosity::OUTPUT_ALWAYS)
+        Console.log_substep("#{descriptor.name} : Merging #{descriptor.their_revision} into #{descriptor.our_revision}...")
+        GitRunner.run_in_working_dir(descriptor.repo.path, "merge #{descriptor.their_revision}", Runner::Verbosity::OUTPUT_ALWAYS)
+        success &= GitRunner.last_command_succeeded
+      end
+      Console.log_warning("Some merge operations failed. Please review the above results.") unless success
+    end
+    
+    def message_for_mode(mode, ref_name)
+      case mode
+      when RevisionSelectionMode::AS_LOCK
+        "merge specific commits as stored in the lock file for main repo revision #{ref_name}"
+      when RevisionSelectionMode::LATEST
+        "merge each branch as stored in the lock file of main repo revision #{ref_name}"
+      when RevisionSelectionMode::EXACT
+        "merge #{ref_name} for each repository, ignoring the contents of the lock file"
       end
     end
   end

@@ -31,7 +31,6 @@ module MultiRepo
     end
     
     def run
-      super
       ensure_in_work_tree
       ensure_multirepo_enabled
       
@@ -49,8 +48,8 @@ module MultiRepo
       end
       
       # Branch dependencies
-      Performer.perform_on_dependencies do |config_entry, lock_entry|
-        perform_branch(config_entry.repo)
+      Performer.dependencies.each do |dependency|
+        perform_branch(dependency.config_entry.repo)
       end
       
       # Branch the main repo

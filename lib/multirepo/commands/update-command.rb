@@ -20,7 +20,6 @@ module MultiRepo
     end
 
     def run
-      super
       ensure_in_work_tree
       ensure_multirepo_enabled
       
@@ -51,8 +50,6 @@ module MultiRepo
       if @commit
         committed = tracking_files.commit("[multirepo] Updated tracking files manually")
         Console.log_substep("Committed tracking files") if committed
-      elsif changed
-        Console.log_substep(log_message)
       end
     end
   end

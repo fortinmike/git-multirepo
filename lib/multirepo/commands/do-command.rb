@@ -37,7 +37,6 @@ module MultiRepo
     end
     
     def run
-      super
       ensure_in_work_tree
       ensure_multirepo_enabled
       
@@ -64,8 +63,8 @@ module MultiRepo
 
     def perform_operation_on_dependencies(operation)
       success = true
-      Performer.perform_on_dependencies do |config_entry, lock_entry|
-        success &= perform_operation(config_entry.repo.path, operation)
+      Performer.dependencies.each do |dependency|
+        success &= perform_operation(dependency.config_entry.repo.path, operation)
       end
       return success
     end

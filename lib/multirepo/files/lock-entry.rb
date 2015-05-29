@@ -18,8 +18,12 @@ module MultiRepo
     def initialize(config_entry)
       @name = config_entry.name
       @id = config_entry.id
-      @head = config_entry.repo.head_hash
-      @branch = config_entry.repo.current_branch
+      
+      head = config_entry.repo.head
+      @head = head.commit_id
+      
+      current_branch = config_entry.repo.current_branch
+      @branch = current_branch ? current_branch.name : nil
     end
   end
 end

@@ -1,3 +1,4 @@
+require "multirepo/multirepo-exception"
 require "fileutils"
 
 module MultiRepo
@@ -30,10 +31,33 @@ module MultiRepo
     
     def self.dependencies_clean?(config_entries)
       clean = true
+      missing = false
       config_entries.each do |e|
+        # Ensure the dependency exists
+        unless e.repo.exists?
+          Console.log_error("Dependency '#{e.path}' does not exist on disk")
+          missing |= true
+          next
+        end
+        
+        # Ensure it contains no uncommitted changes
         dependency_clean = e.repo.clean?
         clean &= dependency_clean
         Console.log_warning("Dependency '#{e.repo.path}' contains uncommitted changes") unless dependency_clean
+      end
+      
+      raise MultiRepoException, "Some dependencies are not present on this machine." +
+                                " Run \"multi install\" to clone missing dependencies." if missing
+      
+      return clean
+    end
+    
+    def self.ensure_working_copies_clean(repos)
+      clean = true
+      repos.each do |repo|
+        dependency_clean = repo.clean?
+        clean &= dependency_clean
+        Console.log_warning("Repo '#{repo.path}' contains uncommitted changes") unless dependency_clean
       end
       return clean
     end

@@ -25,23 +25,26 @@ module MultiRepo
       return !result.start_with?("fatal: bad revision")
     end
     
-    def current_branch
-      branch = GitRunner.run_in_working_dir(@path, "rev-parse --abbrev-ref HEAD", Runner::Verbosity::OUTPUT_NEVER).strip
-      branch != "HEAD" ? branch : nil
+    def current_revision
+      (current_branch || current_commit).name
     end
     
-    def head_hash
-      GitRunner.run_in_working_dir(@path, "rev-parse HEAD", Runner::Verbosity::OUTPUT_NEVER).strip
+    def clean?
+      changes.count == 0
+    end
+    
+    def local_branches
+      branches_by_removing_prefix(/^refs\/heads\//)
+    end
+    
+    def remote_branches
+      branches_by_removing_prefix(/^refs\/remotes\//)
     end
     
     def changes
       output = GitRunner.run_in_working_dir(@path, "status --porcelain", Runner::Verbosity::OUTPUT_NEVER)
       lines = output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
       lines.map { |l| Change.new(l) }
-    end
-    
-    def clean?
-      return changes.count == 0
     end
     
     # Operations
@@ -51,17 +54,43 @@ module MultiRepo
       Runner.last_command_succeeded
     end
     
-    def clone(url)
-      GitRunner.run_in_current_dir("clone #{url} #{@path} --progress", Runner::Verbosity::OUTPUT_ALWAYS)
+    def clone(url, branch = nil)
+      if branch != nil
+        GitRunner.run_in_current_dir("clone #{url} -b #{branch} #{@path} --progress", Runner::Verbosity::OUTPUT_ALWAYS)
+      else
+        GitRunner.run_in_current_dir("clone #{url} #{@path} --progress", Runner::Verbosity::OUTPUT_ALWAYS)
+      end
       Runner.last_command_succeeded
     end
     
-    def checkout(ref)
-      GitRunner.run_in_working_dir(@path, "checkout #{ref}", Runner::Verbosity::OUTPUT_ON_ERROR)
+    def checkout(ref_name)
+      GitRunner.run_in_working_dir(@path, "checkout #{ref_name}", Runner::Verbosity::OUTPUT_ON_ERROR)
       Runner.last_command_succeeded
     end
     
-    # Remotes and branches
+    # Current
+    
+    def head
+      return nil unless exists? && head_born?
+      Ref.new(self, "HEAD")
+    end
+    
+    def current_commit
+      return nil unless exists? && head_born?
+      Commit.new(self, head.commit_id)
+    end
+    
+    def current_branch
+      return nil unless exists? && head_born?
+      name = GitRunner.run_in_working_dir(@path, "rev-parse --abbrev-ref HEAD", Runner::Verbosity::OUTPUT_NEVER).strip
+      Branch.new(self, name)
+    end
+    
+    # Factory methods
+    
+    def ref(name)
+      Ref.new(self, name)
+    end
     
     def branch(name)
       Branch.new(self, name)
@@ -71,8 +100,21 @@ module MultiRepo
       Remote.new(self, name)
     end
     
-    def commit(ref)
-      Commit.new(self, ref)
+    def commit(id)
+      Commit.new(self, id)
+    end
+    
+    # Private helper methods
+    
+    private
+    
+    def branches_by_removing_prefix(prefix_regex)
+      output = GitRunner.run_in_working_dir(@path, "for-each-ref --format='%(refname)'", Runner::Verbosity::OUTPUT_NEVER)
+      all_refs = output.strip.split("\n")
+      
+      full_names = all_refs.select { |r| r =~ prefix_regex }
+      names = full_names.map{ |f| f.sub(prefix_regex, "") }.delete_if{ |n| n =~ /HEAD$/}
+      names.map { |b| Branch.new(self, b) }
     end
   end
 end
