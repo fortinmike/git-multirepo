@@ -16,7 +16,7 @@ module MultiRepo
     def self.report_error(exception)
       if exception.instance_of?(MultiRepoException)
         Console.log_error(exception.message)
-        return
+        exit 1
       end
       raise exception
     end
