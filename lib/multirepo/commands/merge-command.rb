@@ -85,6 +85,7 @@ module MultiRepo
       end
       
       ref_name = @ref_name
+      descriptors = nil
       loop do
         # Gather information about the merges that would occur
         descriptors = build_merge(main_repo, initial_revision, ref_name, mode)
@@ -99,11 +100,14 @@ module MultiRepo
         when MergeValidationResult::ABORT
           raise MultiRepoException, result.message
         when MergeValidationResult::PROCEED
+          raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
           Console.log_warning(result.message) if result.message
+          break
         when MergeValidationResult::MERGE_UPSTREAM
           Console.log_warning(result.message)
           raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Merge upstream instead of local branches?")
           # TODO: Modify operations!
+          raise MultiRepoException, "Fallback behavior not implemented. Please merge manually."
           next
         end
         
