@@ -111,7 +111,10 @@ module MultiRepo
     def branches_by_removing_prefix(prefix_regex)
       output = GitRunner.run_in_working_dir(@path, "for-each-ref --format='%(refname)'", Runner::Verbosity::OUTPUT_NEVER)
       all_refs = output.strip.split("\n")
-      
+
+      # Remove surrounding quotes on Windows
+      all_refs = all_refs.map { |l| l.sub(/^\'/, "").sub(/\'$/, "") }
+
       full_names = all_refs.select { |r| r =~ prefix_regex }
       names = full_names.map{ |f| f.sub(prefix_regex, "") }.delete_if{ |n| n =~ /HEAD$/}
       names.map { |b| Branch.new(self, b) }
