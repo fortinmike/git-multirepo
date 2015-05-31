@@ -10,23 +10,34 @@ module MultiRepo
     self.summary = "Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local git hooks."
     
     def self.options
-      [['[--hooks]', 'Only install local git hooks.']].concat(super)
+      [
+        ['[--hooks]', 'Only install local git hooks.'],
+        ['[--ci]', 'For use in a continuous integration context (such as on a CI build server or agent).']
+      ].concat(super)
     end
     
     def initialize(argv)
       @hooks = argv.flag?("hooks")
+      @ci = argv.flag?("ci")
       super
+    end
+    
+    def validate!
+      super
+      unless validate_only_one_flag(@hooks, @ci)
+        help! "You can't provide more than one operation modifier (--hooks, --ci, etc.)"
+      end
     end
         
     def run
-      ensure_in_work_tree
+      ensure_in_work_tree unless @ci
       ensure_multirepo_tracked
       
       if @hooks
         Console.log_step("Installing hooks in main repo and all dependencies...")
         install_hooks_step
       else
-        Console.log_step("Cloning dependencies and installing hooks...")
+        Console.log_step("Installing dependencies...")
         full_install
       end
       
@@ -35,8 +46,8 @@ module MultiRepo
     
     def full_install
       install_dependencies_step
-      install_hooks_step
-      update_gitconfigs_step
+      install_hooks_step unless @ci
+      update_gitconfigs_step unless @ci
     end
     
     def install_dependencies_step
@@ -49,7 +60,8 @@ module MultiRepo
       
       # Checkout the appropriate branches as specified in the lock file
       checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
-      checkout_command.dependencies_checkout_step(RevisionSelectionMode::LATEST)
+      mode = @ci ? RevisionSelectionMode::AS_LOCK : RevisionSelectionMode::LATEST
+      checkout_command.dependencies_checkout_step(mode)
     end
     
     def install_hooks_step
