@@ -38,6 +38,7 @@ module MultiRepo
         install_hooks_step
       else
         Console.log_step("Installing dependencies...")
+        Console.log_warning("Performing continuous-integration-aware install")
         full_install
       end
       
@@ -88,7 +89,7 @@ module MultiRepo
       if dependency.config_entry.repo.exists?
         check_repo_validity(dependency)
         
-        Console.log_substep("Working copy '#{dependency.config_entry.repo.path}' already exists, fetching instead...")
+        Console.log_substep("Working copy '#{dependency.config_entry.repo.path}' already exists, fetching...")
         fetch_repo(dependency)
       else
         Console.log_substep("Cloning #{dependency.config_entry.url} into '#{dependency.config_entry.repo.path}'")

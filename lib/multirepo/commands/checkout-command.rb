@@ -111,7 +111,7 @@ module MultiRepo
       
       # Checkout!
       if config_entry.repo.checkout(revision)
-        Console.log_substep("Checked out #{dependency_name} #{revision}")
+        Console.log_substep("Checked out #{dependency_name} '#{revision}'")
       else
         raise MultiRepoException, "Couldn't check out the appropriate version of dependency #{dependency_name}"
       end
