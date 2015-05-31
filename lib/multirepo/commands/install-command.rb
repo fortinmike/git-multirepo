@@ -38,7 +38,7 @@ module MultiRepo
         install_hooks_step
       else
         Console.log_step("Installing dependencies...")
-        Console.log_warning("Performing continuous-integration-aware install")
+        Console.log_warning("Performing continuous-integration-aware install") if @ci
         full_install
       end
       
