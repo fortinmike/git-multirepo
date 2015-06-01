@@ -113,11 +113,11 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 
 git-multirepo supports continuous integration in two ways:
 
-- Its `install` command has a special `--ci` flag, which:
+- The `install` command has a special `--ci` flag, which:
   - Installs exact revisions of dependencies in-place
   - Skips local hooks installation
   - Logs additional information that's useful in a CI context
-- Its `inspect` command offers plumbing-style output that can be used to inspect repositories to conditionally perform multirepo operations on them afterwards.
+- The `inspect` command offers plumbing-style output that can be used to inspect repositories to conditionally perform multirepo operations on them afterwards.
 
 ## Summary of Commands
 
@@ -148,7 +148,7 @@ git-multirepo stores all of its metadata in three files:
 
 | File | Format | Updated | Contents |
 |------|--------|---------|----------|
-| .multirepo | YAML | at initialization | A collection of your project's dependencies. For each dependency, stores its **local path** relative to the main repo and the **remote URL** your project depends upon.
+| .multirepo | YAML | at *initialization*, on *add* on *remove* | A collection of your project's dependencies. For each dependency, stores its **local path** relative to the main repo and the **remote URL** your project depends upon.
 | .multirepo.lock | YAML | before each commit | For each dependency, stores the **commit id** and **branch** on which the dependency was when the main repo was committed. The dependency's **name** is also included but only serves as a reference to make inspecting the lock file easier. |
 | .multirepo.meta | YAML | before each commit | Various git-multirepo metadata, such as the **git-multirepo version** that the last commit was performed with. |
 
