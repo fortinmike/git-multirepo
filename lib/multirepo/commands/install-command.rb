@@ -1,3 +1,5 @@
+require "terminal-table"
+
 require "multirepo/utility/console"
 require "multirepo/utility/utils"
 require "multirepo/git/repo"
@@ -38,11 +40,27 @@ module MultiRepo
         install_hooks_step
       else
         Console.log_step("Installing dependencies...")
-        Console.log_warning("Performing continuous-integration-aware install") if @ci
+        log_ci_info if @ci
         full_install
       end
       
       Console.log_step("Done!")
+    end
+    
+    def log_ci_info
+      Console.log_warning("Performing continuous-integration-aware install")
+      
+      meta_file = MetaFile.new(".").load
+      lock_entries = LockFile.new(".").load_entries
+      table = Terminal::Table.new do |t|
+        t.title = "Revision Info"
+        t.add_row ["git-multirepo version", meta_file.version]
+        lock_entries.each do |lock_entry|
+          branch = lock_entry.branch
+          t.add_row [lock_entry.name, lock_entry.head + (branch ? " (on branch #{branch})" : "")]
+        end
+      end
+      puts table
     end
     
     def full_install
