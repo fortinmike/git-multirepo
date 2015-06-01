@@ -109,6 +109,16 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 - The tracked project and its dependencies must live beside each other on disk.
 - You must install the tool on your CI server (`gem install git-multirepo`) and perform a `multi install` prior to checkout dependencies prior to building.
 
+## Continuous Integration
+
+git-multirepo supports continuous integration in two ways:
+
+- Its `install` command has a special `--ci` flag, which:
+  - Installs exact revisions of dependencies in-place
+  - Skips local hooks installation
+  - Logs additional information that's useful in a CI context
+- Its `inspect` command offers plumbing-style output that can be used to inspect repositories to conditionally perform multirepo operations on them afterwards.
+
 ## Summary of Commands
 
 Here is a quick rundown of commands available to you in git-multirepo:
