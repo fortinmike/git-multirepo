@@ -49,6 +49,7 @@ module MultiRepo
     
     def log_ci_info
       Console.log_warning("Performing continuous-integration-aware install")
+      Console.log_info("Using git-multirepo #{MultiRepo::VERSION}")
       
       main_repo = Repo.new(".")
       main_repo_branch = main_repo.current_branch
