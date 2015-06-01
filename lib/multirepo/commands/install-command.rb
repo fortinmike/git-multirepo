@@ -14,7 +14,7 @@ module MultiRepo
     def self.options
       [
         ['[--hooks]', 'Only install local git hooks.'],
-        ['[--ci]', 'For use in a continuous integration context (such as on a CI build server or agent).']
+        ['[--ci]', 'Perform a continuous-integration-aware install (such as on a CI build server or agent).']
       ].concat(super)
     end
     
