@@ -50,17 +50,26 @@ module MultiRepo
     def log_ci_info
       Console.log_warning("Performing continuous-integration-aware install")
       
+      main_repo = Repo.new(".")
+      main_repo_branch = main_repo.current_branch
       meta_file = MetaFile.new(".").load
-      lock_entries = LockFile.new(".").load_entries
+
       table = Terminal::Table.new do |t|
         t.title = "Revision Info"
         t.add_row ["git-multirepo version", meta_file.version]
-        lock_entries.each do |lock_entry|
-          branch = lock_entry.branch
-          t.add_row [lock_entry.name, lock_entry.head + (branch ? " (on branch #{branch})" : "")]
+        t.add_separator
+        t.add_row ["Main Repo", commit_info(main_repo.head.commit_id, (main_repo_branch.name rescue nil))]
+        t.add_separator
+        LockFile.new(".").load_entries.each do |lock_entry|
+          branch_name = lock_entry.branch
+          t.add_row [lock_entry.name, commit_info(lock_entry.head, branch_name)]
         end
       end
       puts table
+    end
+
+    def commit_info(commit_id, branch_name)
+      commit_id + (branch_name ? " (on branch #{branch_name})" : "")
     end
     
     def full_install
