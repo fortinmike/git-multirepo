@@ -21,7 +21,7 @@ module MultiRepo
     end
     
     def initialize(argv)
-      @operation = argv.shift_argument.sub(/^git /, "")
+      @operation = argv.shift_argument
       @all = argv.flag?("all")
       @main_only = argv.flag?("main")
       @deps_only = argv.flag?("deps")
@@ -39,6 +39,8 @@ module MultiRepo
     def run
       ensure_in_work_tree
       ensure_multirepo_enabled
+
+      @operation = @operation.sub(/^git /, "")
       
       success = true
       if @main_only
