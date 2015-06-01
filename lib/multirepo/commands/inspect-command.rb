@@ -28,7 +28,6 @@ module MultiRepo
     
     def run
       ensure_in_work_tree
-      ensure_multirepo_enabled
       
       if @version
         puts MetaFile.new(".").load.version
