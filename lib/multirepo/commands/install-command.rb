@@ -57,7 +57,7 @@ module MultiRepo
 
       table = Terminal::Table.new do |t|
         t.title = "Revision Info"
-        t.add_row ["git-multirepo version", meta_file.version]
+        t.add_row ["Tracked Using", "git-multirepo #{meta_file.version}"]
         t.add_separator
         t.add_row ["Main Repo", commit_info(main_repo.head.commit_id, (main_repo_branch.name rescue nil))]
         t.add_separator
