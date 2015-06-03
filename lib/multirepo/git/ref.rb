@@ -10,28 +10,28 @@ module MultiRepo
     end
     
     def exists?
-      output = GitRunner.run_in_working_dir(@repo.path, "rev-parse --verify --quiet #{@name}", Runner::Verbosity::OUTPUT_NEVER).strip
+      output = GitRunner.run(@repo.path, "rev-parse --verify --quiet #{@name}", Runner::Verbosity::OUTPUT_NEVER).strip
       return output != ""
     end
     
     def commit_id
-      GitRunner.run_in_working_dir(@repo.path, "rev-parse #{@name}", Runner::Verbosity::OUTPUT_NEVER).strip
+      GitRunner.run(@repo.path, "rev-parse #{@name}", Runner::Verbosity::OUTPUT_NEVER).strip
     end
     
     def short_commit_id
-      GitRunner.run_in_working_dir(@repo.path, "rev-parse --short #{@name}", Runner::Verbosity::OUTPUT_NEVER).strip
+      GitRunner.run(@repo.path, "rev-parse --short #{@name}", Runner::Verbosity::OUTPUT_NEVER).strip
     end
     
     def is_merge?
-      lines = GitRunner.run_in_working_dir(@repo.path, "cat-file -p #{@name}", Runner::Verbosity::OUTPUT_NEVER).split("\n")
+      lines = GitRunner.run(@repo.path, "cat-file -p #{@name}", Runner::Verbosity::OUTPUT_NEVER).split("\n")
       parents = lines.grep(/^parent /)
       return parents.count > 1
     end
     
     def can_fast_forward_to?(ref)
       # http://stackoverflow.com/a/2934062/167983
-      rev_parse_output = GitRunner.run_in_working_dir(@repo.path, "rev-parse #{@name}", Runner::Verbosity::OUTPUT_NEVER)
-      merge_base_output = GitRunner.run_in_working_dir(@repo.path, "merge-base \"#{rev_parse_output}\" \"#{ref.name}\"", Runner::Verbosity::OUTPUT_NEVER)
+      rev_parse_output = GitRunner.run(@repo.path, "rev-parse #{@name}", Runner::Verbosity::OUTPUT_NEVER)
+      merge_base_output = GitRunner.run(@repo.path, "merge-base \"#{rev_parse_output}\" \"#{ref.name}\"", Runner::Verbosity::OUTPUT_NEVER)
       return merge_base_output == rev_parse_output
     end
   end
