@@ -10,7 +10,7 @@ module MultiRepo
     end
     
     def url
-      output = GitRunner.run_in_working_dir(@repo.path, "config --get remote.#{@name}.url", Runner::Verbosity::OUTPUT_NEVER).strip
+      output = GitRunner.run(@repo.path, "config --get remote.#{@name}.url", Verbosity::OUTPUT_NEVER).strip
       return output == "" ? nil : output
     end
   end
