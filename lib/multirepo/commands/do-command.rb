@@ -71,7 +71,7 @@ module MultiRepo
 
     def perform_operation(path, operation)
       Console.log_step("Performing operation on '#{path}'")
-      GitRunner.run(path, operation, Runner::Verbosity::OUTPUT_ALWAYS)
+      GitRunner.run_as_system(path, operation)
       GitRunner.last_command_succeeded
     end
     

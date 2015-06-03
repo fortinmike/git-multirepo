@@ -8,12 +8,24 @@ module MultiRepo
     end
     
     def self.run(path, git_command, verbosity)
+      command = build_command(path, git_command)
+      runner_popen(command, verbosity)
+    end
+    
+    def self.run_as_system(path, git_command)
+      command = build_command(path, git_command)
+      runner_system(command)
+    end
+    
+    private
+    
+    def self.build_command(path, git_command)
       if path == "."
         # It is always better to skip -C when running git commands in the
         # current directory (especially in hooks). Doing this prevents
         # any future issues because we automatically fallback to non-"-C" for ".".
         # Fixes bug: https://www.pivotaltracker.com/story/show/94505654
-        return run_internal("#{git_executable} #{git_command}", verbosity)
+        return "#{git_executable} #{git_command}"
       end
       
       full_command = "#{git_executable} -C \"#{path}\" #{git_command}";
@@ -24,14 +36,18 @@ module MultiRepo
         full_command = "sh -c 'unset $(git rev-parse --local-env-vars); #{full_command};'" 
       end
       
-      run_internal(full_command, verbosity)
+      return full_command
     end
     
-    private
-    
-    def self.run_internal(full_command, verbosity)
+    def self.runner_popen(full_command, verbosity)
       result = Runner.run(full_command, verbosity)
       @last_command_succeeded = Runner.last_command_succeeded
+      return result
+    end
+    
+    def self.runner_system(full_command)
+      result = system(full_command)
+      @last_command_succeeded = ($?.exitstatus == 0)
       return result
     end
 

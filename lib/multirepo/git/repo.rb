@@ -50,22 +50,22 @@ module MultiRepo
     # Operations
     
     def fetch
-      GitRunner.run(@path, "fetch --prune --progress", Runner::Verbosity::OUTPUT_ALWAYS)
-      Runner.last_command_succeeded
+      GitRunner.run_as_system(@path, "fetch --prune --progress")
+      GitRunner.last_command_succeeded
     end
     
     def clone(url, branch = nil)
       if branch != nil
-        GitRunner.run(".", "clone #{url} -b #{branch} #{@path} --progress", Runner::Verbosity::OUTPUT_ALWAYS)
+        GitRunner.run_as_system(".", "clone #{url} -b #{branch} #{@path} --progress")
       else
-        GitRunner.run(".", "clone #{url} #{@path} --progress", Runner::Verbosity::OUTPUT_ALWAYS)
+        GitRunner.run_as_system(".", "clone #{url} #{@path} --progress")
       end
-      Runner.last_command_succeeded
+      GitRunner.last_command_succeeded
     end
     
     def checkout(ref_name)
       GitRunner.run(@path, "checkout #{ref_name}", Runner::Verbosity::OUTPUT_ON_ERROR)
-      Runner.last_command_succeeded
+      GitRunner.last_command_succeeded
     end
     
     # Current
