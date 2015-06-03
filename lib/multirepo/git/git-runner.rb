@@ -1,4 +1,6 @@
-require "multirepo/utility/runner"
+require "multirepo/utility/verbosity"
+require "multirepo/utility/popen-runner"
+require "multirepo/utility/system-runner"
 require "multirepo/config"
 
 module MultiRepo
@@ -40,14 +42,12 @@ module MultiRepo
     end
     
     def self.runner_popen(full_command, verbosity)
-      result = Runner.run(full_command, verbosity)
-      @last_command_succeeded = Runner.last_command_succeeded
+      result, @last_command_succeeded = PopenRunner.run(full_command, verbosity)
       return result
     end
     
     def self.runner_system(full_command)
-      result = system(full_command)
-      @last_command_succeeded = ($?.exitstatus == 0)
+      result, @last_command_succeeded = SystemRunner.run(full_command)
       return result
     end
 

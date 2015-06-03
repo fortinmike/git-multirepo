@@ -17,11 +17,11 @@ module MultiRepo
     
     def exists?
       return false unless Dir.exist?("#{@path}/.git")
-      return GitRunner.run(@path, "rev-parse --is-inside-work-tree", Runner::Verbosity::OUTPUT_NEVER).strip == "true"
+      return GitRunner.run(@path, "rev-parse --is-inside-work-tree", Verbosity::OUTPUT_NEVER).strip == "true"
     end
     
     def head_born?
-      result = GitRunner.run(@path, "rev-parse HEAD --", Runner::Verbosity::OUTPUT_NEVER).strip
+      result = GitRunner.run(@path, "rev-parse HEAD --", Verbosity::OUTPUT_NEVER).strip
       return !result.start_with?("fatal: bad revision")
     end
     
@@ -42,7 +42,7 @@ module MultiRepo
     end
     
     def changes
-      output = GitRunner.run(@path, "status --porcelain", Runner::Verbosity::OUTPUT_NEVER)
+      output = GitRunner.run(@path, "status --porcelain", Verbosity::OUTPUT_NEVER)
       lines = output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
       lines.map { |l| Change.new(l) }
     end
@@ -64,7 +64,7 @@ module MultiRepo
     end
     
     def checkout(ref_name)
-      GitRunner.run(@path, "checkout #{ref_name}", Runner::Verbosity::OUTPUT_ON_ERROR)
+      GitRunner.run(@path, "checkout #{ref_name}", Verbosity::OUTPUT_ON_ERROR)
       GitRunner.last_command_succeeded
     end
     
@@ -82,7 +82,7 @@ module MultiRepo
     
     def current_branch
       return nil unless exists? && head_born?
-      name = GitRunner.run(@path, "rev-parse --abbrev-ref HEAD", Runner::Verbosity::OUTPUT_NEVER).strip
+      name = GitRunner.run(@path, "rev-parse --abbrev-ref HEAD", Verbosity::OUTPUT_NEVER).strip
       Branch.new(self, name)
     end
     
@@ -109,7 +109,7 @@ module MultiRepo
     private
     
     def branches_by_removing_prefix(prefix_regex)
-      output = GitRunner.run(@path, "for-each-ref --format='%(refname)'", Runner::Verbosity::OUTPUT_NEVER)
+      output = GitRunner.run(@path, "for-each-ref --format='%(refname)'", Verbosity::OUTPUT_NEVER)
       all_refs = output.strip.split("\n")
 
       # Remove surrounding quotes on Windows
