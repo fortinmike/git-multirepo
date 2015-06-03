@@ -23,7 +23,7 @@ module MultiRepo
     
     def initialize(argv)
       @argv = argv
-      Config.instance.verbose = argv.flag?("verbose") ? true : false
+      Config.instance.verbose |= argv.flag?("verbose") ? true : false
       Config.instance.git_executable = argv.option("git-exe", "git")
       super
     end
