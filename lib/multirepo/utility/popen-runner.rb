@@ -9,7 +9,7 @@ module MultiRepo
       
       lines = []
       last_command_succeeded = false
-      Open3.popen2e(cmd) do |stdin, stdout_and_stderr, thread|
+      Open3.popen2e(cmd) do |_stdin, stdout_and_stderr, thread|
         stdout_and_stderr.each do |line|
           print line if Config.instance.verbose
           lines << line

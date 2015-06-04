@@ -6,26 +6,6 @@
 # versions of RuboCop, may require this file to be generated again.
 
 # Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AlignWith, SupportedStyles, AutoCorrect.
-Lint/EndAlignment:
-  Enabled: false
-
-# Offense count: 1
-Lint/UnreachableCode:
-  Enabled: false
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Lint/UnusedBlockArgument:
-  Enabled: false
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Lint/UnusedMethodArgument:
-  Enabled: false
-
-# Offense count: 1
 Lint/UselessAccessModifier:
   Enabled: false
 

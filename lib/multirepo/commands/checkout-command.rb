@@ -56,7 +56,7 @@ module MultiRepo
         # Checkout first because the current ref might not be multirepo-enabled
         checkout_main_repo_step(main_repo)
         # Only then can we check for dependencies and make sure they are clean
-        ensure_dependencies_clean_step(main_repo)
+        ensure_dependencies_clean_step
       rescue MultiRepoException => e
         Console.log_warning("Restoring working copy to #{initial_revision}")
         main_repo.checkout(initial_revision)
@@ -69,7 +69,7 @@ module MultiRepo
       Performer.perform_main_repo_checkout(main_repo, @ref_name)
     end
     
-    def ensure_dependencies_clean_step(main_repo)
+    def ensure_dependencies_clean_step
       unless Utils.dependencies_clean?(ConfigFile.new(".").load_entries)
         raise MultiRepoException, "Dependencies are not clean!"
       end

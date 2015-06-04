@@ -42,7 +42,7 @@ module MultiRepo
       changed = tracking_files.update
       
       if changed
-        Console.log_substep("Updated tracking files")
+        Console.log_substep(log_message)
       else
         Console.log_substep("Tracking files are already up-to-date")
       end
