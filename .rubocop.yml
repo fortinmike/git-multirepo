@@ -41,3 +41,6 @@ Style/SpaceBeforeBlockBraces:
 
 Style/StringLiterals:
   Enabled: false
+
+Style/TrailingWhitespace:
+  Enabled: false

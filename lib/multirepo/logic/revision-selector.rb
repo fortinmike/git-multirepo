@@ -6,9 +6,9 @@ module MultiRepo
     
     def self.name_for_mode(mode)
       case mode
-      when AS_LOCK; "as-lock"
-      when LATEST; "latest"
-      when EXACT; "exact"
+      when AS_LOCK then "as-lock"
+      when LATEST then "latest"
+      when EXACT then "exact"
       end
     end
   end
@@ -26,9 +26,9 @@ module MultiRepo
     
     def self.revision_for_mode(mode, ref_name, lock_entry)
       case mode
-      when RevisionSelectionMode::AS_LOCK; lock_entry.head
-      when RevisionSelectionMode::LATEST; lock_entry.branch
-      when RevisionSelectionMode::EXACT; ref_name
+      when RevisionSelectionMode::AS_LOCK then lock_entry.head
+      when RevisionSelectionMode::LATEST then lock_entry.branch
+      when RevisionSelectionMode::EXACT then ref_name
       end
     end
   end

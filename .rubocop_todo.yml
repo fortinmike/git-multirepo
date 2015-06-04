@@ -160,11 +160,6 @@ Style/SymbolProc:
 Style/TrailingComma:
   Enabled: false
 
-# Offense count: 355
-# Cop supports --auto-correct.
-Style/TrailingWhitespace:
-  Enabled: false
-
 # Offense count: 1
 Style/UnlessElse:
   Enabled: false
@@ -172,9 +167,4 @@ Style/UnlessElse:
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/UnneededPercentQ:
-  Enabled: false
-
-# Offense count: 14
-# Cop supports --auto-correct.
-Style/WhenThen:
   Enabled: false
