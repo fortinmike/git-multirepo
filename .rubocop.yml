@@ -35,3 +35,9 @@ Style/GuardClause:
 
 Style/RedundantReturn:
   Enabled: false
+
+Style/SpaceBeforeBlockBraces:
+  Enabled: false
+
+Style/StringLiterals:
+  Enabled: false
