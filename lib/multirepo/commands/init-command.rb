@@ -100,14 +100,15 @@ module MultiRepo
         origin_url = repo.remote('origin').url
         current_branch_name = repo.current_branch.name
         
-        if Console.ask_yes_no("Do you want to add '#{repo.path}' as a dependency?\n  [origin: #{origin_url || "NONE"}, branch: #{current_branch_name}]")
-          unless origin_url
-            Console.log_warning("Repo 'origin' remote url is not set; skipping")
-            next
-          end
-          entries.push(ConfigEntry.new(repo))
-          Console.log_substep("Added the repository '#{repo.path}' to the .multirepo file")
+        next unless Console.ask_yes_no("Do you want to add '#{repo.path}' as a dependency?\n  [origin: #{origin_url || 'NONE'}, branch: #{current_branch_name}]")
+        
+        unless origin_url
+          Console.log_warning("Repo 'origin' remote url is not set; skipping")
+          next
         end
+        
+        entries.push(ConfigEntry.new(repo))
+        Console.log_substep("Added the repository '#{repo.path}' to the .multirepo file")
       end
       return entries
     end

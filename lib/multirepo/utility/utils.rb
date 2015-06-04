@@ -8,12 +8,12 @@ module MultiRepo
       File.join(gem_path, "resources/#{resource_name}")
     end
     
-    def self.is_multirepo_enabled(path)
+    def self.multirepo_enabled?(path)
       File.exist?(File.join(path, ".multirepo"))
     end
 
-    def self.is_multirepo_tracked(path)
-      is_multirepo_enabled(path) && File.exist?(File.join(path, ".multirepo.lock"))
+    def self.multirepo_tracked?(path)
+      multirepo_enabled?(path) && File.exist?(File.join(path, ".multirepo.lock"))
     end
     
     def self.install_hook(name, path)
@@ -25,7 +25,7 @@ module MultiRepo
     
     def self.sibling_repos
       sibling_directories = Dir['../*/']
-      sibling_repos = sibling_directories.map{ |d| Repo.new(d) }.select{ |r| r.exists? }
+      sibling_repos = sibling_directories.map{ |d| Repo.new(d) }.select(&:exists?)
       sibling_repos.delete_if{ |r| Pathname.new(r.path).realpath == Pathname.new(".").realpath }
     end
     
@@ -46,7 +46,7 @@ module MultiRepo
         Console.log_warning("Dependency '#{e.repo.path}' contains uncommitted changes") unless dependency_clean
       end
       
-      fail MultiRepoException, "Some dependencies are not present on this machine." +
+      fail MultiRepoException, "Some dependencies are not present on this machine." \
         " Run \"multi install\" to clone missing dependencies." if missing
       
       return clean
@@ -84,11 +84,11 @@ module MultiRepo
     end
     
     def self.append_if_missing(path, pattern, string_to_append)
-      unless File.exist?(path)
-        File.open(path, 'w') { |f| f.puts(string_to_append) }
-      else
+      if File.exist?(path)
         string_located = File.readlines(path).grep(pattern).any?
         File.open(path, 'a') { |f| f.puts(string_to_append) } unless string_located
+      else
+        File.open(path, 'w') { |f| f.puts(string_to_append) }
       end
     end
   end

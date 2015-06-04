@@ -32,7 +32,7 @@ module MultiRepo
       if @version
         puts MetaFile.new(".").load.version
       elsif @tracked
-        puts Utils.is_multirepo_tracked(".").to_s
+        puts Utils.multirepo_tracked?(".").to_s
       end
     end
   end

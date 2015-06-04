@@ -84,7 +84,7 @@ module MultiRepo
     end
     
     def proceed_if_merge_commit?(main_repo, ref_name, mode)
-      return true unless main_repo.ref(ref_name).is_merge?
+      return true unless main_repo.ref(ref_name).merge_commit?
       
       case mode
       when RevisionSelectionMode::AS_LOCK

@@ -66,7 +66,7 @@ module MultiRepo
       branch.create unless branch.exists?
       branch.checkout
       
-      if Utils.is_multirepo_enabled(repo.path)
+      if Utils.multirepo_enabled?(repo.path)
         Console.log_info("Updating and committing tracking files")
         tracking_files = TrackingFiles.new(repo.path)
         tracking_files.update

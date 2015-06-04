@@ -82,7 +82,7 @@ module MultiRepo
     def install_dependencies_step
       # Read config entries as-is on disk, without prior checkout
       config_entries = ConfigFile.new(".").load_entries
-      Console.log_substep("Installing #{config_entries.count} dependencies...");
+      Console.log_substep("Installing #{config_entries.count} dependencies...")
       
       # Clone or fetch all configured dependencies to make sure nothing is missing locally
       Performer.dependencies.each { |d| clone_or_fetch(d) }

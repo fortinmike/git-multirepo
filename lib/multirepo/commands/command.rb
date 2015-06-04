@@ -63,7 +63,7 @@ module MultiRepo
     end
     
     def multirepo_enabled_dependencies
-      ConfigFile.new(".").load_entries.select { |e| Utils.is_multirepo_enabled(e.repo.path) }
+      ConfigFile.new(".").load_entries.select { |e| Utils.multirepo_enabled?(e.repo.path) }
     end
 
     def validate_only_one_flag(*flags)
@@ -77,11 +77,11 @@ module MultiRepo
     end
     
     def ensure_multirepo_enabled
-      fail MultiRepoException, "multirepo is not initialized in this repository." unless Utils.is_multirepo_enabled(".")
+      fail MultiRepoException, "multirepo is not initialized in this repository." unless Utils.multirepo_enabled?(".")
     end
 
     def ensure_multirepo_tracked
-      fail MultiRepoException, "Revision is not tracked by multirepo." unless Utils.is_multirepo_tracked(".")
+      fail MultiRepoException, "Revision is not tracked by multirepo." unless Utils.multirepo_tracked?(".")
       
       lock_file_valid = LockFile.new(".").validate!
       fail MultiRepoException, "Revision is multirepo-enabled but contains a corrupted lock file!" unless lock_file_valid

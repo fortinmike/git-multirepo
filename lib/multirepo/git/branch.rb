@@ -5,7 +5,7 @@ module MultiRepo
   class Branch < Ref
     def exists?
       lines = GitRunner.run(@repo.path, "branch", Verbosity::OUTPUT_NEVER).split("\n")
-      branch_names = lines.map { |line| line.tr("* ", "")}
+      branch_names = lines.map { |line| line.tr("* ", "") }
       branch_names.include?(@name)
     end
     

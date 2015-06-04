@@ -13,39 +13,13 @@ Metrics/CyclomaticComplexity:
 Metrics/PerceivedComplexity:
   Max: 8
 
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/BlockComments:
-  Enabled: false
-
 # Offense count: 29
 # Configuration parameters: Exclude.
 Style/FileName:
   Enabled: false
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: Width.
-Style/IndentationWidth:
-  Enabled: false
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/LineEndConcatenation:
-  Enabled: false
-
-# Offense count: 1
-# Configuration parameters: EnforcedStyle, MinBodyLength, SupportedStyles.
-Style/Next:
-  Enabled: false
-
 # Offense count: 2
 Style/OpMethod:
-  Enabled: false
-
-# Offense count: 3
-# Configuration parameters: NamePrefix, NamePrefixBlacklist.
-Style/PredicateName:
   Enabled: false
 
 # Offense count: 1
@@ -53,52 +27,13 @@ Style/PredicateName:
 Style/RedundantSelf:
   Enabled: false
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
-Style/RegexpLiteral:
-  Enabled: false
-
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: AllowAsExpressionSeparator.
-Style/Semicolon:
-  Enabled: false
-
 # Offense count: 1
 # Configuration parameters: Methods.
 Style/SingleLineBlockParams:
-  Enabled: false
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
-Style/SpaceInsideBlockBraces:
-  Enabled: false
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/StringLiteralsInInterpolation:
-  Enabled: false
-
-# Offense count: 5
-# Cop supports --auto-correct.
-# Configuration parameters: IgnoredMethods.
-Style/SymbolProc:
   Enabled: false
 
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyleForMultiline, SupportedStyles.
 Style/TrailingComma:
-  Enabled: false
-
-# Offense count: 1
-Style/UnlessElse:
-  Enabled: false
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/UnneededPercentQ:
   Enabled: false

@@ -19,7 +19,7 @@ module MultiRepo
       Console.log_substep(message || "Checked out main repo #{ref_name}")
       
       # After checkout, make sure we're working with a multirepo-enabled ref
-      unless Utils.is_multirepo_tracked(".")
+      unless Utils.multirepo_tracked?(".")
         fail MultiRepoException, "Revision #{ref_name} is not tracked by multirepo!"
       end
     end

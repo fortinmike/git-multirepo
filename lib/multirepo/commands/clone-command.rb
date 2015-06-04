@@ -51,7 +51,7 @@ module MultiRepo
       Console.log_substep("Checked out main repo #{@ref_name}")
       
       # Make sure the ref we just checked out is tracked by multirepo
-      unless Utils.is_multirepo_tracked(main_repo_path)
+      unless Utils.multirepo_tracked?(main_repo_path)
         fail MultiRepoException, "Ref #{@ref_name} is not tracked by multirepo"
       end
       

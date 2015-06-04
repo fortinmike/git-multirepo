@@ -5,6 +5,7 @@ inherit_from: .rubocop_todo.yml
 AllCops:
   DisplayCopNames: true
   Exclude:
+    - 'spec/spec_helper.rb'
     - 'spec/fixtures/**/*'
 
 # TO REMOVE!
@@ -58,4 +59,10 @@ Style/HashSyntax:
   Enabled: false
 
 Style/MultilineOperationIndentation:
+  Enabled: false
+
+Style/Semicolon:
+  AllowAsExpressionSeparator: true
+
+Style/IndentationWidth:
   Enabled: false
