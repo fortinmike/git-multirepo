@@ -32,7 +32,7 @@ module MultiRepo
       unique_paths = descendants.map(&:path).uniq
       unique_nodes = unique_paths.collect do |path|
         nodes_for_path = descendants.select { |d| d.path == path }
-        next nodes_for_path.sort(&:depth).first
+        next nodes_for_path.sort_by(&:depth).first
       end
       
       return unique_nodes.sort_by(&:depth).reverse

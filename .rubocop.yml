@@ -71,3 +71,9 @@ Metrics/CyclomaticComplexity:
 
 Metrics/PerceivedComplexity:
   Max: 8
+
+Style/FileName:
+  Enabled: false
+
+Style/SpecialGlobalVars:
+  Enabled: false
