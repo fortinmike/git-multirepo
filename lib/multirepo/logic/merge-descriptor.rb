@@ -57,8 +57,8 @@ module MultiRepo
     def determine_merge_state(repo, their_ref)
       return TheirState::NON_EXISTENT unless their_ref.exists?
       
-      remote_branch = repo.remote_branches.find{ |b| b.name == their_ref.name }
-      local_branch = repo.local_branches.find{ |b| b.name == their_ref.name }
+      remote_branch = repo.remote_branches.find { |b| b.name == their_ref.name }
+      local_branch = repo.local_branches.find { |b| b.name == their_ref.name }
       
       # If no local branch nor remote branch exist for their_ref, this is an exact ref
       return TheirState::EXACT_REF unless remote_branch || local_branch
