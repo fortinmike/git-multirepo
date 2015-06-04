@@ -74,7 +74,6 @@ module MultiRepo
     
     def merge_core(main_repo, initial_revision, mode)
       config_file = ConfigFile.new(".")
-      lock_file = LockFile.new(".")
       
       # Ensure the main repo is clean
       fail MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.clean?
@@ -163,7 +162,7 @@ module MultiRepo
     
     def ensure_dependencies_match(our_dependencies, their_dependencies)
       our_dependencies.zip(their_dependencies).each do |our_dependency, their_dependency|
-        if their_dependency == nil || their_dependency.config_entry.id != our_dependency.config_entry.id
+        if their_dependency.nil? || their_dependency.config_entry.id != our_dependency.config_entry.id
           fail MultiRepoException, "Dependencies differ, please merge manually"
         end
       end

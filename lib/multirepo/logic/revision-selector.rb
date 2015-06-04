@@ -15,9 +15,9 @@ module MultiRepo
   
   class RevisionSelector
     def self.mode_for_args(checkout_latest, checkout_exact)
-      if checkout_latest then
+      if checkout_latest
         RevisionSelectionMode::LATEST
-      elsif checkout_exact then
+      elsif checkout_exact
         RevisionSelectionMode::EXACT
       else
         RevisionSelectionMode::AS_LOCK

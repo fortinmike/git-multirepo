@@ -66,7 +66,7 @@ module MultiRepo
     
     def ==(object)
       object.class == self.class &&
-      object.path == @path
+        object.path == @path
     end
   end
 end

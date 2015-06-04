@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = MultiRepo::VERSION
   spec.authors       = ["Michaël Fortin"]
   spec.email         = ["fortinmike@irradiated.net"]
-  spec.summary       = %q{Track multiple Git repositories side-by-side}
+  spec.summary       = %q(Track multiple Git repositories side-by-side)
   spec.description   = MultiRepo::DESCRIPTION
   spec.homepage      = "https://github.com/fortinmike/git-multirepo"
   spec.license       = "MIT"

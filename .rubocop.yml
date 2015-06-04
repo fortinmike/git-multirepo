@@ -44,3 +44,18 @@ Style/StringLiterals:
 
 Style/TrailingWhitespace:
   Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Style/ElseAlignment:
+  Enabled: false
+
+Style/HashSyntax:
+  Enabled: false
+
+Style/MultilineOperationIndentation:
+  Enabled: false

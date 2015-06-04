@@ -29,7 +29,7 @@ module MultiRepo
     
     def self.ask_yes_no(message)
       answered = false
-      while !answered
+      until answered
         print_prefix
         print message
         print " (y/n) "

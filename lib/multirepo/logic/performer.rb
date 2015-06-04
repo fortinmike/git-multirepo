@@ -32,11 +32,9 @@ module MultiRepo
       dependency_ordered_nodes = Node.new(".").ordered_descendants
       
       return dependency_ordered_nodes.map do |node|
-        pair = dependencies.find { |d| d.config_entry.path == node.path }
+        dependencies.find { |d| d.config_entry.path == node.path }
       end
     end
-    
-    private
     
     def self.build_dependencies(config_entries, lock_entries)
       lock_entries.map do |lock_entry|

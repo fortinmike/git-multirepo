@@ -19,8 +19,6 @@ module MultiRepo
       runner_system(command)
     end
     
-    private
-    
     def self.build_command(path, git_command)
       if path == "."
         # It is always better to skip -C when running git commands in the

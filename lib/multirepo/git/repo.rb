@@ -55,7 +55,7 @@ module MultiRepo
     end
     
     def clone(url, branch = nil)
-      if branch != nil
+      if !branch.nil?
         GitRunner.run_as_system(".", "clone #{url} -b #{branch} #{@path} --progress")
       else
         GitRunner.run_as_system(".", "clone #{url} #{@path} --progress")

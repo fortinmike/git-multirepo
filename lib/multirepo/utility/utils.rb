@@ -47,7 +47,7 @@ module MultiRepo
       end
       
       fail MultiRepoException, "Some dependencies are not present on this machine." +
-                                " Run \"multi install\" to clone missing dependencies." if missing
+        " Run \"multi install\" to clone missing dependencies." if missing
       
       return clean
     end
@@ -69,17 +69,17 @@ module MultiRepo
     
     def self.reveal_in_default_file_browser(unix_path)
       if OS.osx?
-        system %{open "#{unix_path}"}
+        system %(open "#{unix_path}")
       elsif OS.windows?
-        system %{explorer "#{Utils.convert_to_windows_path(unix_path)}"}
+        system %(explorer "#{Utils.convert_to_windows_path(unix_path)}")
       end
     end
     
     def self.open_in_default_app(unix_path)
       if OS.osx?
-        system %{open "#{unix_path}"}
+        system %(open "#{unix_path}")
       elsif OS.windows?
-        system %{cmd /c "start C:\\#{Utils.convert_to_windows_path(unix_path)}"}
+        system %(cmd /c "start C:\\#{Utils.convert_to_windows_path(unix_path)}")
       end
     end
     
