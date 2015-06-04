@@ -26,16 +26,6 @@ Metrics/ClassLength:
 Metrics/CyclomaticComplexity:
   Max: 10
 
-# Offense count: 177
-# Configuration parameters: AllowURI, URISchemes.
-Metrics/LineLength:
-  Max: 190
-
-# Offense count: 20
-# Configuration parameters: CountComments.
-Metrics/MethodLength:
-  Max: 29
-
 # Offense count: 1
 Metrics/PerceivedComplexity:
   Max: 8

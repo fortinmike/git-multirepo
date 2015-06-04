@@ -17,3 +17,9 @@ Style/RescueModifier:
 
 Lint/EndAlignment:
   Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/LineLength:
+  Enabled: false
