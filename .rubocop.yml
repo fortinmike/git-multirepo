@@ -1,17 +1,13 @@
 # This is the configuration used to check the rubocop source code.
 
-inherit_from: .rubocop_todo.yml
-
 AllCops:
   DisplayCopNames: true
   Exclude:
+    - 'resources/*'
+    - 'pkg/*'
+    - 'docs/*'
     - 'spec/spec_helper.rb'
     - 'spec/fixtures/**/*'
-
-# TO REMOVE!
-Lint/UnreachableCode:
-  Enabled: false
-# END TO REMOVE!
 
 Style/RescueModifier:
   Enabled: false
