@@ -23,3 +23,15 @@ Metrics/MethodLength:
 
 Metrics/LineLength:
   Enabled: false
+
+Style/EachWithObject:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/RedundantReturn:
+  Enabled: false

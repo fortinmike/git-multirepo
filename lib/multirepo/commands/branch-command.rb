@@ -73,10 +73,10 @@ module MultiRepo
         tracking_files.commit("[multirepo] Post-branch tracking files update")
       end
       
-      if @remote_tracking
-        Console.log_info("Pushing #{@branch_name} to origin/#{@branch_name}")
-        repo.branch(@branch_name).push
-      end
+      return unless @remote_tracking
+      
+      Console.log_info("Pushing #{@branch_name} to origin/#{@branch_name}")
+      repo.branch(@branch_name).push
     end
   end
 end

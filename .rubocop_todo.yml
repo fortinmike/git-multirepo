@@ -40,14 +40,6 @@ Performance/Detect:
 Style/BlockComments:
   Enabled: false
 
-# Offense count: 44
-Style/Documentation:
-  Enabled: false
-
-# Offense count: 1
-Style/EachWithObject:
-  Enabled: false
-
 # Offense count: 2
 # Cop supports --auto-correct.
 Style/ElseAlignment:
@@ -56,11 +48,6 @@ Style/ElseAlignment:
 # Offense count: 29
 # Configuration parameters: Exclude.
 Style/FileName:
-  Enabled: false
-
-# Offense count: 13
-# Configuration parameters: MinBodyLength.
-Style/GuardClause:
   Enabled: false
 
 # Offense count: 2
@@ -125,12 +112,6 @@ Style/PercentLiteralDelimiters:
 # Offense count: 3
 # Configuration parameters: NamePrefix, NamePrefixBlacklist.
 Style/PredicateName:
-  Enabled: false
-
-# Offense count: 32
-# Cop supports --auto-correct.
-# Configuration parameters: AllowMultipleReturnValues.
-Style/RedundantReturn:
   Enabled: false
 
 # Offense count: 1
