@@ -22,10 +22,10 @@ module MultiRepo
       @url = repo.exists? ? repo.remote('origin').url : nil
     end
     
-    def ==(entry)
-      entry_path = Pathname.new(entry.path)
-      self_path = Pathname.new(self.path)
-      entry_path.exist? && self_path.exist? && entry_path.realpath == self_path.realpath
+    def ==(other)
+      other_path = Pathname.new(other.path)
+      self_path = Pathname.new(path)
+      other_path.exist? && self_path.exist? && other_path.realpath == self_path.realpath
     end
     
     def repo

@@ -66,3 +66,6 @@ Style/Semicolon:
 
 Style/IndentationWidth:
   Enabled: false
+
+Style/SingleLineBlockParams:
+  Enabled: false

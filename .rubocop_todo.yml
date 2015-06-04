@@ -17,23 +17,3 @@ Metrics/PerceivedComplexity:
 # Configuration parameters: Exclude.
 Style/FileName:
   Enabled: false
-
-# Offense count: 2
-Style/OpMethod:
-  Enabled: false
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/RedundantSelf:
-  Enabled: false
-
-# Offense count: 1
-# Configuration parameters: Methods.
-Style/SingleLineBlockParams:
-  Enabled: false
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleForMultiline, SupportedStyles.
-Style/TrailingComma:
-  Enabled: false
