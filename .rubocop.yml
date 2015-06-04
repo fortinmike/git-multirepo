@@ -6,3 +6,6 @@ AllCops:
   DisplayCopNames: true
   Exclude:
     - 'spec/fixtures/**/*'
+
+Style/RescueModifier:
+  Enabled: false
