@@ -39,12 +39,12 @@ module MultiRepo
       main_repo = Repo.new(".")
       
       # Ensure the main repo is clean
-      raise MultiRepoException, "Main repo is not clean; multi branch aborted" unless main_repo.clean?
+      fail MultiRepoException, "Main repo is not clean; multi branch aborted" unless main_repo.clean?
       
       # Ensure dependencies are clean
       config_entries = ConfigFile.new(".").load_entries
       unless Utils.dependencies_clean?(config_entries)
-        raise MultiRepoException, "Dependencies are not clean; multi branch aborted"
+        fail MultiRepoException, "Dependencies are not clean; multi branch aborted"
       end
       
       # Branch dependencies

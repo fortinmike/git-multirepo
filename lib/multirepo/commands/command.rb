@@ -18,7 +18,7 @@ module MultiRepo
         Console.log_error(exception.message)
         exit 1
       end
-      raise exception
+      fail exception
     end
     
     def initialize(argv)
@@ -72,19 +72,19 @@ module MultiRepo
     
     def ensure_in_work_tree
       repo = Repo.new(".")
-      raise MultiRepoException, "Not a git repository" unless repo.exists?
-      raise MultiRepoException, "HEAD is unborn (you must perform at least one commit)" unless repo.head_born?
+      fail MultiRepoException, "Not a git repository" unless repo.exists?
+      fail MultiRepoException, "HEAD is unborn (you must perform at least one commit)" unless repo.head_born?
     end
     
     def ensure_multirepo_enabled
-      raise MultiRepoException, "multirepo is not initialized in this repository." unless Utils.is_multirepo_enabled(".")
+      fail MultiRepoException, "multirepo is not initialized in this repository." unless Utils.is_multirepo_enabled(".")
     end
 
     def ensure_multirepo_tracked
-      raise MultiRepoException, "Revision is not tracked by multirepo." unless Utils.is_multirepo_tracked(".")
+      fail MultiRepoException, "Revision is not tracked by multirepo." unless Utils.is_multirepo_tracked(".")
       
       lock_file_valid = LockFile.new(".").validate!
-      raise MultiRepoException, "Revision is multirepo-enabled but contains a corrupted lock file!" unless lock_file_valid
+      fail MultiRepoException, "Revision is multirepo-enabled but contains a corrupted lock file!" unless lock_file_valid
     end
   end
 end

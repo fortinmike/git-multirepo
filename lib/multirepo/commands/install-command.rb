@@ -127,13 +127,13 @@ module MultiRepo
     
     def fetch_repo(dependency)
       unless dependency.config_entry.repo.fetch
-        raise MultiRepoException, "Could not fetch from remote #{dependency.config_entry.repo.remote('origin').url}"
+        fail MultiRepoException, "Could not fetch from remote #{dependency.config_entry.repo.remote('origin').url}"
       end
     end
     
     def clone_repo(dependency)
       unless dependency.config_entry.repo.clone(dependency.config_entry.url, dependency.lock_entry.branch)
-        raise MultiRepoException, "Could not clone remote #{dependency.config_entry.url} with branch #{dependency.config_entry.branch}"
+        fail MultiRepoException, "Could not clone remote #{dependency.config_entry.url} with branch #{dependency.config_entry.branch}"
       end
     end
     
@@ -141,7 +141,7 @@ module MultiRepo
     
     def check_repo_validity(dependency)
       unless dependency.config_entry.repo.remote("origin").url == dependency.config_entry.url
-        raise MultiRepoException, "'#{dependency.config_entry.path}' origin URL (#{dependency.config_entry.repo.remote('origin').url}) does not match entry (#{dependency.config_entry.url})!"
+        fail MultiRepoException, "'#{dependency.config_entry.path}' origin URL (#{dependency.config_entry.repo.remote('origin').url}) does not match entry (#{dependency.config_entry.url})!"
       end
     end
   end

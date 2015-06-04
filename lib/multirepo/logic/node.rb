@@ -58,7 +58,7 @@ module MultiRepo
             description = "itself" if visited.count == 1
             Console.log_warning("'#{n.path}' depends on #{description}")
           end
-          raise MultiRepoException, "Dependency cycles are not supported by multirepo."
+          fail MultiRepoException, "Dependency cycles are not supported by multirepo."
         end
         parent = parent.parent # Will eventually be nil (root node), which will break out of the loop
       end

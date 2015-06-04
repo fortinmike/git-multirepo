@@ -46,7 +46,7 @@ module MultiRepo
         Console.log_warning("Dependency '#{e.repo.path}' contains uncommitted changes") unless dependency_clean
       end
       
-      raise MultiRepoException, "Some dependencies are not present on this machine." +
+      fail MultiRepoException, "Some dependencies are not present on this machine." +
                                 " Run \"multi install\" to clone missing dependencies." if missing
       
       return clean

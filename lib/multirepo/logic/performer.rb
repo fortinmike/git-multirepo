@@ -8,19 +8,19 @@ module MultiRepo
     def self.perform_main_repo_checkout(main_repo, ref_name, message = nil)
       # Make sure the main repo is clean before attempting a checkout
       unless main_repo.clean?
-        raise MultiRepoException, "Can't checkout #{ref_name} because the main repo contains uncommitted changes"
+        fail MultiRepoException, "Can't checkout #{ref_name} because the main repo contains uncommitted changes"
       end
       
       # Checkout the specified ref
       unless main_repo.checkout(ref_name)
-        raise MultiRepoException, "Couldn't perform checkout of main repo #{ref_name}!"
+        fail MultiRepoException, "Couldn't perform checkout of main repo #{ref_name}!"
       end
       
       Console.log_substep(message || "Checked out main repo #{ref_name}")
       
       # After checkout, make sure we're working with a multirepo-enabled ref
       unless Utils.is_multirepo_tracked(".")
-        raise MultiRepoException, "Revision #{ref_name} is not tracked by multirepo!"
+        fail MultiRepoException, "Revision #{ref_name} is not tracked by multirepo!"
       end
     end
     

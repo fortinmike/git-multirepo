@@ -42,7 +42,7 @@ module MultiRepo
       main_repo = Repo.new(".")
       
       unless proceed_if_merge_commit?(main_repo, @ref_name, mode)
-        raise MultiRepoException, "Aborting checkout"
+        fail MultiRepoException, "Aborting checkout"
       end
       
       checkout_core(main_repo, mode)
@@ -71,7 +71,7 @@ module MultiRepo
     
     def ensure_dependencies_clean_step
       unless Utils.dependencies_clean?(ConfigFile.new(".").load_entries)
-        raise MultiRepoException, "Dependencies are not clean!"
+        fail MultiRepoException, "Dependencies are not clean!"
       end
     end
     
@@ -113,7 +113,7 @@ module MultiRepo
       if config_entry.repo.checkout(revision)
         Console.log_substep("Checked out #{dependency_name} '#{revision}'")
       else
-        raise MultiRepoException, "Couldn't check out the appropriate version of dependency #{dependency_name}"
+        fail MultiRepoException, "Couldn't check out the appropriate version of dependency #{dependency_name}"
       end
     end
   end

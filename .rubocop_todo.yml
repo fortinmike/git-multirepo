@@ -131,12 +131,6 @@ Style/RegexpLiteral:
 Style/Semicolon:
   Enabled: false
 
-# Offense count: 44
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/SignalException:
-  Enabled: false
-
 # Offense count: 1
 # Configuration parameters: Methods.
 Style/SingleLineBlockParams:

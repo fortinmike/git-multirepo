@@ -37,11 +37,11 @@ module MultiRepo
     def full_initialize_step
       if ConfigFile.new(".").exists?
         reinitialize = Console.ask_yes_no(".multirepo file already exists. Reinitialize?")
-        raise MultiRepoException, "Initialization aborted" unless reinitialize
+        fail MultiRepoException, "Initialization aborted" unless reinitialize
       end
       
       unless add_sibling_repos_step
-        raise MultiRepoException, "There are no sibling repositories to track as dependencies. Initialization aborted."
+        fail MultiRepoException, "There are no sibling repositories to track as dependencies. Initialization aborted."
       end
 
       initialize_extras_step
@@ -56,7 +56,7 @@ module MultiRepo
       valid_repos = find_valid_repos(sibling_repos)
       entries = create_entries(valid_repos)
       
-      raise MultiRepoException, "No sibling repositories were added as dependencies; init aborted" unless entries.any?
+      fail MultiRepoException, "No sibling repositories were added as dependencies; init aborted" unless entries.any?
       
       ConfigFile.new(".").save_entries(entries)
       return true
@@ -113,8 +113,8 @@ module MultiRepo
     end
     
     def check_repo_exists
-      raise MultiRepoException, "There is no folder at path '#{@repo.path}'" unless Dir.exist?(@repo.path)
-      raise MultiRepoException, "'#{@repo.path}' is not a repository" unless @repo.exists?
+      fail MultiRepoException, "There is no folder at path '#{@repo.path}'" unless Dir.exist?(@repo.path)
+      fail MultiRepoException, "'#{@repo.path}' is not a repository" unless @repo.exists?
     end
   end
 end

@@ -80,14 +80,14 @@ module MultiRepo
     def confirm_main_repo_operation
       unless main_repo_clean?
         Console.log_warning("Main repo contains uncommitted changes")
-        raise MultiRepoException, "Aborted" unless Console.ask_yes_no("Proceed anyway?")
+        fail MultiRepoException, "Aborted" unless Console.ask_yes_no("Proceed anyway?")
       end
     end
     
     def confirm_dependencies_operation
       unless dependencies_clean?
         Console.log_warning("Some dependencies contain uncommitted changes")
-        raise MultiRepoException, "Aborted" unless Console.ask_yes_no("Proceed anyway?")
+        fail MultiRepoException, "Aborted" unless Console.ask_yes_no("Proceed anyway?")
       end
     end
     
