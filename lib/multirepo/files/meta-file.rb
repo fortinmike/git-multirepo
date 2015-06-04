@@ -30,7 +30,7 @@ module MultiRepo
     end
         
     def load
-      Psych.load(file)
+      Psych.load(File.read(file))
     end
     
     def update

@@ -16,14 +16,14 @@ module MultiRepo
     def self.report_error(exception)
       if exception.instance_of?(MultiRepoException)
         Console.log_error(exception.message)
-        return
+        exit 1
       end
       raise exception
     end
     
     def initialize(argv)
       @argv = argv
-      Config.instance.verbose = argv.flag?("verbose") ? true : false
+      Config.instance.verbose |= argv.flag?("verbose") ? true : false
       Config.instance.git_executable = argv.option("git-exe", "git")
       super
     end

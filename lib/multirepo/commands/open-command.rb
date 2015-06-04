@@ -10,8 +10,9 @@ module MultiRepo
 
     def self.options
       [
-        ['[--main]', 'Open the main repository.'],
         ['[--all]', 'Open the main repository and all dependencies.'],
+        ['[--main]', 'Open the main repository.'],
+        ['[--deps]', 'Open dependencies.']
       ].concat(super)
     end
     

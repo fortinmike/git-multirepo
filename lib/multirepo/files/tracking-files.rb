@@ -18,20 +18,20 @@ module MultiRepo
     end
     
     def stage
-      GitRunner.run_in_working_dir(@path, "add --force -- #{files_pathspec}", Runner::Verbosity::OUTPUT_ON_ERROR)
+      GitRunner.run(@path, "add --force -- #{files_pathspec}", Verbosity::OUTPUT_ON_ERROR)
     end
     
     def commit(message)
       stage
       
-      output = GitRunner.run_in_working_dir(@path, "ls-files --modified --others -- #{files_pathspec}", Runner::Verbosity::OUTPUT_NEVER)
+      output = GitRunner.run(@path, "ls-files --modified --others -- #{files_pathspec}", Verbosity::OUTPUT_NEVER)
       files_are_untracked_or_modified = output.strip != ""
       
-      output = GitRunner.run_in_working_dir(@path, "diff --name-only --cached -- #{files_pathspec}", Runner::Verbosity::OUTPUT_NEVER)
+      output = GitRunner.run(@path, "diff --name-only --cached -- #{files_pathspec}", Verbosity::OUTPUT_NEVER)
       files_are_staged = output.strip != ""
       
       must_commit = files_are_untracked_or_modified || files_are_staged
-      GitRunner.run_in_working_dir(@path, "commit --no-verify -m \"#{message}\" --only -- #{files_pathspec}", Runner::Verbosity::OUTPUT_ON_ERROR) if must_commit
+      GitRunner.run(@path, "commit --no-verify -m \"#{message}\" --only -- #{files_pathspec}", Verbosity::OUTPUT_ON_ERROR) if must_commit
       
       return must_commit
     end
