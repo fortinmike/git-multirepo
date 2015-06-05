@@ -34,13 +34,13 @@ module MultiRepo
       ensure_in_work_tree
       ensure_multirepo_enabled
       
-      if @all
+      if @main_only
+        open_main
+      elsif @deps_only
         open_dependencies
-        open_main
-      elsif @main_only
-        open_main
       else
         open_dependencies
+        open_main
       end
     end
 
