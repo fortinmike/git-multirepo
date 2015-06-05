@@ -35,20 +35,20 @@ module MultiRepo
     
     def merge_description
       case @state
-      when TheirState::NON_EXISTENT; "No revision named #{@their_revision}".red
+      when TheirState::NON_EXISTENT then "No revision named #{@their_revision}".red
       else; "Merge '#{@state == TheirState::EXACT_REF ? @short_commit_id : @their_revision}' into '#{@our_revision}'"
       end
     end
 
     def upstream_description
       case @state
-      when TheirState::NON_EXISTENT; "--"
-      when TheirState::EXACT_REF; "Exact ref".yellow
-      when TheirState::LOCAL_NO_UPSTREAM; "Not remote-tracking".yellow
-      when TheirState::UPSTREAM_NO_LOCAL; "Branch is upstream".green
-      when TheirState::LOCAL_UP_TO_DATE; "Local up-to-date with upstream".green
-      when TheirState::LOCAL_OUTDATED; "Local outdated compared to upstream".yellow
-      when TheirState::LOCAL_UPSTREAM_DIVERGED; "Local and upstream have diverged!".red
+      when TheirState::NON_EXISTENT then "--"
+      when TheirState::EXACT_REF then "Exact ref".yellow
+      when TheirState::LOCAL_NO_UPSTREAM then "Not remote-tracking".yellow
+      when TheirState::UPSTREAM_NO_LOCAL then "Branch is upstream".green
+      when TheirState::LOCAL_UP_TO_DATE then "Local up-to-date with upstream".green
+      when TheirState::LOCAL_OUTDATED then "Local outdated compared to upstream".yellow
+      when TheirState::LOCAL_UPSTREAM_DIVERGED then "Local and upstream have diverged!".red
       end
     end
     
@@ -57,8 +57,8 @@ module MultiRepo
     def determine_merge_state(repo, their_ref)
       return TheirState::NON_EXISTENT unless their_ref.exists?
       
-      remote_branch = repo.remote_branches.select{ |b| b.name == their_ref.name }.first
-      local_branch = repo.local_branches.select{ |b| b.name == their_ref.name }.first
+      remote_branch = repo.remote_branches.find { |b| b.name == their_ref.name }
+      local_branch = repo.local_branches.find { |b| b.name == their_ref.name }
       
       # If no local branch nor remote branch exist for their_ref, this is an exact ref
       return TheirState::EXACT_REF unless remote_branch || local_branch

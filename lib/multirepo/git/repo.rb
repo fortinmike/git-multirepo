@@ -34,16 +34,16 @@ module MultiRepo
     end
     
     def local_branches
-      branches_by_removing_prefix(/^refs\/heads\//)
+      branches_by_removing_prefix(%r{^refs/heads/})
     end
     
     def remote_branches
-      branches_by_removing_prefix(/^refs\/remotes\//)
+      branches_by_removing_prefix(%r{^refs/remotes/})
     end
     
     def changes
       output = GitRunner.run(@path, "status --porcelain", Verbosity::OUTPUT_NEVER)
-      lines = output.split("\n").each{ |f| f.strip }.delete_if{ |f| f == "" }
+      lines = output.split("\n").each(&:strip).delete_if{ |f| f == "" }
       lines.map { |l| Change.new(l) }
     end
     
@@ -55,7 +55,7 @@ module MultiRepo
     end
     
     def clone(url, branch = nil)
-      if branch != nil
+      if !branch.nil?
         GitRunner.run_as_system(".", "clone #{url} -b #{branch} #{@path} --progress")
       else
         GitRunner.run_as_system(".", "clone #{url} #{@path} --progress")
@@ -116,7 +116,7 @@ module MultiRepo
       all_refs = all_refs.map { |l| l.sub(/^\'/, "").sub(/\'$/, "") }
 
       full_names = all_refs.select { |r| r =~ prefix_regex }
-      names = full_names.map{ |f| f.sub(prefix_regex, "") }.delete_if{ |n| n =~ /HEAD$/}
+      names = full_names.map{ |f| f.sub(prefix_regex, "") }.delete_if{ |n| n =~ /HEAD$/ }
       names.map { |b| Branch.new(self, b) }
     end
   end

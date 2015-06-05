@@ -74,14 +74,13 @@ module MultiRepo
     
     def merge_core(main_repo, initial_revision, mode)
       config_file = ConfigFile.new(".")
-      lock_file = LockFile.new(".")
       
       # Ensure the main repo is clean
-      raise MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.clean?
+      fail MultiRepoException, "Main repo is not clean; merge aborted" unless main_repo.clean?
       
       # Ensure dependencies are clean
       unless Utils.dependencies_clean?(config_file.load_entries)
-        raise MultiRepoException, "Dependencies are not clean; merge aborted"
+        fail MultiRepoException, "Dependencies are not clean; merge aborted"
       end
       
       ref_name = @ref_name
@@ -98,20 +97,20 @@ module MultiRepo
         
         case result.outcome
         when MergeValidationResult::ABORT
-          raise MultiRepoException, result.message
+          fail MultiRepoException, result.message
         when MergeValidationResult::PROCEED
-          raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
+          fail MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
           Console.log_warning(result.message) if result.message
           break
         when MergeValidationResult::MERGE_UPSTREAM
           Console.log_warning(result.message)
-          raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Merge upstream instead of local branches?")
+          fail MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Merge upstream instead of local branches?")
           # TODO: Modify operations!
-          raise MultiRepoException, "Fallback behavior not implemented. Please merge manually."
+          fail MultiRepoException, "Fallback behavior not implemented. Please merge manually."
           next
         end
         
-        raise MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
+        fail MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
       end
       
       Console.log_step("Performing merge...")
@@ -163,13 +162,13 @@ module MultiRepo
     
     def ensure_dependencies_match(our_dependencies, their_dependencies)
       our_dependencies.zip(their_dependencies).each do |our_dependency, their_dependency|
-        if their_dependency == nil || their_dependency.config_entry.id != our_dependency.config_entry.id
-          raise MultiRepoException, "Dependencies differ, please merge manually"
+        if their_dependency.nil? || their_dependency.config_entry.id != our_dependency.config_entry.id
+          fail MultiRepoException, "Dependencies differ, please merge manually"
         end
       end
       
       if their_dependencies.count > our_dependencies.count
-        raise MultiRepoException, "There are more dependencies in the specified ref, please merge manually"
+        fail MultiRepoException, "There are more dependencies in the specified ref, please merge manually"
       end
     end
     

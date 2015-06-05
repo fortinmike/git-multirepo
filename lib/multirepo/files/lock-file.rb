@@ -22,7 +22,7 @@ module MultiRepo
     end
     
     def exists?
-      File.exists?(file)
+      File.exist?(file)
     end
     
     def load_entries

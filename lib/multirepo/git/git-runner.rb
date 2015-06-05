@@ -19,8 +19,6 @@ module MultiRepo
       runner_system(command)
     end
     
-    private
-    
     def self.build_command(path, git_command)
       if path == "."
         # It is always better to skip -C when running git commands in the
@@ -30,7 +28,7 @@ module MultiRepo
         return "#{git_executable} #{git_command}"
       end
       
-      full_command = "#{git_executable} -C \"#{path}\" #{git_command}";
+      full_command = "#{git_executable} -C \"#{path}\" #{git_command}"
       if Config.instance.running_git_hook
         # True fix for the -C flag issue in pre-commit hook where the status command would
         # fail to provide correct results if a pathspec was provided when performing a commit.

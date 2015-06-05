@@ -39,12 +39,12 @@ module MultiRepo
       main_repo = Repo.new(".")
       
       # Ensure the main repo is clean
-      raise MultiRepoException, "Main repo is not clean; multi branch aborted" unless main_repo.clean?
+      fail MultiRepoException, "Main repo is not clean; multi branch aborted" unless main_repo.clean?
       
       # Ensure dependencies are clean
       config_entries = ConfigFile.new(".").load_entries
       unless Utils.dependencies_clean?(config_entries)
-        raise MultiRepoException, "Dependencies are not clean; multi branch aborted"
+        fail MultiRepoException, "Dependencies are not clean; multi branch aborted"
       end
       
       # Branch dependencies
@@ -66,17 +66,17 @@ module MultiRepo
       branch.create unless branch.exists?
       branch.checkout
       
-      if Utils.is_multirepo_enabled(repo.path)
+      if Utils.multirepo_enabled?(repo.path)
         Console.log_info("Updating and committing tracking files")
         tracking_files = TrackingFiles.new(repo.path)
         tracking_files.update
         tracking_files.commit("[multirepo] Post-branch tracking files update")
       end
       
-      if @remote_tracking
-        Console.log_info("Pushing #{@branch_name} to origin/#{@branch_name}")
-        repo.branch(@branch_name).push
-      end
+      return unless @remote_tracking
+      
+      Console.log_info("Pushing #{@branch_name} to origin/#{@branch_name}")
+      repo.branch(@branch_name).push
     end
   end
 end

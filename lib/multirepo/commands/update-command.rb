@@ -31,7 +31,7 @@ module MultiRepo
       elsif !dependencies_clean && @force
         update_lock_file_step("Force-updated tracking files (ignoring uncommitted changes)")
       else
-        raise MultiRepoException, "Can't update because not all dependencies are clean"
+        fail MultiRepoException, "Can't update because not all dependencies are clean"
       end
       
       Console.log_step("Done!")
@@ -42,7 +42,7 @@ module MultiRepo
       changed = tracking_files.update
       
       if changed
-        Console.log_substep("Updated tracking files")
+        Console.log_substep(log_message)
       else
         Console.log_substep("Tracking files are already up-to-date")
       end

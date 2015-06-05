@@ -22,7 +22,7 @@ module MultiRepo
       GitRunner.run(@repo.path, "rev-parse --short #{@name}", Verbosity::OUTPUT_NEVER).strip
     end
     
-    def is_merge?
+    def merge_commit?
       lines = GitRunner.run(@repo.path, "cat-file -p #{@name}", Verbosity::OUTPUT_NEVER).split("\n")
       parents = lines.grep(/^parent /)
       return parents.count > 1

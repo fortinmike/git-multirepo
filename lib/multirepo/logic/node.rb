@@ -17,7 +17,7 @@ module MultiRepo
     end
     
     def children
-      return [] unless Utils.is_multirepo_enabled(@path)
+      return [] unless Utils.multirepo_enabled?(@path)
       config_entries = ConfigFile.new(@path).load_entries
       return config_entries.map { |e| Node.new(e.path, self, @depth + 1) }
     end
@@ -29,13 +29,13 @@ module MultiRepo
     def ordered_descendants
       descendants = find_descendants_recursive(self)
       
-      unique_paths = descendants.map{ |d| d.path }.uniq
+      unique_paths = descendants.map(&:path).uniq
       unique_nodes = unique_paths.collect do |path|
         nodes_for_path = descendants.select { |d| d.path == path }
-        next nodes_for_path.sort{ |n| n.depth }.first
+        next nodes_for_path.sort_by(&:depth).first
       end
       
-      return unique_nodes.sort_by{ |d| d.depth }.reverse
+      return unique_nodes.sort_by(&:depth).reverse
     end
     
     def find_descendants_recursive(node)
@@ -58,15 +58,15 @@ module MultiRepo
             description = "itself" if visited.count == 1
             Console.log_warning("'#{n.path}' depends on #{description}")
           end
-          raise MultiRepoException, "Dependency cycles are not supported by multirepo."
+          fail MultiRepoException, "Dependency cycles are not supported by multirepo."
         end
         parent = parent.parent # Will eventually be nil (root node), which will break out of the loop
       end
     end
     
-    def ==(object)
-      object.class == self.class &&
-      object.path == @path
+    def ==(other)
+      other.class == self.class &&
+      other.path == @path
     end
   end
 end
