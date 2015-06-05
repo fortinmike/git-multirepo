@@ -48,12 +48,17 @@ module MultiRepo
     end
     
     def log_ci_info
-      Console.log_warning("Performing continuous-integration-aware install")
+      Console.log_info("Performing continuous-integration-aware install")
       Console.log_info("Using git-multirepo #{MultiRepo::VERSION}")
       
       main_repo = Repo.new(".")
       main_repo_branch = main_repo.current_branch
       meta_file = MetaFile.new(".").load
+
+      if (main_repo.head.merge_commit?)
+        Console.log_warning("[MERGE COMMIT] The checked-out main repo revision is a merge commit.")
+        Console.log_warning("[MERGE COMMIT] Lock file might not represent a valid project state.")
+      end
 
       table = Terminal::Table.new do |t|
         t.title = "Revision Info"
