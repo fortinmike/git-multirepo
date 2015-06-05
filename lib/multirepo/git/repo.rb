@@ -83,6 +83,7 @@ module MultiRepo
     def current_branch
       return nil unless exists? && head_born?
       name = GitRunner.run(@path, "rev-parse --abbrev-ref HEAD", Verbosity::OUTPUT_NEVER).strip
+      return nil if name == "HEAD" # Code assumes that current_branch will be nil when we're in floating HEAD
       Branch.new(self, name)
     end
     
