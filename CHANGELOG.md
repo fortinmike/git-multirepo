@@ -23,3 +23,7 @@ To install betas run `[sudo] gem install git-multirepo --pre`
 - **Enhancement:** Better `multi install --ci` output
 - **Enhancement:** Not requiring a multirepo-enabled repo in InspectCommand, else it's not very useful to inspect random repos
 - **Bug Fix:** Fixed exception in `multi do` when providing only the `--help` flag
+
+## 1.0.0.beta45 and earlier
+
+Refer to the commit history for details on earlier versions of git-multirepo.
