@@ -42,7 +42,7 @@ module MultiRepo
       main_repo = Repo.new(".")
       
       unless proceed_if_merge_commit?(main_repo, @ref_name, mode)
-        raise MultiRepoException, "Aborting checkout"
+        fail MultiRepoException, "Aborting checkout"
       end
       
       checkout_core(main_repo, mode)
@@ -56,7 +56,7 @@ module MultiRepo
         # Checkout first because the current ref might not be multirepo-enabled
         checkout_main_repo_step(main_repo)
         # Only then can we check for dependencies and make sure they are clean
-        ensure_dependencies_clean_step(main_repo)
+        ensure_dependencies_clean_step
       rescue MultiRepoException => e
         Console.log_warning("Restoring working copy to #{initial_revision}")
         main_repo.checkout(initial_revision)
@@ -69,9 +69,9 @@ module MultiRepo
       Performer.perform_main_repo_checkout(main_repo, @ref_name)
     end
     
-    def ensure_dependencies_clean_step(main_repo)
+    def ensure_dependencies_clean_step
       unless Utils.dependencies_clean?(ConfigFile.new(".").load_entries)
-        raise MultiRepoException, "Dependencies are not clean!"
+        fail MultiRepoException, "Dependencies are not clean!"
       end
     end
     
@@ -84,7 +84,7 @@ module MultiRepo
     end
     
     def proceed_if_merge_commit?(main_repo, ref_name, mode)
-      return true unless main_repo.ref(ref_name).is_merge?
+      return true unless main_repo.ref(ref_name).merge_commit?
       
       case mode
       when RevisionSelectionMode::AS_LOCK
@@ -111,9 +111,9 @@ module MultiRepo
       
       # Checkout!
       if config_entry.repo.checkout(revision)
-        Console.log_substep("Checked out #{dependency_name} #{revision}")
+        Console.log_substep("Checked out #{dependency_name} '#{revision}'")
       else
-        raise MultiRepoException, "Couldn't check out the appropriate version of dependency #{dependency_name}"
+        fail MultiRepoException, "Couldn't check out the appropriate version of dependency #{dependency_name}"
       end
     end
   end

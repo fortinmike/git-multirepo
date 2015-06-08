@@ -41,7 +41,7 @@ module MultiRepo
           Console.log_step("Deleted '#{@path}' from disk")
         end
       else
-        raise MultiRepoException, "'#{@path}' isn't tracked by multirepo"
+        fail MultiRepoException, "'#{@path}' isn't tracked by multirepo"
       end
     end
   end

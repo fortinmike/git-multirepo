@@ -22,7 +22,7 @@ module MultiRepo
     end
     
     def exists?
-      File.exists?(file)
+      File.exist?(file)
     end
     
     def load_entries
@@ -47,7 +47,7 @@ module MultiRepo
       valid &= /\b([a-f0-9]{40})\b/ =~ entry.head.to_s
       
       # branch
-      GitRunner.run_in_working_dir(@path, "check-ref-format --branch #{entry.branch}", Runner::Verbosity::OUTPUT_NEVER)
+      GitRunner.run(@path, "check-ref-format --branch #{entry.branch}", Verbosity::OUTPUT_NEVER)
       valid &= (entry.branch == "" || GitRunner.last_command_succeeded)
       
       return valid

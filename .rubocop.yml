@@ -1,0 +1,79 @@
+# This is the configuration used to check the rubocop source code.
+
+AllCops:
+  DisplayCopNames: true
+  Exclude:
+    - 'resources/*'
+    - 'pkg/*'
+    - 'docs/*'
+    - 'spec/spec_helper.rb'
+    - 'spec/fixtures/**/*'
+
+Style/RescueModifier:
+  Enabled: false
+
+Lint/EndAlignment:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/LineLength:
+  Enabled: false
+
+Style/EachWithObject:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/RedundantReturn:
+  Enabled: false
+
+Style/SpaceBeforeBlockBraces:
+  Enabled: false
+
+Style/StringLiterals:
+  Enabled: false
+
+Style/TrailingWhitespace:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Style/ElseAlignment:
+  Enabled: false
+
+Style/HashSyntax:
+  Enabled: false
+
+Style/MultilineOperationIndentation:
+  Enabled: false
+
+Style/Semicolon:
+  AllowAsExpressionSeparator: true
+
+Style/IndentationWidth:
+  Enabled: false
+
+Style/SingleLineBlockParams:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Max: 8
+
+Style/FileName:
+  Enabled: false
+
+Style/SpecialGlobalVars:
+  Enabled: false

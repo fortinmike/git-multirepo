@@ -16,14 +16,14 @@ module MultiRepo
     def self.report_error(exception)
       if exception.instance_of?(MultiRepoException)
         Console.log_error(exception.message)
-        return
+        exit 1
       end
-      raise exception
+      fail exception
     end
     
     def initialize(argv)
       @argv = argv
-      Config.instance.verbose = argv.flag?("verbose") ? true : false
+      Config.instance.verbose |= argv.flag?("verbose") ? true : false
       Config.instance.git_executable = argv.option("git-exe", "git")
       super
     end
@@ -36,7 +36,7 @@ module MultiRepo
       super
       path = Config.instance.git_executable
       is_git_exe = path =~ /.*(git)|(git.exe)$/
-      file_exists = path == "git" || File.exists?(path)
+      file_exists = path == "git" || File.exist?(path)
       help! "Invalid git executable '#{path}'" unless is_git_exe && file_exists
     end
     
@@ -63,7 +63,7 @@ module MultiRepo
     end
     
     def multirepo_enabled_dependencies
-      ConfigFile.new(".").load_entries.select { |e| Utils.is_multirepo_enabled(e.repo.path) }
+      ConfigFile.new(".").load_entries.select { |e| Utils.multirepo_enabled?(e.repo.path) }
     end
 
     def validate_only_one_flag(*flags)
@@ -72,19 +72,19 @@ module MultiRepo
     
     def ensure_in_work_tree
       repo = Repo.new(".")
-      raise MultiRepoException, "Not a git repository" unless repo.exists?
-      raise MultiRepoException, "HEAD is unborn (you must perform at least one commit)" unless repo.head_born?
+      fail MultiRepoException, "Not a git repository" unless repo.exists?
+      fail MultiRepoException, "HEAD is unborn (you must perform at least one commit)" unless repo.head_born?
     end
     
     def ensure_multirepo_enabled
-      raise MultiRepoException, "multirepo is not initialized in this repository." unless Utils.is_multirepo_enabled(".")
+      fail MultiRepoException, "multirepo is not initialized in this repository." unless Utils.multirepo_enabled?(".")
     end
 
     def ensure_multirepo_tracked
-      raise MultiRepoException, "Revision is not tracked by multirepo." unless Utils.is_multirepo_tracked(".")
+      fail MultiRepoException, "Revision is not tracked by multirepo." unless Utils.multirepo_tracked?(".")
       
       lock_file_valid = LockFile.new(".").validate!
-      raise MultiRepoException, "Revision is multirepo-enabled but contains a corrupted lock file!" unless lock_file_valid
+      fail MultiRepoException, "Revision is multirepo-enabled but contains a corrupted lock file!" unless lock_file_valid
     end
   end
 end
