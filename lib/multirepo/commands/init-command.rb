@@ -36,7 +36,7 @@ module MultiRepo
     
     def full_initialize_step
       if ConfigFile.new(".").exists?
-        reinitialize = Console.ask_yes_no(".multirepo file already exists. Reinitialize?")
+        reinitialize = Console.ask(".multirepo file already exists. Reinitialize?")
         fail MultiRepoException, "Initialization aborted" unless reinitialize
       end
       
@@ -100,7 +100,7 @@ module MultiRepo
         origin_url = repo.remote('origin').url
         current_branch_name = repo.current_branch.name
         
-        next unless Console.ask_yes_no("Do you want to add '#{repo.path}' as a dependency?\n  [origin: #{origin_url || 'NONE'}, branch: #{current_branch_name}]")
+        next unless Console.ask("Do you want to add '#{repo.path}' as a dependency?\n  [origin: #{origin_url || 'NONE'}, branch: #{current_branch_name}]")
         
         unless origin_url
           Console.log_warning("Repo 'origin' remote url is not set; skipping")

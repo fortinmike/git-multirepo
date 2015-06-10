@@ -5,6 +5,7 @@ require "multirepo/logic/node"
 require "multirepo/logic/revision-selector"
 require "multirepo/logic/performer"
 require "multirepo/logic/merge-descriptor"
+require "multirepo/files/tracking-files"
 
 module MultiRepo
   class MergeValidationResult
@@ -99,24 +100,24 @@ module MultiRepo
         when MergeValidationResult::ABORT
           fail MultiRepoException, result.message
         when MergeValidationResult::PROCEED
-          fail MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
+          fail MultiRepoException, "Merge aborted" unless Console.ask("Proceed?")
           Console.log_warning(result.message) if result.message
           break
         when MergeValidationResult::MERGE_UPSTREAM
           Console.log_warning(result.message)
-          fail MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Merge upstream instead of local branches?")
+          fail MultiRepoException, "Merge aborted" unless Console.ask("Merge upstream instead of local branches?")
           # TODO: Modify operations!
           fail MultiRepoException, "Fallback behavior not implemented. Please merge manually."
           next
         end
         
-        fail MultiRepoException, "Merge aborted" unless Console.ask_yes_no("Proceed?")
+        fail MultiRepoException, "Merge aborted" unless Console.ask("Proceed?")
       end
       
       Console.log_step("Performing merge...")
       
-      # Merge dependencies and the main repo
-      perform_merges(descriptors)
+      all_succeeded = perform_merges(descriptors)
+      ask_tracking_files_update(all_succeeded)
     end
     
     def build_merge(main_repo, initial_revision, ref_name, mode)
@@ -195,7 +196,7 @@ module MultiRepo
         outcome.message = "Some upstream branches have diverged. This warrants a manual merge!"
       elsif descriptors.any? { |d| d.state == TheirState::LOCAL_OUTDATED }
         outcome.outcome = MergeValidationResult::MERGE_UPSTREAM
-        outcome.message = "Some local branches are outdated."
+        outcome.message = "Some local branches are outdated"
       end
       
       return outcome
@@ -208,7 +209,29 @@ module MultiRepo
         GitRunner.run_as_system(descriptor.repo.path, "merge #{descriptor.their_revision}")
         success &= GitRunner.last_command_succeeded
       end
-      Console.log_warning("Some merge operations failed. Please review the above results.") unless success
+      
+      if success
+        Console.log_info("All merges performed successfully!")
+      else
+        Console.log_warning("Some merge operations failed. Please review the above.")
+      end
+      
+      return success
+    end
+    
+    def ask_tracking_files_update(all_merges_succeeded)
+      unless all_merges_succeeded
+        Console.log_warning("Perform a manual update using 'multi update' after resolving merge conflicts")
+        return
+      end
+      
+      return unless Console.ask("Update main repo tracking files (important for continuous integration)?")
+      
+      tracking_files = TrackingFiles.new(".")
+      tracking_files.update
+      tracking_files.commit("[multirepo] Post-merge tracking files update")
+      
+      Console.log_info("Updated and committed tracking files in the main repo")
     end
     
     def message_for_mode(mode, ref_name)
