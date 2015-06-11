@@ -1,6 +1,6 @@
 require "claide"
 
-require "info"
+require "multirepo/info"
 require "multirepo/multirepo-exception"
 require "multirepo/config"
 require "multirepo/files/config-file"
