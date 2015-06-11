@@ -17,7 +17,7 @@
 - !ruby/object:MultiRepo::LockEntry
   name: git-multirepo-migrations
   id: ad6472a5-7238-447f-a54e-50f50197e21e
-  head: 6f2289d9def62d226c415e9bdd49318474d43e87
+  head: 15ee465101c368193a052cd1f5b0c5accc6fb9fa
   branch: master
 - !ruby/object:MultiRepo::LockEntry
   name: git-multirepo.gh-pages

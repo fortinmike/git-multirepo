@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require "claide"
-require "commands"
+require "multirepo/commands/commands"
 
 trap("INT") do
   puts "\rAbort, abort!!" # \r hides the interrupt control characters
