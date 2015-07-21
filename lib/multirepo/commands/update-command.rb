@@ -1,6 +1,7 @@
 require "multirepo/utility/console"
 require "multirepo/logic/performer"
 require "multirepo/files/tracking-files"
+require "multirepo/git/git-runner"
 
 module MultiRepo
   class UpdateCommand < Command
@@ -48,29 +49,34 @@ module MultiRepo
     end
     
     def update_tracking_files_step
+      main_changed = false
       if @main_only
         Console.log_step("Updating main repo...")
-        update_main
+        main_changed = update_main
       elsif @deps_only
         Console.log_step("Updating dependencies...")
         update_dependencies
       else
         Console.log_step("Updating main repo and dependencies...")
         update_dependencies
-        update_main
+        main_changed = update_main
       end
+
+      show_diff(".") if main_changed && Console.ask("Show diff?")
     end
 
     def update_dependencies
+      any_changed = false
       Performer.dependencies.each do |dependency|
         path = dependency.config_entry.path
         name = dependency.config_entry.name
-        update_tracking_files(path, name) if Utils.multirepo_enabled?(path)
+        any_changed |= update_tracking_files(path, name) if Utils.multirepo_enabled?(path)
       end
+      return any_changed
     end
 
     def update_main
-      update_tracking_files(".", "main repo")
+      return update_tracking_files(".", "main repo")
     end
     
     def update_tracking_files(path, name)
@@ -89,6 +95,12 @@ module MultiRepo
         committed = tracking_files.commit("[multirepo] Updated tracking files manually")
         Console.log_info("Committed tracking files") if committed
       end
+
+      return changed
+    end
+
+    def show_diff(path)
+      GitRunner.run_as_system(path, "diff .multirepo.lock")
     end
   end
 end
