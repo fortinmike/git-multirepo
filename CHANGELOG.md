@@ -2,6 +2,12 @@
 
 To install betas run `[sudo] gem install git-multirepo --pre`
 
+## 1.0.0.beta50
+
+- **Enhancement:** `multi merge` now asks to update the main repo lock file after a merge (useful for CI scenarios)
+- **Enhancement:** `multi update` now asks to show a lock file diff if the main repo's lock file was modified
+- **Enhancement:** Checking out the main repo in floating HEAD to prevent unnecessary local branch creation in `multi merge`
+
 ## 1.0.0.beta49
 
 - **Enhancement:** Added --deps, --main and --all flags to `multi update` and update all by default
