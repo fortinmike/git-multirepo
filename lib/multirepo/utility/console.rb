@@ -27,7 +27,7 @@ module MultiRepo
       puts $stdout.isatty ? message.red : message
     end
     
-    def self.ask_yes_no(message)
+    def self.ask(message)
       answered = false
       until answered
         print_prefix
