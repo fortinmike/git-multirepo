@@ -69,13 +69,19 @@ module MultiRepo
       Performer.dependencies.each do |dependency|
         path = dependency.config_entry.path
         name = dependency.config_entry.name
-        any_changed |= update_tracking_files(path, name) if Utils.multirepo_enabled?(path)
+        any_changed |= update_one(path, name) if Utils.multirepo_enabled?(path)
       end
       return any_changed
     end
 
     def update_main
-      return update_tracking_files(".", "main repo")
+      update_one(".", "main repo")
+    end
+
+    def update_one(path, name)
+      updated = update_tracking_files(path, name)
+      commit_tracking_files(path) if @commit
+      return updated
     end
     
     def update_tracking_files(path, name)
@@ -90,12 +96,13 @@ module MultiRepo
         Console.log_info("Tracking files are already up-to-date")
       end
       
-      if @commit
-        committed = tracking_files.commit("[multirepo] Updated tracking files manually")
-        Console.log_info("Committed tracking files") if committed
-      end
-
       return changed
+    end
+
+    def commit_tracking_files(path)
+      tracking_files = TrackingFiles.new(path)
+      committed = tracking_files.commit("[multirepo] Updated tracking files manually")
+      Console.log_info("Committed tracking files") if committed
     end
 
     def show_diff(path)
