@@ -26,7 +26,7 @@ module MultiRepo
     
     def validate!
       super
-      unless validate_only_one_flag(@hooks, @ci)
+      unless Utils.only_one_true?(@hooks, @ci)
         help! "You can't provide more than one operation modifier (--hooks, --ci, etc.)"
       end
     end

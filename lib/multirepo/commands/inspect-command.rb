@@ -21,7 +21,7 @@ module MultiRepo
     
     def validate!
       super
-      unless validate_only_one_flag(@version, @tracked)
+      unless Utils.only_one_true?(@version, @tracked)
         help! "You can't provide more than one operation modifier (--version, --tracked, etc.)"
       end
     end

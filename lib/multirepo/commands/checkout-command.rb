@@ -1,4 +1,5 @@
 require "multirepo/utility/console"
+require "multirepo/utility/utils"
 require "multirepo/logic/revision-selector"
 require "multirepo/logic/performer"
 
@@ -25,7 +26,7 @@ module MultiRepo
     def validate!
       super
       help! "You must specify a branch or commit id to checkout" unless @ref_name
-      unless validate_only_one_flag(@checkout_latest, @checkout_exact)
+      unless Utils.only_one_true?(@checkout_latest, @checkout_exact)
         help! "You can't provide more than one operation modifier (--latest, --exact, etc.)"
       end
     end

@@ -1,6 +1,6 @@
 require_relative "command"
-require "multirepo/utility/utils"
 require "multirepo/utility/console"
+require "multirepo/utility/utils"
 require "multirepo/files/config-file"
 require "multirepo/git/repo"
 require "multirepo/git/git-runner"
@@ -31,7 +31,7 @@ module MultiRepo
     def validate!
       super
       help! "You must provide a git operation to perform" unless @operation
-      unless validate_only_one_flag(@all, @main_only, @deps_only)
+      unless Utils.only_one_true?(@all, @main_only, @deps_only)
         help! "You can't provide more than one operation modifier (--deps, --main, etc.)"
       end
     end

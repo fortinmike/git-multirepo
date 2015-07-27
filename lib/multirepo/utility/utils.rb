@@ -3,6 +3,10 @@ require "fileutils"
 
 module MultiRepo
   class Utils
+    def self.only_one_true?(*flags)
+      flags.reduce(0) { |count, flag| count += 1 if flag; count } <= 1
+    end
+
     def self.path_for_resource(resource_name)
       gem_path = Gem::Specification.find_by_name("git-multirepo").gem_dir
       File.join(gem_path, "resources/#{resource_name}")

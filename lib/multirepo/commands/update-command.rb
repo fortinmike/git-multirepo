@@ -1,4 +1,5 @@
 require "multirepo/utility/console"
+require "multirepo/utility/utils"
 require "multirepo/logic/performer"
 require "multirepo/files/tracking-files"
 require "multirepo/git/git-runner"
@@ -29,7 +30,7 @@ module MultiRepo
 
     def validate!
       super
-      unless validate_only_one_flag(@all, @main_only, @deps_only)
+      unless Utils.only_one_true?(@all, @main_only, @deps_only)
         help! "You can't provide more than one operation modifier (--deps, --main, etc.)"
       end
     end
