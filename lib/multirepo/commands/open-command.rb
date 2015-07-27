@@ -2,6 +2,7 @@ require "os"
 
 require "multirepo/utility/console"
 require "multirepo/utility/utils"
+require "multirepo/logic/repo-selection"
 
 module MultiRepo
   class OpenCommand < Command
@@ -17,28 +18,25 @@ module MultiRepo
     end
     
     def initialize(argv)
-      @all = argv.flag?("all")
-      @main_only = argv.flag?("main")
-      @deps_only = argv.flag?("deps")
+      @repo_selection = RepoSelection.new(argv)
       super
     end
 
     def validate!
       super
-      unless Utils.only_one_true?(@all, @main_only, @deps_only)
-        help! "You can't provide more than one operation modifier (--deps, --main, etc.)"
-      end
+      help! "You can't provide more than one operation modifier (--deps, --main, etc.)" unless @repo_selection.valid?
     end
     
     def run
       ensure_in_work_tree
       ensure_multirepo_enabled
       
-      if @main_only
+      case @repo_selection.value
+      when RepoSelection::MAIN
         open_main
-      elsif @deps_only
+      when RepoSelection::DEPS
         open_dependencies
-      else
+      when RepoSelection::ALL
         open_dependencies
         open_main
       end

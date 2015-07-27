@@ -5,6 +5,7 @@ require "multirepo/files/config-file"
 require "multirepo/git/repo"
 require "multirepo/git/git-runner"
 require "multirepo/logic/performer"
+require "multirepo/logic/repo-selection"
 
 module MultiRepo
   class DoCommand < Command
@@ -22,18 +23,14 @@ module MultiRepo
     
     def initialize(argv)
       @operation = argv.shift_argument
-      @all = argv.flag?("all")
-      @main_only = argv.flag?("main")
-      @deps_only = argv.flag?("deps")
+      @repo_selection = RepoSelection.new(argv)
       super
     end
 
     def validate!
       super
       help! "You must provide a git operation to perform" unless @operation
-      unless Utils.only_one_true?(@all, @main_only, @deps_only)
-        help! "You can't provide more than one operation modifier (--deps, --main, etc.)"
-      end
+      help! "You can't provide more than one operation modifier (--deps, --main, etc.)" unless @repo_selection.valid?
     end
     
     def run
@@ -43,13 +40,14 @@ module MultiRepo
       @operation = @operation.sub(/^git /, "")
       
       success = true
-      if @main_only
+      case @repo_selection.value
+      when RepoSelection::MAIN
         confirm_main_repo_operation
         success &= perform_operation_on_main(@operation)
-      elsif @deps_only
+      when RepoSelection::DEPS
         confirm_dependencies_operation
         success &= perform_operation_on_dependencies(@operation)
-      else
+      when RepoSelection::ALL
         confirm_main_repo_operation
         confirm_dependencies_operation
         success &= perform_operation_on_dependencies(@operation) # Ordered dependencies first

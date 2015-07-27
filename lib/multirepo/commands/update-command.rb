@@ -1,6 +1,7 @@
 require "multirepo/utility/console"
 require "multirepo/utility/utils"
 require "multirepo/logic/performer"
+require "multirepo/logic/repo-selection"
 require "multirepo/files/tracking-files"
 require "multirepo/git/git-runner"
 
@@ -20,9 +21,7 @@ module MultiRepo
     end
     
     def initialize(argv)
-      @all = argv.flag?("all")
-      @main_only = argv.flag?("main")
-      @deps_only = argv.flag?("deps")
+      @repo_selection = RepoSelection.new(argv)
       @commit = argv.flag?("commit")
       @force = argv.flag?("force")
       super
@@ -30,9 +29,7 @@ module MultiRepo
 
     def validate!
       super
-      unless Utils.only_one_true?(@all, @main_only, @deps_only)
-        help! "You can't provide more than one operation modifier (--deps, --main, etc.)"
-      end
+      help! "You can't provide more than one operation modifier (--deps, --main, etc.)" unless @repo_selection.valid?
     end
 
     def run
@@ -51,13 +48,14 @@ module MultiRepo
     
     def update_tracking_files_step
       main_changed = false
-      if @main_only
+      case @repo_selection.value
+      when RepoSelection::MAIN
         Console.log_step("Updating main repo...")
         main_changed = update_main
-      elsif @deps_only
+      when RepoSelection::DEPS
         Console.log_step("Updating dependencies...")
         update_dependencies
-      else
+      when RepoSelection::ALL
         Console.log_step("Updating main repo and dependencies...")
         update_dependencies
         main_changed = update_main
