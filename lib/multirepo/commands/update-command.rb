@@ -38,7 +38,7 @@ module MultiRepo
       
       dependencies_clean = Utils.dependencies_clean?(ConfigFile.new(".").load_entries)
       if dependencies_clean || @force
-        update_tracking_files_step
+        update_tracking_files_step(@repo_selection.value)
       else
         fail MultiRepoException, "Can't update because not all dependencies are clean"
       end
@@ -46,9 +46,9 @@ module MultiRepo
       Console.log_step("Done!")
     end
     
-    def update_tracking_files_step
+    def update_tracking_files_step(repo_selection_value)
       main_changed = false
-      case @repo_selection.value
+      case repo_selection_value
       when RepoSelection::MAIN
         Console.log_step("Updating main repo...")
         main_changed = update_main

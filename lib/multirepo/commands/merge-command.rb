@@ -4,9 +4,11 @@ require "multirepo/utility/console"
 require "multirepo/utility/utils"
 require "multirepo/logic/node"
 require "multirepo/logic/revision-selector"
+require "multirepo/logic/repo-selection"
 require "multirepo/logic/performer"
 require "multirepo/logic/merge-descriptor"
 require "multirepo/files/tracking-files"
+require "multirepo/commands/update-command"
 
 module MultiRepo
   class MergeValidationResult
@@ -229,11 +231,8 @@ module MultiRepo
       
       return unless Console.ask("Update main repo tracking files (important for continuous integration)?")
       
-      tracking_files = TrackingFiles.new(".")
-      tracking_files.update
-      tracking_files.commit("[multirepo] Post-merge tracking files update")
-      
-      Console.log_info("Updated and committed tracking files in the main repo")
+      update_command = UpdateCommand.new(CLAide::ARGV.new(["--commit"]))
+      update_command.update_tracking_files_step(RepoSelection::MAIN)
     end
     
     def message_for_mode(mode, ref_name)
