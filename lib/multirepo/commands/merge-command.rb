@@ -51,7 +51,7 @@ module MultiRepo
       # Find out the checkout mode based on command-line options
       mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
       
-      strategy_name = RevisionSelectionMode.name_for_mode(mode)
+      strategy_name = RevisionSelection.name_for_mode(mode)
       Console.log_step("Merging #{@ref_name} with '#{strategy_name}' strategy...")
       
       main_repo = Repo.new(".")
@@ -237,11 +237,11 @@ module MultiRepo
     
     def message_for_mode(mode, ref_name)
       case mode
-      when RevisionSelectionMode::AS_LOCK
+      when RevisionSelection::AS_LOCK
         "merge specific commits as stored in the lock file for main repo revision #{ref_name}"
-      when RevisionSelectionMode::LATEST
+      when RevisionSelection::LATEST
         "merge each branch as stored in the lock file of main repo revision #{ref_name}"
-      when RevisionSelectionMode::EXACT
+      when RevisionSelection::EXACT
         "merge #{ref_name} for each repository, ignoring the contents of the lock file"
       end
     end

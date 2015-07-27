@@ -1,5 +1,5 @@
 module MultiRepo
-  class RevisionSelectionMode
+  class RevisionSelection
     AS_LOCK = 0
     LATEST = 1
     EXACT = 2
@@ -16,19 +16,19 @@ module MultiRepo
   class RevisionSelector
     def self.mode_for_args(checkout_latest, checkout_exact)
       if checkout_latest
-        RevisionSelectionMode::LATEST
+        RevisionSelection::LATEST
       elsif checkout_exact
-        RevisionSelectionMode::EXACT
+        RevisionSelection::EXACT
       else
-        RevisionSelectionMode::AS_LOCK
+        RevisionSelection::AS_LOCK
       end
     end
     
     def self.revision_for_mode(mode, ref_name, lock_entry)
       case mode
-      when RevisionSelectionMode::AS_LOCK then lock_entry.head
-      when RevisionSelectionMode::LATEST then lock_entry.branch
-      when RevisionSelectionMode::EXACT then ref_name
+      when RevisionSelection::AS_LOCK then lock_entry.head
+      when RevisionSelection::LATEST then lock_entry.branch
+      when RevisionSelection::EXACT then ref_name
       end
     end
   end

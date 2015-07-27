@@ -94,7 +94,7 @@ module MultiRepo
       
       # Checkout the appropriate branches as specified in the lock file
       checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
-      mode = @ci ? RevisionSelectionMode::AS_LOCK : RevisionSelectionMode::LATEST
+      mode = @ci ? RevisionSelection::AS_LOCK : RevisionSelection::LATEST
       checkout_command.dependencies_checkout_step(mode)
     end
     

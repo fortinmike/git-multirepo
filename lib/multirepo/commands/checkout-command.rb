@@ -36,7 +36,7 @@ module MultiRepo
       # Find out the checkout mode based on command-line options
       mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
       
-      strategy_name = RevisionSelectionMode.name_for_mode(mode)
+      strategy_name = RevisionSelection.name_for_mode(mode)
       Console.log_step("Checking out #{@ref_name} and its dependencies using the '#{strategy_name}' strategy...")
       
       main_repo = Repo.new(".")
@@ -87,11 +87,11 @@ module MultiRepo
       return true unless main_repo.ref(ref_name).merge_commit?
       
       case mode
-      when RevisionSelectionMode::AS_LOCK
+      when RevisionSelection::AS_LOCK
         Console.log_error("The specified ref is a merge commit and an \"as-lock\" checkout was requested.")
         Console.log_error("The resulting checkout would most probably not result in a valid project state.")
         return false
-      when RevisionSelectionMode::LATEST
+      when RevisionSelection::LATEST
         Console.log_warning("The specified ref is a merge commit and a \"latest\" checkout was requested.")
         Console.log_warning("The work branches recorded in the branch from which the merge was performed will be checked out.")
       end
