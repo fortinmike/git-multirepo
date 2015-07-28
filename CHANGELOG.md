@@ -2,6 +2,14 @@
 
 To install betas run `[sudo] gem install git-multirepo --pre`
 
+## 1.0.0.beta51
+
+- **Enhancement:** `multi merge` now shows a lock file diff if the user chooses to perform an update after the merge operation
+- **Enhancement:** `multi merge` now uses the same update logic as `multi update` for more robustness and uniformity
+- **Enhancement:** `multi update` has a new `--no-diff` option to skip lock file diffing and shows diff by default
+- **Bug Fix:** `multi update` did not show the lock file diff when the `--commit` flag was specified
+- **Internals:** `multi update`, `multi do` and `multi open` now use common repo-selection logic (--deps, --main, etc.)
+
 ## 1.0.0.beta50
 
 - **Enhancement:** `multi merge` now asks to update the main repo lock file after a merge (useful for CI scenarios)
