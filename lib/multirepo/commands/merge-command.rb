@@ -225,11 +225,11 @@ module MultiRepo
     
     def ask_tracking_files_update(all_merges_succeeded)
       unless all_merges_succeeded
-        Console.log_warning("Perform a manual update using 'multi update' after resolving merge conflicts")
+        Console.log_warning("Perform a 'multi update' after resolving merge conflicts to ensure lock file contents are valid")
         return
       end
       
-      return unless Console.ask("Update main repo tracking files (important for continuous integration)?")
+      return unless Console.ask("Update main repo tracking files? (important for continuous integration)")
       
       update_command = UpdateCommand.new(CLAide::ARGV.new(["--commit", "--diff"]))
       update_command.update_tracking_files_step(RepoSelection::MAIN)
