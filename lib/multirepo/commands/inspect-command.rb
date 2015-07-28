@@ -2,36 +2,45 @@ require "multirepo/utility/console"
 require "multirepo/utility/utils"
 
 module MultiRepo
+  class InspectCommandStats
+    VERSION = "version"
+    TRACKED = "tracked"
+  end
+
   class InspectCommand < Command
     self.command = "inspect"
     self.summary = "Outputs various information about multirepo-enabled repos. For use in scripting and CI scenarios."
     
     def self.options
-      [
-        ['[--version]', 'Outputs the multirepo version that was used to track this revision.'],
-        ['[--tracked]', 'Whether the current revision is tracked by multirepo or not.']
-      ].concat(super)
+      [['<stat name>', 'The name of the statistic to output.']].concat(super)
     end
     
     def initialize(argv)
-      @version = argv.flag?("version")
-      @tracked = argv.flag?("tracked")
+      stat = argv.shift_argument
+      @stat = stat ? stat.downcase : nil
       super
     end
-    
+
     def validate!
       super
-      unless Utils.only_one_true?(@version, @tracked)
-        help! "You can't provide more than one operation modifier (--version, --tracked, etc.)"
-      end
+      help! "You must provide a valid stat name. Available stats: \n    #{stats.join(', ')}" unless valid_stat?(@stat)
+    end
+
+    def stats
+      InspectCommandStats.constants.map { |s| InspectCommandStats.const_get(s) }
+    end
+
+    def valid_stat?(stat)
+      stats.include?(stat)
     end
     
     def run
       ensure_in_work_tree
       
-      if @version
+      case @stat
+      when InspectCommandStats::VERSION
         puts MetaFile.new(".").load.version
-      elsif @tracked
+      when InspectCommandStats::TRACKED
         puts Utils.multirepo_tracked?(".").to_s
       end
     end
