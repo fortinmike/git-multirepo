@@ -16,7 +16,8 @@ module MultiRepo
         ['[--main]', 'Update the main repository.'],
         ['[--deps]', 'Update dependencies.'],
         ['[--force]', 'Update the tracking files even if dependencies contain uncommitted changes.'],
-        ['[--commit]', 'Commit the tracking files after updating them.']
+        ['[--commit]', 'Commit the tracking files after updating them.'],
+        ['[--no-diff]', 'Don\'t show lock file diff(s) after updating.']
       ].concat(super)
     end
     
