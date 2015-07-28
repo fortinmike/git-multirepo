@@ -7,9 +7,9 @@ module MultiRepo
     DEPS = 2
 
     def initialize(argv)
-    	@main = argv.flag?("main")
-		  @deps = argv.flag?("deps")
-		  @all = argv.flag?("all")
+      @main = argv.flag?("main")
+      @deps = argv.flag?("deps")
+      @all = argv.flag?("all")
     end
 
     def valid?
@@ -17,9 +17,9 @@ module MultiRepo
     end
 
     def value
-    	return MAIN if @main
-    	return DEPS if @deps
-    	return ALL # Default if unspecified
+      return MAIN if @main
+      return DEPS if @deps
+      return ALL # Default if unspecified
     end
   end
 end

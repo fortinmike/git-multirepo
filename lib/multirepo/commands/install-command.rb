@@ -55,7 +55,7 @@ module MultiRepo
       main_repo_branch = main_repo.current_branch
       meta_file = MetaFile.new(".").load
 
-      if (main_repo.head.merge_commit?)
+      if main_repo.head.merge_commit?
         Console.log_warning("[MERGE COMMIT] The checked-out main repo revision is a merge commit.")
         Console.log_warning("[MERGE COMMIT] Lock file might not represent a valid project state.")
       end
