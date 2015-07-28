@@ -1,6 +1,6 @@
 ## Releases
 
-To install betas run `[sudo] gem install git-multirepo --pre`
+To install betas run `gem install git-multirepo --pre`
 
 ## 1.0.0.beta51
 
