@@ -24,6 +24,7 @@ module MultiRepo
       @repo_selection = RepoSelection.new(argv)
       @commit = argv.flag?("commit")
       @force = argv.flag?("force")
+      @diff = argv.flag?("diff", true)
       super
     end
 
@@ -47,21 +48,18 @@ module MultiRepo
     end
     
     def update_tracking_files_step(repo_selection_value)
-      main_changed = false
       case repo_selection_value
       when RepoSelection::MAIN
         Console.log_step("Updating main repo...")
-        main_changed = update_main
+        update_main
       when RepoSelection::DEPS
         Console.log_step("Updating dependencies...")
         update_dependencies
       when RepoSelection::ALL
         Console.log_step("Updating main repo and dependencies...")
         update_dependencies
-        main_changed = update_main
+        update_main
       end
-
-      show_diff(".") if main_changed && Console.ask("Show diff?")
     end
 
     def update_dependencies
@@ -80,6 +78,7 @@ module MultiRepo
 
     def update_one(path, name)
       updated = update_tracking_files(path, name)
+      show_diff(path) if updated && @diff
       commit_tracking_files(path) if @commit
       return updated
     end
