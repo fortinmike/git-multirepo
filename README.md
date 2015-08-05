@@ -88,7 +88,7 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 - While the repositories are independent, git-multirepo makes sure to track everything that's required to bring back a previous version of your project in a valid state.
 - It supports sub-dependencies (e.g. dependencies that have dependencies of their own) so that you can bring back any subset of your project in a valid state at will.
 - Much more approachable to novice developers than submodules or subtrees.
-- Once setup, there is little need for git-multirepo commands, so you are free to use whatever tools you like to work with your git repos.
+- Once setup, there is little need for git-multirepo commands (although some of them are great timesavers), so you are free to use whatever tools you like to work with your git repos.
 - Low possibility of human error (such as forgetting to contribute changes to dependencies back to the appropriate remotes, forgetting to commit dependencies in the proper order, etc.)
 - You're not stuck with git-multirepo. It stores its metadata as [YAML](http://www.yaml.org) in the main repo. You can clone and checkout appropriate revisions of your dependencies by hand without git-multirepo if you need to. The information is there, in human-readable form.
 
@@ -105,7 +105,7 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 
 ## Limitations
 
-- This tool should be considered beta at the moment.
+- This tool should be considered beta at the moment (but it's getting pretty stable).
 - The tracked project and its dependencies must live beside each other on disk.
 - You must install the tool on your CI server (`gem install git-multirepo`) and perform a `multi install --ci` to checkout dependencies prior to building.
 
