@@ -16,7 +16,7 @@ You can download a handy cheat sheet [here](https://github.com/fortinmike/git-mu
 
 git-multirepo is distributed as a Ruby Gem. It can thus be installed as follows (provided Ruby is installed on your machine):
 
-    gem install git-multirepo --pre
+    $ gem install git-multirepo --pre
 
 The `--pre` flag is necessary to install beta releases.
 
