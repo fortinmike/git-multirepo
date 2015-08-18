@@ -12,7 +12,8 @@ module MultiRepo
       [
         ['<refname>', 'The main repo tag, branch or commit id to checkout.'],
         ['[--latest]', 'Checkout the HEAD of each dependency branch (as recorded in the lock file) instead of the exact required commits.'],
-        ['[--exact]', 'Checkout the exact specified ref for each repo, regardless of what\'s stored in the lock file.']
+        ['[--exact]', 'Checkout the exact specified ref for each repo, regardless of what\'s stored in the lock file.'],
+        ['[--force]', 'Force checkout even if there are uncommmitted changes.']
       ].concat(super)
     end
     
@@ -20,6 +21,7 @@ module MultiRepo
       @ref_name = argv.shift_argument
       @checkout_latest = argv.flag?("latest")
       @checkout_exact = argv.flag?("exact")
+      @force = argv.flag?("force")
       super
     end
     
@@ -57,7 +59,7 @@ module MultiRepo
         # Checkout first because the current ref might not be multirepo-enabled
         checkout_main_repo_step(main_repo)
         # Only then can we check for dependencies and make sure they are clean
-        ensure_dependencies_clean_step
+        ensure_dependencies_clean_step if !@force
       rescue MultiRepoException => e
         Console.log_warning("Restoring working copy to #{initial_revision}")
         main_repo.checkout(initial_revision)
@@ -67,7 +69,7 @@ module MultiRepo
     end
     
     def checkout_main_repo_step(main_repo)
-      Performer.perform_main_repo_checkout(main_repo, @ref_name)
+      Performer.perform_main_repo_checkout(main_repo, @ref_name, @force)
     end
     
     def ensure_dependencies_clean_step

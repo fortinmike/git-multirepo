@@ -5,9 +5,9 @@ require_relative "dependency"
 
 module MultiRepo
   class Performer
-    def self.perform_main_repo_checkout(main_repo, ref_name, message = nil)
+    def self.perform_main_repo_checkout(main_repo, ref_name, force = false, message = nil)
       # Make sure the main repo is clean before attempting a checkout
-      unless main_repo.clean?
+      unless force || main_repo.clean?
         fail MultiRepoException, "Can't checkout #{ref_name} because the main repo contains uncommitted changes"
       end
       

@@ -12,7 +12,7 @@ module MultiRepo
     def self.options
       [
         ['<branch name>', 'The name of the branch to create and checkout.'],
-        ['[--force]', 'Force creating the branch even if the repos contain uncommmitted changes.'],
+        ['[--force]', 'Force creating the branch even if there are uncommmitted changes.'],
         ['[--no-push]', 'Do not push the branch on creation.']
       ].concat(super)
     end
