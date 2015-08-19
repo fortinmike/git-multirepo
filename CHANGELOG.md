@@ -18,7 +18,7 @@ To install betas run `gem install git-multirepo --pre`
 
 ## 1.0.0.beta49
 
-- **Enhancement:** Added --deps, --main and --all flags to `multi update` and update all by default
+- **Enhancement:** Added `--deps`, `--main` and `--all` flags to `multi update` and update all by default
 - **Enhancement:** Log a warning on multi install --ci if the main repo HEAD is a merge commit, for CI servers to pick up and optionally force fail with
 - **Bug Fix:** "HEAD" was stored in the lock file instead of `nil` when in floating HEAD, which caused some operations to have unexpected results
 - **Bug Fix:** Incorrect default behavior for `multi open` (now defaults to "all")
