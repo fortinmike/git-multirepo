@@ -117,6 +117,22 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 - The tracked project and its dependencies must live beside each other on disk.
 - You must install the tool on your CI server (`gem install git-multirepo`) and perform a `multi install --ci` to checkout dependencies prior to building.
 
+## Subdependencies
+
+Dependencies can be initialized and have their own dependencies. However, git-multirepo currently supports only *direct* dependencies (which is a minor inconvenience in practice). This means that every git-multirepo-enabled repository must have its direct and indirect dependencies listed in its `.multirepo file`. Take for example the following directory listing.
+
+  ```
+  MyAwesomeProject
+    |-- AwesomeApp
+    |-- AppDependency1
+    |-- AppDependency1-Dependency
+    |-- AppDependency2
+  ```
+
+To properly track those repositories with git-multirepo, `AppDependency1` would be initialized with `AppDependency1-Dependency` as a dependency. Then, `AwesomeApp` would be initialized with `AppDependency1`, `AppDependency1-Dependency` and `AppDependency2` as dependencies, even though `MyAwesomeApp` does not directly depend on `AppDependency1-Dependency`. `AppDependency1-Dependency` and `AppDependency2` do not need to be initialized because they have no dependencies of their own.
+
+After repositories are initialized this way, git-multirepo handles the rest and enforces dependency tree-based commit order, merges and more. From then, it is also possible to perform a `multi checkout` not only in the `AwesomeApp` directory but also in the `AppDependency1` directory. This means you can easily get a subset of your dependencies into the state they were in at some point in the past.
+
 ## Continuous Integration
 
 git-multirepo supports continuous integration in two ways:
