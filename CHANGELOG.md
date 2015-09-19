@@ -2,6 +2,11 @@
 
 To install betas run `gem install git-multirepo --pre`
 
+## 1.0.0.beta52
+
+- **Enhancement:** InspectCommand now takes the name of a stat as input instead of flags and provides helpful output if the provided stat name is invalid
+- **Enhancement:** Added a `--force` flag to `multi checkout`, which ignores uncommitted changes
+
 ## 1.0.0.beta51
 
 - **Enhancement:** `multi merge` now shows a lock file diff if the user chooses to perform an update after the merge operation
