@@ -54,12 +54,16 @@ module MultiRepo
       GitRunner.last_command_succeeded
     end
     
-    def clone(url, branch = nil)
-      if !branch.nil?
-        GitRunner.run_as_system(".", "clone #{url} -b #{branch} #{@path} --progress")
-      else
-        GitRunner.run_as_system(".", "clone #{url} #{@path} --progress")
-      end
+    def clone(url, options = nil)
+      options = {} unless options
+      branch = options[:branch]
+      shallow = options[:shallow] || false
+
+      command = "clone #{url} #{@path} --progress"
+      command << " -b #{branch}" if branch
+      command << " --depth 1" if shallow
+      
+      GitRunner.run_as_system(".", command)
       GitRunner.last_command_succeeded
     end
     
