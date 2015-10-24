@@ -2,6 +2,10 @@
 
 To install betas run `gem install git-multirepo --pre`
 
+## 1.0.0.beta53
+
+- **Enhancement:** Added a `--ci-output` flag to output additional CI server-specific messages (such as TeamCity service messages)
+
 ## 1.0.0.beta52
 
 - **Enhancement:** InspectCommand now takes the name of a stat as input instead of flags and provides helpful output if the provided stat name is invalid
