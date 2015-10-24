@@ -41,7 +41,6 @@ module MultiRepo
         install_hooks_step
       else
         Console.log_step("Installing dependencies...")
-        ExtraOutput.log("Installing dependencies") if @ci
         log_ci_info if @ci
         full_install
       end
@@ -95,6 +94,7 @@ module MultiRepo
       Performer.dependencies.each { |d| clone_or_fetch(d) }
       
       # Checkout the appropriate branches as specified in the lock file
+      ExtraOutput.log("Checking out appropriate dependency revisions") if @ci
       checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
       mode = @ci ? RevisionSelection::AS_LOCK : RevisionSelection::LATEST
       checkout_command.dependencies_checkout_step(mode)
