@@ -12,5 +12,8 @@ module MultiRepo
 
     attr_accessor :git_executable
     @git_executable = nil
+    
+    attr_accessor :extra_output
+    @extra_output = nil
   end
 end

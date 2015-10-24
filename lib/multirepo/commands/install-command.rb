@@ -1,6 +1,7 @@
 require "terminal-table"
 
 require "multirepo/utility/console"
+require "multirepo/utility/extra-output"
 require "multirepo/utility/utils"
 require "multirepo/git/repo"
 require "multirepo/logic/performer"
@@ -40,6 +41,7 @@ module MultiRepo
         install_hooks_step
       else
         Console.log_step("Installing dependencies...")
+        ExtraOutput.log("Installing dependencies") if @ci
         log_ci_info if @ci
         full_install
       end
@@ -122,10 +124,12 @@ module MultiRepo
       if dependency.config_entry.repo.exists?
         check_repo_validity(dependency)
         
-        Console.log_substep("Working copy '#{dependency.config_entry.repo.path}' already exists, fetching...")
+        Console.log_substep("Working copy '#{dependency.config_entry.repo.path}' already exists, fetching...") 
+        ExtraOutput.log("Fetching #{dependency.config_entry.repo.basename}") if @ci
         fetch_repo(dependency)
       else
         Console.log_substep("Cloning #{dependency.config_entry.url} into '#{dependency.config_entry.repo.path}'")
+        ExtraOutput.log("Cloning into #{dependency.config_entry.repo.basename}") if @ci
         clone_repo(dependency)
       end
     end
