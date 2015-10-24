@@ -4,7 +4,7 @@ To install betas run `gem install git-multirepo --pre`
 
 ## 1.0.0.beta53
 
-- **Enhancement:** Added a `--ci-output` flag to output additional CI server-specific messages (such as TeamCity service messages)
+- **Enhancement:** Added a `--extra-output` flag to output additional CI server-specific messages (such as TeamCity service messages)
 
 ## 1.0.0.beta52
 
