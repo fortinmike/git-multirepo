@@ -50,7 +50,7 @@ module MultiRepo
     # Operations
     
     def fetch
-      GitRunner.run_as_system(@path, "fetch --prune --progress")
+      GitRunner.run_as_system(@path, "fetch --prune")
       GitRunner.last_command_succeeded
     end
     
@@ -58,8 +58,10 @@ module MultiRepo
       options = {} unless options
       branch = options[:branch]
       shallow = options[:shallow] || false
+      quiet = options[:quiet] || false
 
-      command = "clone #{url} #{@path} --progress"
+      command = "clone #{url} #{@path}"
+      command << " -q" if quiet
       command << " -b #{branch}" if branch
       command << " --depth 1" if shallow
       

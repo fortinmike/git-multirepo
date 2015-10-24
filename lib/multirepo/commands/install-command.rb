@@ -137,7 +137,7 @@ module MultiRepo
     end
     
     def clone_repo(dependency)
-      options = { :branch => dependency.lock_entry.branch, :shallow => @ci }
+      options = { :branch => dependency.lock_entry.branch, :shallow => @ci, :quiet => true }
       unless dependency.config_entry.repo.clone(dependency.config_entry.url, options)
         fail MultiRepoException, "Could not clone remote #{dependency.config_entry.url} with branch #{dependency.config_entry.branch}"
       end
