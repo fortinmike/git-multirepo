@@ -1,8 +1,8 @@
 require "terminal-table"
 
 require "multirepo/utility/console"
-require "multirepo/utility/extra-output"
 require "multirepo/utility/utils"
+require "multirepo/output/extra-output"
 require "multirepo/git/repo"
 require "multirepo/logic/performer"
 require "multirepo/commands/checkout-command"
@@ -94,7 +94,7 @@ module MultiRepo
       Performer.dependencies.each { |d| clone_or_fetch(d) }
       
       # Checkout the appropriate branches as specified in the lock file
-      ExtraOutput.log("Checking out appropriate dependency revisions") if @ci
+      ExtraOutput.progress("Checking out appropriate dependency revisions") if @ci
       checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
       mode = @ci ? RevisionSelection::AS_LOCK : RevisionSelection::LATEST
       checkout_command.dependencies_checkout_step(mode)
@@ -125,17 +125,18 @@ module MultiRepo
         check_repo_validity(dependency)
         
         Console.log_substep("Working copy '#{dependency.config_entry.repo.path}' already exists, fetching...") 
-        ExtraOutput.log("Fetching #{dependency.config_entry.repo.basename}") if @ci
+        ExtraOutput.progress("Fetching #{dependency.config_entry.repo.basename}") if @ci
         fetch_repo(dependency)
       else
         Console.log_substep("Cloning #{dependency.config_entry.url} into '#{dependency.config_entry.repo.path}'")
-        ExtraOutput.log("Cloning into #{dependency.config_entry.repo.basename}") if @ci
+        ExtraOutput.progress("Cloning into #{dependency.config_entry.repo.basename}") if @ci
         clone_repo(dependency)
       end
     end
     
     def fetch_repo(dependency)
       unless dependency.config_entry.repo.fetch
+        ExtraOutput.error("Failed to fetch #{dependency.config_entry.repo.basename}") if @ci
         fail MultiRepoException, "Could not fetch from remote #{dependency.config_entry.repo.remote('origin').url}"
       end
     end
@@ -143,6 +144,7 @@ module MultiRepo
     def clone_repo(dependency)
       options = { :branch => dependency.lock_entry.branch, :quiet => true }
       unless dependency.config_entry.repo.clone(dependency.config_entry.url, options)
+        ExtraOutput.error("Failed to clone #{dependency.config_entry.repo.basename}") if @ci
         fail MultiRepoException, "Could not clone remote #{dependency.config_entry.url} with branch #{dependency.config_entry.branch}"
       end
     end
@@ -151,6 +153,7 @@ module MultiRepo
     
     def check_repo_validity(dependency)
       unless dependency.config_entry.repo.remote("origin").url == dependency.config_entry.url
+        ExtraOutput.error("Repo #{dependency.config_entry.path} origin URL does not match config") if @ci
         fail MultiRepoException, "'#{dependency.config_entry.path}' origin URL (#{dependency.config_entry.repo.remote('origin').url}) does not match entry (#{dependency.config_entry.url})!"
       end
     end

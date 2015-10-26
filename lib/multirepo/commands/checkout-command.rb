@@ -1,5 +1,6 @@
 require "multirepo/utility/console"
 require "multirepo/utility/utils"
+require "multirepo/output/extra-output"
 require "multirepo/logic/revision-selector"
 require "multirepo/logic/performer"
 
@@ -109,13 +110,16 @@ module MultiRepo
       # (in case the checked-out revision had an additional dependency)
       unless config_entry.repo.exists?
         Console.log_substep("Cloning missing dependency '#{config_entry.path}' from #{config_entry.url}")
+        ExtraOutput.progress("Cloning missing dependency #{config_entry.path}")
         config_entry.repo.clone(config_entry.url)
       end
       
       # Checkout!
+      ExtraOutput.progress("Checking out #{dependency_name} #{revision}")
       if config_entry.repo.checkout(revision)
         Console.log_substep("Checked out #{dependency_name} '#{revision}'")
       else
+        ExtraOutput.error("Couldn|'t check out dependency #{dependency_name}")
         fail MultiRepoException, "Couldn't check out the appropriate version of dependency #{dependency_name}"
       end
     end
