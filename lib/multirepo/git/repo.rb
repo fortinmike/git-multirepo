@@ -56,14 +56,13 @@ module MultiRepo
     
     def clone(url, options = nil)
       options = {} unless options
+      
       branch = options[:branch]
-      shallow = options[:shallow] || false
-      quiet = options[:quiet] || false
 
       command = "clone #{url} #{@path}"
-      command << " -q" if quiet
+      command << " -q" if options[:quiet] || false
       command << " -b #{branch}" if branch
-      command << " --depth 1" if shallow
+      command << " --depth 1" if options[:shallow] || false
       
       GitRunner.run_as_system(".", command)
       GitRunner.last_command_succeeded
