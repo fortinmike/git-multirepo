@@ -6,7 +6,7 @@ module MultiRepo
       output = case Config.instance.extra_output
       when "teamcity"; TeamCityExtraOutput.new
       end
-      output.send(sym, *args, &block)
+      output.send(sym, *args, &block) if output
     end
   end
 end
