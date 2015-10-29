@@ -135,13 +135,14 @@ After repositories are initialized this way, git-multirepo handles the rest and 
 
 ## Continuous Integration
 
-git-multirepo supports continuous integration in two ways:
+git-multirepo supports continuous integration in a couple of ways:
 
 - The `install` command has a special `--ci` flag, which:
   - Installs exact revisions of dependencies in-place
   - Skips local hooks installation
   - Logs additional information that's useful in a CI context
 - The `inspect` command offers plumbing-style output that can be used to inspect repositories to conditionally perform multirepo operations on them afterwards.
+- A special `--extra-output` option causes git-multirepo to output specially-formatted progress and error messages for CI purposes, such as TeamCity service messages (when using `--extra-output=teamcity`).
 
 ## Summary of Commands
 
