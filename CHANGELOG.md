@@ -2,6 +2,10 @@
 
 To install betas run `gem install git-multirepo --pre`
 
+## 1.0.0.beta57
+
+- **Bug Fix:** Fixed error in multi install clone error message building
+
 ## 1.0.0.beta56
 
 - **Enhancement:** Using the `--extra-output` flag will output more CI server-specific info (checkout info, errors, etc.)
