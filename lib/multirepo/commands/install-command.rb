@@ -48,37 +48,6 @@ module MultiRepo
       Console.log_step("Done!")
     end
     
-    def log_ci_info
-      Console.log_info("Performing continuous-integration-aware install")
-      Console.log_info("Using git-multirepo #{MultiRepo::VERSION}")
-      
-      main_repo = Repo.new(".")
-      main_repo_branch = main_repo.current_branch
-      meta_file = MetaFile.new(".").load
-
-      if main_repo.head.merge_commit?
-        Console.log_warning("[MERGE COMMIT] The checked-out main repo revision is a merge commit.")
-        Console.log_warning("[MERGE COMMIT] Lock file might not represent a valid project state.")
-      end
-
-      table = Terminal::Table.new do |t|
-        t.title = "Revision Info"
-        t.add_row ["Tracked Using", "git-multirepo #{meta_file.version}"]
-        t.add_separator
-        t.add_row ["Main Repo", commit_info(main_repo.head.commit_id, (main_repo_branch.name rescue nil))]
-        t.add_separator
-        LockFile.new(".").load_entries.each do |lock_entry|
-          branch_name = lock_entry.branch
-          t.add_row [lock_entry.name, commit_info(lock_entry.head, branch_name)]
-        end
-      end
-      puts table
-    end
-
-    def commit_info(commit_id, branch_name)
-      commit_id + (branch_name ? " (on branch #{branch_name})" : "")
-    end
-    
     def full_install
       install_dependencies_step
       install_hooks_step unless @ci
@@ -156,6 +125,46 @@ module MultiRepo
         ExtraOutput.error("Repo #{dependency.config_entry.path} origin URL does not match config") if @ci
         fail MultiRepoException, "'#{dependency.config_entry.path}' origin URL (#{dependency.config_entry.repo.remote('origin').url}) does not match entry (#{dependency.config_entry.url})!"
       end
+    end
+    
+    # Logging
+    
+    def log_ci_info
+      Console.log_info("Performing continuous-integration-aware install")
+      Console.log_info("Using git-multirepo #{MultiRepo::VERSION}")
+      
+      main_repo = Repo.new(".")
+      
+      log_merge_commit_warning(main_repo)
+      log_merge_table(main_repo)
+    end
+    
+    def log_merge_commit_warning(main_repo)
+      if main_repo.head.merge_commit?
+        Console.log_warning("[MERGE COMMIT] The checked-out main repo revision is a merge commit.")
+        Console.log_warning("[MERGE COMMIT] Lock file might not represent a valid project state.")
+      end
+    end
+    
+    def log_merge_table(main_repo)
+      meta_file = MetaFile.new(".").load
+      main_repo_branch = main_repo.current_branch
+      
+      puts Terminal::Table.new do |t|
+        t.title = "Revision Info"
+        t.add_row ["Tracked Using", "git-multirepo #{meta_file.version}"]
+        t.add_separator
+        t.add_row ["Main Repo", commit_info(main_repo.head.commit_id, (main_repo_branch.name rescue nil))]
+        t.add_separator
+        LockFile.new(".").load_entries.each do |lock_entry|
+          branch_name = lock_entry.branch
+          t.add_row [lock_entry.name, commit_info(lock_entry.head, branch_name)]
+        end
+      end
+    end
+
+    def commit_info(commit_id, branch_name)
+      commit_id + (branch_name ? " (on branch #{branch_name})" : "")
     end
   end
 end
