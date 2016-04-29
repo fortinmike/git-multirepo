@@ -66,7 +66,7 @@ module MultiRepo
     
     def ==(other)
       other.class == self.class &&
-      other.path == @path
+      other.path.casecmp(@path) == 0
     end
   end
 end

@@ -32,7 +32,7 @@ module MultiRepo
       dependency_ordered_nodes = Node.new(".").ordered_descendants
       
       return dependency_ordered_nodes.map do |node|
-        dependencies.find { |d| d.config_entry.path == node.path }
+        dependencies.find { |d| d.config_entry.path.casecmp(node.path) == 0 }
       end
     end
     
