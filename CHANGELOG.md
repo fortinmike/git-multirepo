@@ -2,6 +2,10 @@
 
 To install betas run `gem install git-multirepo --pre`
 
+## 1.0.0.beta58
+
+- **Bug Fix:** Fix clone and install error when on-disk dependency directory case does not match
+
 ## 1.0.0.beta57
 
 - **Bug Fix:** Fixed error in multi install clone error message building
