@@ -80,7 +80,7 @@ module MultiRepo
     end
     
     def dependencies_checkout_step(mode, ref_name = nil)
-      Performer.dependencies.each do |dependency|
+      Performer.depth_ordered_dependencies.each do |dependency|
         # Find out the required dependency revision based on the checkout mode
         revision = RevisionSelector.revision_for_mode(mode, ref_name, dependency.lock_entry)
         perform_dependency_checkout(dependency.config_entry, revision)

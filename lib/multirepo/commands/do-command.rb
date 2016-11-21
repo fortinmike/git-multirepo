@@ -63,7 +63,7 @@ module MultiRepo
 
     def perform_operation_on_dependencies(operation)
       success = true
-      Performer.dependencies.each do |dependency|
+      Performer.depth_ordered_dependencies.each do |dependency|
         success &= perform_operation(dependency.config_entry.repo.path, operation)
       end
       return success

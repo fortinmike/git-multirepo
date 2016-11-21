@@ -60,7 +60,7 @@ module MultiRepo
       Console.log_substep("Installing #{config_entries.count} dependencies...")
       
       # Clone or fetch all configured dependencies to make sure nothing is missing locally
-      Performer.dependencies.each { |d| clone_or_fetch(d) }
+      Performer.depth_ordered_dependencies.each { |d| clone_or_fetch(d) }
       
       # Checkout the appropriate branches as specified in the lock file
       ExtraOutput.progress("Checking out appropriate dependency revisions") if @ci

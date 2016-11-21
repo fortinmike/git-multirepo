@@ -125,14 +125,14 @@ module MultiRepo
     
     def build_merge(main_repo, initial_revision, ref_name, mode)
       # List dependencies prior to checkout so that we can compare them later
-      our_dependencies = Performer.dependencies
+      our_dependencies = Performer.depth_ordered_dependencies
       
       # Checkout the specified main repo ref to find out which dependency refs to merge
       commit_id = Ref.new(main_repo, ref_name).commit_id # Checkout in floating HEAD
       Performer.perform_main_repo_checkout(main_repo, commit_id, false, "Checked out main repo '#{ref_name}' to inspect to-merge dependencies")
       
       # List dependencies for the ref we're trying to merge
-      their_dependencies = Performer.dependencies
+      their_dependencies = Performer.depth_ordered_dependencies
       
       # Checkout the initial revision ASAP
       Performer.perform_main_repo_checkout(main_repo, initial_revision, false, "Checked out initial main repo revision '#{initial_revision}'")

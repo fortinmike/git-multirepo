@@ -65,7 +65,7 @@ module MultiRepo
 
     def update_dependencies
       any_changed = false
-      Performer.dependencies.each do |dependency|
+      Performer.depth_ordered_dependencies.each do |dependency|
         path = dependency.config_entry.path
         name = dependency.config_entry.name
         any_changed |= update_one(path, name) if Utils.multirepo_enabled?(path)

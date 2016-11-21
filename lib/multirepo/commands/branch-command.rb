@@ -48,7 +48,7 @@ module MultiRepo
       end
       
       # Branch dependencies
-      Performer.dependencies.each do |dependency|
+      Performer.depth_ordered_dependencies.each do |dependency|
         perform_branch(dependency.config_entry.repo)
       end
       
