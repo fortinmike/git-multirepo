@@ -24,7 +24,7 @@ module MultiRepo
       end
     end
     
-    def self.dependencies
+    def self.depth_ordered_dependencies
       config_entries = ConfigFile.new(".").load_entries
       lock_entries = LockFile.new(".").load_entries
       

@@ -20,7 +20,7 @@ module MultiRepo
     def initialize(argv)
       @branch_name = argv.shift_argument
       @force = argv.flag?("force")
-      @remote_tracking = argv.flag?("push", true)
+      @push = argv.flag?("push", true)
       super
     end
     
@@ -38,15 +38,17 @@ module MultiRepo
       
       main_repo = Repo.new(".")
       
-      # Ensure the main repo is clean
-      fail MultiRepoException, "Main repo is not clean; multi branch aborted" unless main_repo.clean?
-      
-      # Ensure dependencies are clean
-      config_entries = ConfigFile.new(".").load_entries
-      unless Utils.dependencies_clean?(config_entries)
-        fail MultiRepoException, "Dependencies are not clean; multi branch aborted"
+      unless @force
+        # Ensure the main repo is clean
+        fail MultiRepoException, "Main repo is not clean; multi branch aborted" unless main_repo.clean?
+        
+        # Ensure dependencies are clean
+        config_entries = ConfigFile.new(".").load_entries
+        unless Utils.dependencies_clean?(config_entries)
+          fail MultiRepoException, "Dependencies are not clean; multi branch aborted"
+        end
       end
-      
+
       # Branch dependencies
       Performer.depth_ordered_dependencies.each do |dependency|
         perform_branch(dependency.config_entry.repo)
@@ -73,10 +75,14 @@ module MultiRepo
         tracking_files.commit("[multirepo] Post-branch tracking files update")
       end
       
-      return unless @remote_tracking
+      return unless @push
       
-      Console.log_info("Pushing #{@branch_name} to origin/#{@branch_name}")
-      repo.branch(@branch_name).push
+      if @force
+        Console.log_warning("Skipping #{@branch_name} branch push because we're force-branching")
+      else
+        Console.log_info("Pushing #{@branch_name} to origin/#{@branch_name}")
+        repo.branch(@branch_name).push
+      end
     end
   end
 end
