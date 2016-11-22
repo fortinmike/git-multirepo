@@ -24,10 +24,12 @@ module MultiRepo
     end
     
     def load_entries
+      fail MultiRepoException, "Can't read config file (no permission)" if !File.stat(file).readable?
       Psych.load(File.read(file))
     end
     
     def save_entries(entries)
+      fail MultiRepoException, "Can't write config file (no permission)" if !File.stat(file).writable?
       File.write(file, Psych.dump(entries))
     end
     

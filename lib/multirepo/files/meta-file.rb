@@ -30,10 +30,12 @@ module MultiRepo
     end
         
     def load
+      fail MultiRepoException, "Can't read meta file (no permission)" if !File.stat(file).readable?
       Psych.load(File.read(file))
     end
     
     def update
+      fail MultiRepoException, "Can't write meta file (no permission)" if !File.stat(file).writable?
       content = Psych.dump(self)
       return update_internal(file, content)
     end

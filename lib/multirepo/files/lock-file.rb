@@ -26,10 +26,12 @@ module MultiRepo
     end
     
     def load_entries
+      fail MultiRepoException, "Can't read lock file (no permission)" if !File.stat(file).readable? 
       Psych.load(File.read(file))
     end
     
     def update
+      fail MultiRepoException, "Can't write lock file (no permission)" if !File.stat(file).writable?
       config_entries = ConfigFile.new(@path).load_entries
       lock_entries = config_entries.map { |c| LockEntry.new(c) }
       content = Psych.dump(lock_entries)
