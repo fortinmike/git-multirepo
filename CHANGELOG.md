@@ -2,6 +2,12 @@
 
 To install betas run `gem install git-multirepo --pre`
 
+## 1.0.0.beta60
+
+- **Enhancement:** Implemented the `--force` option in `multi branch`
+- **Enhancement:** Prevent updating tracking files with an outdated version of the tool
+- **Bug Fix:** Fail gracefully in case of limited tracking file permissions
+
 ## 1.0.0.beta59
 
 - **Bug Fix:** Fix clone and install error when on-disk dependency directory case does not match
