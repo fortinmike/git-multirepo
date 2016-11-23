@@ -1,6 +1,8 @@
 require "multirepo/git/git-runner"
 require_relative "meta-file"
 require_relative "lock-file"
+require "multirepo/info"
+require "multirepo/logic/version-comparer"
 
 module MultiRepo
   class TrackingFiles
@@ -8,13 +10,28 @@ module MultiRepo
     
     def initialize(path)
       @path = path
-      @files = [MetaFile.new(path), LockFile.new(path)]
+      @meta_file = MetaFile.new(path)
+      @lock_file = LockFile.new(path)
+      @files = [@meta_file, @lock_file]
     end
     
     def update
+      ensure_tool_not_outdated
       updated = false
       files.each { |f| updated |= f.update }
       return updated
+    end
+
+    def ensure_tool_not_outdated
+      # TODO: Also outdated if the tracking file does not exist 
+      current_version = MultiRepo::VERSION
+      meta_version = @meta_file.load.version
+      outdated_tool = !VersionComparer.is_latest(current: current_version, last: meta_version)
+
+      message = "Can't update tracking files with an outdated version of git-multirepo\n" + 
+                "  Current version is #{current_version} and repo is tracked by #{meta_version}"
+
+      fail MultiRepoException, message if outdated_tool
     end
     
     def stage
