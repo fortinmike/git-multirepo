@@ -24,6 +24,10 @@ module MultiRepo
     def filename
       FILENAME
     end
+
+    def exists?
+      File.exist?(file)
+    end
     
     def encode_with(coder)
       coder["version"] = @version

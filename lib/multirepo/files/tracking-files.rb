@@ -23,14 +23,15 @@ module MultiRepo
     end
 
     def ensure_tool_not_outdated
-      # TODO: Also outdated if the tracking file does not exist 
+      base_message = "Can't update tracking files with an outdated version of git-multirepo"
+
+      fail MultiRepoException, base_message if !@meta_file.exists?
+
       current_version = MultiRepo::VERSION
       meta_version = @meta_file.load.version
       outdated_tool = !VersionComparer.is_latest(current: current_version, last: meta_version)
-
-      message = "Can't update tracking files with an outdated version of git-multirepo\n" + 
-                "  Current version is #{current_version} and repo is tracked by #{meta_version}"
-
+      message = base_message + "\n  Current version is #{current_version} and repo is tracked by #{meta_version}"
+      
       fail MultiRepoException, message if outdated_tool
     end
     
