@@ -34,14 +34,18 @@ module MultiRepo
     end
         
     def load
-      fail MultiRepoException, "Can't read meta file (no permission)" if !File.stat(file).readable?
+      ensure_access(file, "Can't read meta file (permissions)") { |stat| stat.readable? }
       Psych.load(File.read(file))
     end
     
     def update
-      fail MultiRepoException, "Can't write meta file (no permission)" if !File.stat(file).writable?
+      ensure_access(file, "Can't write meta file (permissions)") { |stat| stat.writable? }
       content = Psych.dump(self)
       return update_internal(file, content)
+    end
+
+    def ensure_access(file, error_message, &check)
+      fail MultiRepoException, error_message if File.exists?(file) && !check.call(File.stat(file))
     end
   end
 end

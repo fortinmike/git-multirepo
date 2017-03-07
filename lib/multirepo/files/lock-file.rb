@@ -26,12 +26,12 @@ module MultiRepo
     end
     
     def load_entries
-      fail MultiRepoException, "Can't read lock file (no permission)" if !File.stat(file).readable? 
+      ensure_access(file, "Can't read lock file (permissions)") { |stat| stat.readable? }
       Psych.load(File.read(file))
     end
     
     def update
-      fail MultiRepoException, "Can't write lock file (no permission)" if !File.stat(file).writable?
+      ensure_access(file, "Can't write lock file (permissions)") { |stat| stat.writable? }
       config_entries = ConfigFile.new(@path).load_entries
       lock_entries = config_entries.map { |c| LockEntry.new(c) }
       content = Psych.dump(lock_entries)
@@ -53,6 +53,10 @@ module MultiRepo
       valid &= (entry.branch == "" || GitRunner.last_command_succeeded)
       
       return valid
+    end
+
+    def ensure_access(file, error_message, &check)
+      fail MultiRepoException, error_message if File.exists?(file) && !check.call(File.stat(file))
     end
   end
 end
