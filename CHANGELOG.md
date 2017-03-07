@@ -2,6 +2,10 @@
 
 To install betas run `gem install git-multirepo --pre`
 
+## 1.0.0.beta62
+
+- **Bug Fix:** Fix post-first-init commit
+
 ## 1.0.0.beta61
 
 - **Bug Fix:** Fix crasher in file permissions checking code
