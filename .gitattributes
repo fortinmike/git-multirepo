@@ -1,2 +1,4 @@
+resources/post-commit eol=lf
+resources/pre-commit eol=lf
 .multirepo.lock merge=ours
 .multirepo.meta merge=ours
