@@ -28,8 +28,6 @@ module MultiRepo
       base_message = "Can't update tracking files with an outdated version of git-multirepo."
       current_version = MultiRepo::VERSION
       meta_version = @meta_file.load.version
-      puts "CURRENT: " + current_version
-      puts "META: " + meta_version
       outdated_tool = !VersionComparer.is_latest(current: current_version, last: meta_version)
       message = base_message + " Current version is #{current_version} and repo is tracked by #{meta_version}"
       
