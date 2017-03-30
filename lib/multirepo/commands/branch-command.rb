@@ -13,14 +13,14 @@ module MultiRepo
       [
         ['<branch name>', 'The name of the branch to create and checkout.'],
         ['[--force]', 'Force creating the branch even if there are uncommmitted changes.'],
-        ['[--no-push]', 'Do not push the branch on creation.']
+        ['[--push]', 'Push the branch on creation.']
       ].concat(super)
     end
     
     def initialize(argv)
       @branch_name = argv.shift_argument
       @force = argv.flag?("force")
-      @push = argv.flag?("push", true)
+      @push = argv.flag?("push", false)
       super
     end
     
