@@ -2,6 +2,10 @@
 
 To install betas run `gem install git-multirepo --pre`
 
+## 1.0.0.beta65
+
+- **Removal:** The `graph` command was removed. It was unused and added an unnecessary dependency.
+
 ## 1.0.0.beta64
 
 - **Enhancement:** The branch command does not push by default anymore (helps avoid creating branches in wrong origins when setting up new projects)
