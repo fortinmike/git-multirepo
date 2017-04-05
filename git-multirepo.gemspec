@@ -27,6 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "colored", "~> 1.2"
   spec.add_runtime_dependency "os", "~> 0.9.6"
   spec.add_runtime_dependency "terminal-table", "~> 1.7.3"
-  spec.add_runtime_dependency "ruby-graphviz", "~> 1.2.2"
   spec.add_runtime_dependency "naturally", "~> 2.1"
 end

@@ -156,7 +156,6 @@ Here is a quick rundown of commands available to you in git-multirepo:
 | checkout | Checks out the specified commit or branch of the main repo and checks out matching versions of all dependencies. |
 | clone | Clones the specified repository in a subfolder, then installs it. |
 | do | Perform an arbitrary Git operation in the main repository, dependency repositories or all repositories. |
-| graph | Graphs the dependency tree from the current repository. |
 | inspect | Outputs various information about multirepo-enabled repos. For use in scripting and CI scenarios. |
 | install | Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local git hooks. Idempotent for a given main repo checkout. |
 | merge | Performs a git merge on all dependencies and the main repo, in the proper order. |
