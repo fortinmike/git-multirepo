@@ -28,7 +28,8 @@ module MultiRepo
       [
         ['<refname>', 'The main repo tag, branch or commit id to merge.'],
         ['[--latest]', 'Merge the HEAD of each stored dependency branch instead of the commits recorded in the lock file.'],
-        ['[--exact]', 'Merge the exact specified ref for each repo, regardless of what\'s stored in the lock file.']
+        ['[--exact]', 'Merge the exact specified ref for each repo, regardless of what\'s stored in the lock file.'],
+        ['[--no-ff]', 'Never perform a fast-forward.']
       ].concat(super)
     end
     
@@ -36,6 +37,7 @@ module MultiRepo
       @ref_name = argv.shift_argument
       @checkout_latest = argv.flag?("latest")
       @checkout_exact = argv.flag?("exact")
+      @fast_forward = argv.flag?("ff")
       super
     end
     
@@ -210,7 +212,7 @@ module MultiRepo
       success = true
       descriptors.each do |descriptor|
         Console.log_substep("#{descriptor.name} : Merging #{descriptor.their_revision} into #{descriptor.our_revision}...")
-        GitRunner.run_as_system(descriptor.repo.path, "merge #{descriptor.their_revision}")
+        GitRunner.run_as_system(descriptor.repo.path, "merge #{descriptor.their_revision}#{@fast_forward ? '' : '--no-ff'}")
         success &= GitRunner.last_command_succeeded
       end
       

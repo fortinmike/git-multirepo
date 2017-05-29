@@ -2,6 +2,10 @@
 
 To install betas run `gem install git-multirepo --pre`
 
+## 1.0.0.beta66
+
+- **Enhancement:** Add a `--no-ff` option to `multi merge` to optionally avoid fast-forwarding
+
 ## 1.0.0.beta65
 
 - **Removal:** The `graph` command was removed. It was unused and added an unnecessary dependency.
