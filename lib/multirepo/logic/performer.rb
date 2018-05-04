@@ -1,5 +1,6 @@
 require "multirepo/files/config-file"
 require "multirepo/files/lock-file"
+require "multirepo/utility/utils"
 
 require_relative "dependency"
 
@@ -31,9 +32,15 @@ module MultiRepo
       dependencies = build_dependencies(config_entries, lock_entries)
       dependency_ordered_nodes = Node.new(".").ordered_descendants
       
-      return dependency_ordered_nodes.map do |node|
-        dependencies.find { |d| d.config_entry.path.casecmp(node.path) == 0 }
+      depth_ordered = dependency_ordered_nodes.map do |node|
+        dependencies.find do |d| 
+          configPath = Utils.standard_path(d.config_entry.path)
+          nodePath = Utils.standard_path(node.path)
+          next configPath.casecmp(nodePath) == 0
+        end
       end
+
+      return depth_ordered
     end
     
     def self.build_dependencies(config_entries, lock_entries)

@@ -1,4 +1,5 @@
 require "multirepo/files/config-file"
+require "multirepo/utility/utils"
 
 module MultiRepo
   class Node
@@ -66,7 +67,9 @@ module MultiRepo
     
     def ==(other)
       other.class == self.class &&
-      other.path.casecmp(@path) == 0
+      otherPath = Utils.standard_path(other.path)
+      thisPath = Utils.standard_path(@path)
+      otherPath.casecmp(thisPath) == 0
     end
   end
 end

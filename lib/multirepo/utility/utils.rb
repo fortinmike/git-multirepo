@@ -3,6 +3,13 @@ require "fileutils"
 
 module MultiRepo
   class Utils
+    def self.standard_path(p)
+      path = URI.parse(p).path
+      path.insert(0, '/') if (path[0] != '/')
+      path.chomp!('/') if (path > '/')
+      path
+    end
+
     def self.only_one_true?(*flags)
       flags.reduce(0) { |count, flag| count += 1 if flag; count } <= 1
     end
