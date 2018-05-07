@@ -1,5 +1,6 @@
 require "multirepo/multirepo-exception"
 require "fileutils"
+require "uri"
 
 module MultiRepo
   class Utils
