@@ -2,6 +2,10 @@
 
 To install betas run `gem install git-multirepo --pre`
 
+## 1.0.0.beta69
+
+* **Bug Fix:** The `add` command ensures that added repos' paths have a trailing slash (avoids some nasty issues)
+
 ## 1.0.0.beta68
 
 * **Bug Fix:** Fix a regression that prevented many commands from running
