@@ -2,8 +2,9 @@
 
 To install betas run `gem install git-multirepo --pre`
 
-## 1.0.0.betaXX
+## 1.0.0.beta70
 
+- **Enhancement:** Repo clones initialize and clone submodules (shallow in CI scenarios).
 - **Enhancement:** The `merge` command always updates main repo tracking files (makes no sense not to do it, important for CI).
 
 ## 1.0.0.beta69

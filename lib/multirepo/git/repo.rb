@@ -63,6 +63,7 @@ module MultiRepo
       command << " -q" if options[:quiet] || false
       command << " -b #{branch}" if branch
       command << " --recurse-submodules"
+      command << " --shallow-submodules" if options[:shallow] || false
       command << " --depth 1" if options[:shallow] || false
       
       GitRunner.run_as_system(".", command)
