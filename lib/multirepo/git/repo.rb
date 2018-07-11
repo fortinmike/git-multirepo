@@ -62,6 +62,7 @@ module MultiRepo
       command = "clone #{url} #{@path}"
       command << " -q" if options[:quiet] || false
       command << " -b #{branch}" if branch
+      command << " --recurse-submodules"
       command << " --depth 1" if options[:shallow] || false
       
       GitRunner.run_as_system(".", command)
