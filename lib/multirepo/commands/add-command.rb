@@ -11,7 +11,7 @@ module MultiRepo
     end
     
     def initialize(argv)
-      @path = argv.shift_argument
+      @path = with_trailing_slash(argv.shift_argument)
       super
     end
     
@@ -46,6 +46,10 @@ module MultiRepo
       parent_dir = File.expand_path("..")
       path = File.expand_path("..", path)
       return parent_dir == path
+    end
+
+    def with_trailing_slash(path)
+      if path.end_with?("/") then path else path + "/" end
     end
   end
 end

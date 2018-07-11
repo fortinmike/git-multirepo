@@ -231,8 +231,6 @@ module MultiRepo
         return
       end
       
-      return unless Console.ask("Update main repo tracking files? (important for continuous integration)")
-      
       update_command = UpdateCommand.new(CLAide::ARGV.new(["--commit", "--diff"]))
       update_command.update_tracking_files_step(RepoSelection::MAIN)
     end
