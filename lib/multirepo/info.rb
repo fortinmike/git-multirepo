@@ -1,5 +1,5 @@
 module MultiRepo
   NAME = "git-multirepo"
-  VERSION = "1.0.0.beta70"
+  VERSION = "1.0.0.beta72"
   DESCRIPTION = "Track multiple Git repositories side-by-side."
 end

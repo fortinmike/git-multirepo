@@ -12,7 +12,8 @@ module MultiRepo
       [
         ['<url>', 'The repository to clone.'],
         ['<name>', 'The name of the containing folder that will be created.'],
-        ['[<refname>]', 'The branch, tag or commit id to checkout. Checkout will use "master" if unspecified.']
+        ['[<refname>]', 'The branch, tag or commit id to checkout. Checkout will use "master" if unspecified.'],
+        ['[--here]', 'Checkout directly in the current directory instead of creating a new directory to put repos in'],
       ].concat(super)
     end
     
@@ -20,6 +21,7 @@ module MultiRepo
       @url = argv.shift_argument
       @name = argv.shift_argument
       @ref_name = argv.shift_argument || "master"
+      @here = argv.flag?("here")
       super
     end
 
@@ -34,7 +36,7 @@ module MultiRepo
 
       fail MultiRepoException, "A directory named #{@name} already exists" if Dir.exist?(@name)
 
-      main_repo_path = "#{@name}/#{@name}"
+      main_repo_path = @here ? "#{@name}" : "#{@name}/#{@name}"
       main_repo = Repo.new(main_repo_path)
       
       # Recursively create the directory where we'll clone the main repo

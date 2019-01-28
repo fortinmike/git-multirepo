@@ -2,6 +2,15 @@
 
 To install betas run `gem install git-multirepo --pre`
 
+## 1.0.0.beta72
+
+- **Bug Fix:** Revert changes from beta 71
+- **Enhancement:** Add a `--here` flag to the `clone` command to skip creating an intermediate directory to clone into
+
+## 1.0.0.beta71
+
+- **Enhancement:** The `clone` command now clones all repos in the current directory instead of creating an intermediate directory (more flexible)
+
 ## 1.0.0.beta70
 
 - **Enhancement:** Repo clones initialize and clone submodules (shallow in CI scenarios).
