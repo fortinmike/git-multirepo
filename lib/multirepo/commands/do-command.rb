@@ -22,13 +22,12 @@ module MultiRepo
     end
     
     def initialize(argv)
-      @operation = argv.shift_argument
+      @operation = argv.remainder!.join(" ")
       @repo_selection = RepoSelection.new(argv)
       super
     end
 
     def validate!
-      super
       help! "You must provide a git operation to perform" unless @operation
       help! "You can't provide more than one operation modifier (--deps, --main, etc.)" unless @repo_selection.valid?
     end

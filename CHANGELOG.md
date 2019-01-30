@@ -2,6 +2,12 @@
 
 To install betas run `gem install git-multirepo --pre`
 
+## 1.0.0.beta73
+
+- **Enhancement:** Git commands with arbitrary complexity can be performed using the `do` command, for example:
+
+      multi do push --set-upstream origin master
+
 ## 1.0.0.beta72
 
 - **Bug Fix:** Revert changes from beta 71
