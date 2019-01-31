@@ -14,11 +14,17 @@ You can download a handy cheat sheet [here](https://github.com/fortinmike/git-mu
 
 ## Installation
 
-git-multirepo is distributed as a Ruby Gem. It can thus be installed as follows (provided Ruby is installed on your machine):
+git-multirepo is distributed as a Ruby Gem.
 
     $ gem install git-multirepo --pre
 
 The `--pre` flag is necessary to install beta releases.
+
+## Development
+
+1. Install dependencies with `bundle install` (install the `bundler` gem beforehand if necessary)
+2. Run `rake install` to build and install the tool locally
+3. Run it using the command `multi`
 
 ## Motivation
 
@@ -66,16 +72,16 @@ Say you want to track an existing project with git-multirepo:
 
 1. Organize repos on disk in the following manner:
 
-	```
-	MyAwesomeProject
-	  |-- AwesomeApp
-	  |-- Dependency1
-	  |-- Dependency2
-	```
+   ```
+   MyAwesomeProject
+     |-- AwesomeApp
+     |-- Dependency1
+     |-- Dependency2
+   ```
 
-2. `cd` into the *AwesomeApp* directory (aka the "main repo").
+2. `cd` into the _AwesomeApp_ directory (aka the "main repo").
 3. Run `multi init`.
-4. You will get prompted to add *Dependency1* and *Dependency2* to multirepo; do so.
+4. You will get prompted to add _Dependency1_ and _Dependency2_ to multirepo; do so.
 5. git-multirepo reads all required information from dependency repos and initializes itself, storing its metadata in the main repo, under version control.
 
 From now on, each time you commit the main repo git-multirepo tracks &mdash; using local git hooks &mdash; which revision of each dependency is required for that main repo revision, and where to get them. The hooks also ensure that you won't commit the main repo before its dependencies so that you always get a valid state stored under version control.
@@ -100,16 +106,16 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 - Low possibility of human error (such as forgetting to contribute changes to dependencies back to the appropriate remotes, forgetting to commit dependencies in the proper order, etc.)
 - You're not stuck with git-multirepo. It stores its metadata as [YAML](http://www.yaml.org) in the main repo. You can clone and checkout appropriate revisions of your dependencies by hand without git-multirepo if you need to. The information is there, in human-readable form.
 
-| How It Handles... | git-multirepo | git submodules | git subtrees |
-|----------------------------------|:----------------:|:--------------:|:------------:|
-| Working Copy | beside main repo | in main repo | in main repo |
-| Constantly Evolving Dependencies | easy | hard | passable |
-| Merging Changes to Dependencies | easy | hard | passable |
-| Contributing Upstream | easy | easy | passable |
-| Continuous Integration | medium | medium | easy |
-| Branch-Based Workflows | easy* | hard | easy |
+| How It Handles...                |  git-multirepo   | git submodules | git subtrees |
+| -------------------------------- | :--------------: | :------------: | :----------: |
+| Working Copy                     | beside main repo |  in main repo  | in main repo |
+| Constantly Evolving Dependencies |       easy       |      hard      |   passable   |
+| Merging Changes to Dependencies  |       easy       |      hard      |   passable   |
+| Contributing Upstream            |       easy       |      easy      |   passable   |
+| Continuous Integration           |      medium      |     medium     |     easy     |
+| Branch-Based Workflows           |      easy\*      |      hard      |     easy     |
 
-(*) The `multi branch` and `multi merge` commands faciliate branching and merging the main repo and its dependencies as a whole.
+(\*) The `multi branch` and `multi merge` commands faciliate branching and merging the main repo and its dependencies as a whole.
 
 ## Limitations
 
@@ -119,15 +125,15 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 
 ## Subdependencies
 
-Dependencies can be initialized and have their own dependencies. However, git-multirepo currently supports only *direct* dependencies (which is a minor inconvenience in practice). This means that every git-multirepo-enabled repository must have its direct and indirect dependencies listed in its `.multirepo file`. Take for example the following directory listing.
+Dependencies can be initialized and have their own dependencies. However, git-multirepo currently supports only _direct_ dependencies (which is a minor inconvenience in practice). This means that every git-multirepo-enabled repository must have its direct and indirect dependencies listed in its `.multirepo file`. Take for example the following directory listing.
 
-  ```
-  MyAwesomeProject
-    |-- AwesomeApp
-    |-- AppDependency1
-    |-- AppDependency1-Dependency
-    |-- AppDependency2
-  ```
+```
+MyAwesomeProject
+  |-- AwesomeApp
+  |-- AppDependency1
+  |-- AppDependency1-Dependency
+  |-- AppDependency2
+```
 
 To properly track those repositories with git-multirepo, `AppDependency1` would be initialized with `AppDependency1-Dependency` as a dependency. Then, `AwesomeApp` would be initialized with `AppDependency1`, `AppDependency1-Dependency` and `AppDependency2` as dependencies, even though `MyAwesomeApp` does not directly depend on `AppDependency1-Dependency`. `AppDependency1-Dependency` and `AppDependency2` do not need to be initialized because they have no dependencies of their own.
 
@@ -148,21 +154,21 @@ git-multirepo supports continuous integration in a couple of ways:
 
 Here is a quick rundown of commands available to you in git-multirepo:
 
-| Command | Description |
-|---------|-------------|
-| init | Initialize the current repository as a multirepo project. |
-| add | Track an additional dependency with multirepo. |
-| branch | Create and/or checkout a new branch for all repos. |
-| checkout | Checks out the specified commit or branch of the main repo and checks out matching versions of all dependencies. |
-| clone | Clones the specified repository in a subfolder, then installs it. |
-| do | Perform an arbitrary Git operation in the main repository, dependency repositories or all repositories. |
-| inspect | Outputs various information about multirepo-enabled repos. For use in scripting and CI scenarios. |
-| install | Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local git hooks. Idempotent for a given main repo checkout. |
-| merge | Performs a git merge on all dependencies and the main repo, in the proper order. |
-| open | Opens repositories in the OS's file explorer. |
-| remove | Removes the specified dependency from multirepo. |
-| update | Force-updates the multirepo tracking files. |
-| uninit | Removes all traces of multirepo in the current multirepo repository. |
+| Command  | Description                                                                                                                                                                               |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| init     | Initialize the current repository as a multirepo project.                                                                                                                                 |
+| add      | Track an additional dependency with multirepo.                                                                                                                                            |
+| branch   | Create and/or checkout a new branch for all repos.                                                                                                                                        |
+| checkout | Checks out the specified commit or branch of the main repo and checks out matching versions of all dependencies.                                                                          |
+| clone    | Clones the specified repository in a subfolder, then installs it.                                                                                                                         |
+| do       | Perform an arbitrary Git operation in the main repository, dependency repositories or all repositories.                                                                                   |
+| inspect  | Outputs various information about multirepo-enabled repos. For use in scripting and CI scenarios.                                                                                         |
+| install  | Clones and checks out dependencies as defined in the version-controlled multirepo metadata files and installs git-multirepo's local git hooks. Idempotent for a given main repo checkout. |
+| merge    | Performs a git merge on all dependencies and the main repo, in the proper order.                                                                                                          |
+| open     | Opens repositories in the OS's file explorer.                                                                                                                                             |
+| remove   | Removes the specified dependency from multirepo.                                                                                                                                          |
+| update   | Force-updates the multirepo tracking files.                                                                                                                                               |
+| uninit   | Removes all traces of multirepo in the current multirepo repository.                                                                                                                      |
 
 To read more about each command, use the `--help` flag (e.g. `$ multi clone --help`).
 
@@ -170,10 +176,10 @@ To read more about each command, use the `--help` flag (e.g. `$ multi clone --he
 
 git-multirepo stores all of its metadata in three files:
 
-| File | Format | Updated | Contents |
-|------|--------|---------|----------|
-| .multirepo | YAML | at *initialization*, on *add* on *remove* | A collection of your project's dependencies. For each dependency, stores its **local path** relative to the main repo and the **remote URL** your project depends upon.
-| .multirepo.lock | YAML | before each commit | For each dependency, stores the **commit id** and **branch** on which the dependency was when the main repo was committed. The dependency's **name** is also included but only serves as a reference to make inspecting the lock file easier. |
-| .multirepo.meta | YAML | before each commit | Various git-multirepo metadata, such as the **git-multirepo version** that the last commit was performed with. |
+| File            | Format | Updated                                   | Contents                                                                                                                                                                                                                                      |
+| --------------- | ------ | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| .multirepo      | YAML   | at _initialization_, on _add_ on _remove_ | A collection of your project's dependencies. For each dependency, stores its **local path** relative to the main repo and the **remote URL** your project depends upon.                                                                       |
+| .multirepo.lock | YAML   | before each commit                        | For each dependency, stores the **commit id** and **branch** on which the dependency was when the main repo was committed. The dependency's **name** is also included but only serves as a reference to make inspecting the lock file easier. |
+| .multirepo.meta | YAML   | before each commit                        | Various git-multirepo metadata, such as the **git-multirepo version** that the last commit was performed with.                                                                                                                                |
 
 The information contained in .multirepo and .multirepo.lock allow one-step cloning of a project and all its dependencies, and checking out any prior revision of the main project with appropriate revisions of all of its dependencies, respectively.

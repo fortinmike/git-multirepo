@@ -2,6 +2,10 @@
 
 To install betas run `gem install git-multirepo --pre`
 
+## 1.0.0.beta74
+
+- **Enhancement:** Bump all dependencies to avoid `Gunzip` warnings at launch
+
 ## 1.0.0.beta73
 
 - **Enhancement:** Git commands with arbitrary complexity can be performed using the `do` command, for example:
