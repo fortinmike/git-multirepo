@@ -66,7 +66,7 @@ module MultiRepo
       ExtraOutput.progress("Checking out appropriate dependency revisions") if @ci
       checkout_command = CheckoutCommand.new(CLAide::ARGV.new([]))
       mode = @ci ? RevisionSelection::AS_LOCK : RevisionSelection::LATEST
-      checkout_command.dependencies_checkout_step(mode)
+      checkout_command.dependencies_checkout_step(mode, nil, @ci) # Force in CI environment
     end
     
     def install_hooks_step

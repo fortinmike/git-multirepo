@@ -70,8 +70,9 @@ module MultiRepo
       GitRunner.last_command_succeeded
     end
     
-    def checkout(ref_name)
-      GitRunner.run(@path, "checkout #{ref_name}", Verbosity::OUTPUT_ON_ERROR)
+    def checkout(ref_name, force = false)
+      forceFlag = force ? " -f" : ""
+      GitRunner.run(@path, "checkout#{forceFlag} #{ref_name}", Verbosity::OUTPUT_ON_ERROR)
       GitRunner.last_command_succeeded
     end
     

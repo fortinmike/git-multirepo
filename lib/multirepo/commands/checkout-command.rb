@@ -79,11 +79,11 @@ module MultiRepo
       end
     end
     
-    def dependencies_checkout_step(mode, ref_name = nil)
+    def dependencies_checkout_step(mode, ref_name = nil, force = false)
       Performer.depth_ordered_dependencies.each do |dependency|
         # Find out the required dependency revision based on the checkout mode
         revision = RevisionSelector.revision_for_mode(mode, ref_name, dependency.lock_entry)
-        perform_dependency_checkout(dependency.config_entry, revision)
+        perform_dependency_checkout(dependency.config_entry, revision, force)
       end
     end
     
@@ -103,7 +103,7 @@ module MultiRepo
       return true
     end
     
-    def perform_dependency_checkout(config_entry, revision)
+    def perform_dependency_checkout(config_entry, revision, force)
       dependency_name = config_entry.repo.basename
       
       # Make sure the repo exists on disk, and clone it if it doesn't
@@ -116,7 +116,7 @@ module MultiRepo
       
       # Checkout!
       ExtraOutput.progress("Checking out #{dependency_name} #{revision}")
-      if config_entry.repo.checkout(revision)
+      if config_entry.repo.checkout(revision, force)
         Console.log_substep("Checked out #{dependency_name} '#{revision}'")
       else
         ExtraOutput.error("Couldn|'t check out dependency #{dependency_name}")
