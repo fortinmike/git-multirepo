@@ -17,7 +17,8 @@ module MultiRepo
         ['[--deps]', 'Update dependencies.'],
         ['[--force]', 'Update the tracking files even if dependencies contain uncommitted changes.'],
         ['[--commit]', 'Commit the tracking files after updating them.'],
-        ['[--no-diff]', 'Don\'t show lock file diff(s) after updating.']
+        ['[--no-diff]', 'Don\'t show lock file diff(s) after updating.'],
+        ['<message>', 'A commit message for the update (what changed in the dependencies)']
       ].concat(super)
     end
     
@@ -26,12 +27,14 @@ module MultiRepo
       @commit = argv.flag?("commit")
       @force = argv.flag?("force")
       @diff = argv.flag?("diff", true)
+      @message = argv.shift_argument
       super
     end
 
     def validate!
       super
       help! "You can't provide more than one operation modifier (--deps, --main, etc.)" unless @repo_selection.valid?
+      help! "You must provide a commit message" if @commit && !@message
     end
 
     def run
@@ -101,7 +104,7 @@ module MultiRepo
 
     def commit_tracking_files(path)
       tracking_files = TrackingFiles.new(path)
-      committed = tracking_files.commit("[multirepo] Updated tracking files manually")
+      committed = tracking_files.commit(@message)
       Console.log_info("Committed tracking files") if committed
     end
 
