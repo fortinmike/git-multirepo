@@ -231,7 +231,7 @@ module MultiRepo
         return
       end
       
-      update_command = UpdateCommand.new(CLAide::ARGV.new(["--commit", "--diff"]))
+      update_command = UpdateCommand.new(CLAide::ARGV.new(["--diff", "--commit", "[multirepo] Post-merge tracking files update"]))
       update_command.update_tracking_files_step(RepoSelection::MAIN)
     end
     

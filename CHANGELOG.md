@@ -2,6 +2,10 @@
 
 To install betas run `gem install git-multirepo --pre`
 
+## 1.0.0.beta77
+
+- **Enhancement:** Fix post-merge tracking files update.
+
 ## 1.0.0.beta76
 
 - **Enhancement:** The update command now requires a commit message (if committing).
