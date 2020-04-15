@@ -212,7 +212,7 @@ module MultiRepo
       success = true
       descriptors.each do |descriptor|
         Console.log_substep("#{descriptor.name} : Merging #{descriptor.their_revision} into #{descriptor.our_revision}...")
-        GitRunner.run_as_system(descriptor.repo.path, "merge #{descriptor.their_revision}#{@fast_forward ? '' : ' --no-ff'}")
+        GitRunner.run_as_system(descriptor.repo.path, "merge #{descriptor.their_revision} --no-edit#{@fast_forward ? '' : ' --no-ff'}")
         success &= GitRunner.last_command_succeeded
       end
       
