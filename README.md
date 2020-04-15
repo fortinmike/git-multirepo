@@ -16,27 +16,27 @@ You can download a handy cheat sheet [here](https://github.com/fortinmike/git-mu
 
 git-multirepo is distributed as a Ruby Gem.
 
-    $ gem install git-multirepo --pre
+    $ gem install git-multirepo
 
 The `--pre` flag is necessary to install beta releases.
 
 ## Development
 
 1. Install dependencies with `bundle install` (install the `bundler` gem beforehand if necessary)
-2. Run `rake install` to build and install the tool locally
+2. Run `rake install` to build and install the tool locally (`sudo` might be required based on how your Ruby was installed)
 3. Run it using the command `multi`
 
 ## Motivation
 
-By now the
+The
 [pitfalls](http://somethingsinistral.net/blog/git-submodules-are-probably-not-the-answer/)
 of git submodules are
 [pretty](https://codingkilledthecat.wordpress.com/2012/04/28/why-your-company-shouldnt-use-git-submodules/)
 [well](http://slopjong.de/2013/06/04/git-why-submodules-are-evil/)
 [known](http://stackoverflow.com/questions/12075809/git-submodules-workflow-issues).
-They work when your dependencies are linearly-evolving third-party libraries that you seldom update but they fall apart when it comes to managing your own, constantly evolving dependencies.
+They work when your dependencies are linearly-evolving third-party libraries that you seldom update but they fall apart when it comes to managing your own, constantly evolving dependencies. To solve this, many tools have been created. Among the most popular is [Lerna](https://lerna.js.org) but that only works for JavaScript projets and requires projects to migrate to a monorepo. `git-multirepo` works with separate repos and is language-agnostic.
 
-Git subtrees are the recommended alternative but have pitfalls of their own:
+Git subtrees are a recommended approach, but they have pitfalls of their own:
 
 - They require verbose and error-prone command-line operations. This can become quite tedious when managing more than one or two dependencies.
 - They change the rules of the game when it comes to merges.
@@ -48,7 +48,7 @@ Etc.
 
 ## Overview
 
-Using git-multirepo, you can manage your main project and its dependencies as completely independent repositories while still maintaining the ability to checkout a previous revision in a single step and have the project build properly.
+Using git-multirepo, you can manage your main project and its dependencies as completely independent repositories while still maintaining the ability to checkout a previous revision (or another branch) in a single step and have the project build properly.
 
 A git-multirepo setup looks like this:
 
@@ -62,9 +62,9 @@ MyAwesomeProject
 In essence:
 
 1. You tell git-multirepo what your dependencies are.
-2. Each time you commit the main repo, git-multirepo tracks what revision of each dependency is required by the project (don't worry, it ensures that you don't forget to commit changes to dependencies beforehand; more on that later).
+2. Each time you commit the main repo, git-multirepo tracks what revision of each dependency is required by the project (and it ensures that you don't forget to commit changes to dependencies beforehand; more on that later).
 3. If you ever want to go back to a previous version of your project, git-multirepo handles checking out the main repo and appropriate revisions of all of its dependencies in a single, seamless operation.
-4. Setting up the project on a new machine is only a single `multi clone` away.
+4. Setting up the project on a new machine is only a single `multi clone` away. Checking out source for continuous integration is similarly easy.
 
 ## Example
 
@@ -106,16 +106,18 @@ If you want to stop using git-multirepo, run `multi uninit`. This will remove al
 - Low possibility of human error (such as forgetting to contribute changes to dependencies back to the appropriate remotes, forgetting to commit dependencies in the proper order, etc.)
 - You're not stuck with git-multirepo. It stores its metadata as [YAML](http://www.yaml.org) in the main repo. You can clone and checkout appropriate revisions of your dependencies by hand without git-multirepo if you need to. The information is there, in human-readable form.
 
-| How It Handles...                |  git-multirepo   | git submodules | git subtrees |
-| -------------------------------- | :--------------: | :------------: | :----------: |
-| Working Copy                     | beside main repo |  in main repo  | in main repo |
-| Constantly Evolving Dependencies |       easy       |      hard      |   passable   |
-| Merging Changes to Dependencies  |       easy       |      hard      |   passable   |
-| Contributing Upstream            |       easy       |      easy      |   passable   |
-| Continuous Integration           |      medium      |     medium     |     easy     |
-| Branch-Based Workflows           |      easy\*      |      hard      |     easy     |
+| How It Handles...                |   git-multirepo    | git submodules | git subtrees |
+| -------------------------------- | :----------------: | :------------: | :----------: |
+| Working Copy                     |  beside main repo  |  in main repo  | in main repo |
+| Constantly Evolving Dependencies |        easy        |      hard      |   passable   |
+| Merging Changes to Dependencies  |        easy        |      hard      |   passable   |
+| Contributing Upstream            |        easy        |      easy      |   passable   |
+| Continuous Integration           | medium<sup>1</sup> |     medium     |     easy     |
+| Branch-Based Workflows           |  easy<sup>2</sup>  |      hard      |     easy     |
 
-(\*) The `multi branch` and `multi merge` commands faciliate branching and merging the main repo and its dependencies as a whole.
+(1) For simplified checkouts, you must install and use `git-multirepo` in your CI pipeline, otherwise you forgo the benefits it provides for CI. See [Continuous Integration](#continuous-integration) for details.
+
+(2) The `multi branch` and `multi merge` commands faciliate branching and merging the main repo and its dependencies as a whole.
 
 ## Limitations
 
@@ -141,10 +143,12 @@ After repositories are initialized this way, git-multirepo handles the rest and 
 
 ## Continuous Integration
 
+<a href="#continuous-integration"></a>
+
 git-multirepo supports continuous integration in a couple of ways:
 
 - The `install` command has a special `--ci` flag, which:
-  - Installs exact revisions of dependencies in-place
+  - Installs exact revisions of dependencies in-place (as read from the lock file)
   - Skips local hooks installation
   - Logs additional information that's useful in a CI context
 - The `inspect` command offers plumbing-style output that can be used to inspect repositories to conditionally perform multirepo operations on them afterwards.
