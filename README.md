@@ -8,7 +8,7 @@ Track multiple Git repositories side-by-side.
 
 An alternative approach to manage constantly evolving dependencies.
 
-Check out [the project's to-do list](https://www.pivotaltracker.com/n/projects/1256156) to get an idea of upcoming enhancements and read the [change log](https://github.com/fortinmike/git-multirepo/blob/master/CHANGELOG.md) for detailed information on git-multirepo releases.
+Check out [the project's to-do list](https://www.pivotaltracker.com/n/projects/1256156) to get an idea of upcoming enhancements and read the [change log](https://github.com/fortinmike/git-multirepo/blob/master/CHANGELOG.md) for detailed information on releases.
 
 You can download a handy cheat sheet [here](https://github.com/fortinmike/git-multirepo/raw/master/docs/git-multirepo-cheatsheet.docx).
 
