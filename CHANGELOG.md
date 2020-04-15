@@ -2,7 +2,12 @@
 
 ## 78.0
 
-- Nothing new, just the first official release!
+The first official release! 🎉
+
+Most kinks have been ironed out by now. There are no major known issues.
+
+- **Enhancement:** Use the (removed) `--exact` flag's behaviour by default for `merge` and `checkout`. To get the old default behaviour (checking out exact commits as stored in the lock file), use `--as-lock`.
+- **Enhancement:** The `merge` command merges without opening an editor by default. Use `--edit` to open an editor for each merge operation as before.
 
 ## 1.0.0.beta77
 
