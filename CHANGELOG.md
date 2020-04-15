@@ -1,6 +1,8 @@
-## Releases
+# Releases
 
-To install betas run `gem install git-multirepo --pre`
+## 78.0
+
+- Nothing new, just the first official release!
 
 ## 1.0.0.beta77
 
