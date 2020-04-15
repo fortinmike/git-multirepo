@@ -12,8 +12,8 @@ module MultiRepo
     def self.options
       [
         ['<refname>', 'The main repo tag, branch or commit id to checkout.'],
-        ['[--latest]', 'Checkout the HEAD of each dependency branch (as recorded in the lock file) instead of the exact required commits.'],
-        ['[--exact]', 'Checkout the exact specified ref for each repo, regardless of what\'s stored in the lock file.'],
+        ['[--latest]', 'Checkout the HEAD of each dependency branch (as recorded in the lock file) instead of the exact stored commits.'],
+        ['[--as-lock]', 'Checkout the exact commits for each repo based on the lock file, in detached head state.'],
         ['[--force]', 'Force checkout even if there are uncommmitted changes.']
       ].concat(super)
     end
@@ -21,7 +21,7 @@ module MultiRepo
     def initialize(argv)
       @ref_name = argv.shift_argument
       @checkout_latest = argv.flag?("latest")
-      @checkout_exact = argv.flag?("exact")
+      @checkout_lock = argv.flag?("as-lock")
       @force = argv.flag?("force")
       super
     end
@@ -29,8 +29,8 @@ module MultiRepo
     def validate!
       super
       help! "You must specify a branch or commit id to checkout" unless @ref_name
-      unless Utils.only_one_true?(@checkout_latest, @checkout_exact)
-        help! "You can't provide more than one operation modifier (--latest, --exact, etc.)"
+      unless Utils.only_one_true?(@checkout_latest, @checkout_lock)
+        help! "You can't provide more than one operation modifier (--latest, --as-lock, etc.)"
       end
     end
     
@@ -38,7 +38,7 @@ module MultiRepo
       ensure_in_work_tree
       
       # Find out the checkout mode based on command-line options
-      mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
+      mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_lock)
       
       strategy_name = RevisionSelection.name_for_mode(mode)
       Console.log_step("Checking out #{@ref_name} and its dependencies using the '#{strategy_name}' strategy...")

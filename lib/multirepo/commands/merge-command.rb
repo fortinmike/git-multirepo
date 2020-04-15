@@ -28,15 +28,15 @@ module MultiRepo
       [
         ['<refname>', 'The main repo tag, branch or commit id to merge.'],
         ['[--latest]', 'Merge the HEAD of each stored dependency branch instead of the commits recorded in the lock file.'],
-        ['[--exact]', 'Merge the exact specified ref for each repo, regardless of what\'s stored in the lock file.'],
-        ['[--no-ff]', 'Never perform a fast-forward.']
+        ['[--as-lock]', 'Merge the exact specified commits for each repo, as stored in the lock file.'],
+        ['[--ff]', 'Perform a fast-forward if possible.']
       ].concat(super)
     end
     
     def initialize(argv)
       @ref_name = argv.shift_argument
       @checkout_latest = argv.flag?("latest")
-      @checkout_exact = argv.flag?("exact")
+      @checkout_lock = argv.flag?("as-lock")
       @fast_forward = argv.flag?("ff")
       super
     end
@@ -44,8 +44,8 @@ module MultiRepo
     def validate!
       super
       help! "You must specify a ref to merge" unless @ref_name
-      unless Utils.only_one_true?(@checkout_latest, @checkout_exact)
-        help! "You can't provide more than one operation modifier (--latest, --exact, etc.)"
+      unless Utils.only_one_true?(@checkout_latest, @checkout_lock)
+        help! "You can't provide more than one operation modifier (--latest, --as-lock, etc.)"
       end
     end
     
@@ -54,7 +54,7 @@ module MultiRepo
       ensure_multirepo_enabled
       
       # Find out the checkout mode based on command-line options
-      mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_exact)
+      mode = RevisionSelector.mode_for_args(@checkout_latest, @checkout_lock)
       
       strategy_name = RevisionSelection.name_for_mode(mode)
       Console.log_step("Merging #{@ref_name} with '#{strategy_name}' strategy...")

@@ -2,13 +2,13 @@ require_relative "revision-selection"
 
 module MultiRepo
   class RevisionSelector
-    def self.mode_for_args(checkout_latest, checkout_exact)
+    def self.mode_for_args(checkout_latest, checkout_lock)
       if checkout_latest
         RevisionSelection::LATEST
-      elsif checkout_exact
-        RevisionSelection::EXACT
-      else
+      elsif checkout_lock
         RevisionSelection::AS_LOCK
+      else
+        RevisionSelection::EXACT
       end
     end
     
